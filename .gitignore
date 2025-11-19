@@ -2,8 +2,9 @@ node_modules
 .cache
 *-cache
 out
-dist
-lib
+# dist
+# lib
+# Temporarily allow dist/lib for GitHub installation
 *-*.log
 .now
 .vscode
