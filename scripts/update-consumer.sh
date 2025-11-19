@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 CONSUMER_PATH="../isi-page-fe"
-CRAFT_REPO="gin31259461/craft.js"
+CRAFT_REPO="bageurinc/craft.js"
 DEFAULT_TAG="latest"
 
 # Get tag from argument or use default
