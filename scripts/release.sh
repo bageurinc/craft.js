@@ -45,12 +45,43 @@ CURRENT_VERSION=$(node -p "require('./packages/core/package.json').version")
 echo -e "Current version: ${YELLOW}${CURRENT_VERSION}${NC}"
 echo ""
 
-# Ask for new version
-read -p "Enter new version tag (e.g., v0.2.13-darkmode): " VERSION_TAG
+# Get version from argument or prompt
+if [ -n "$1" ]; then
+  # Non-interactive mode: use argument
+  VERSION_INPUT="$1"
+  RELEASE_MESSAGE="${2:-Release $VERSION_INPUT}"
+
+  # Add 'v' prefix if not present
+  if [[ ! $VERSION_INPUT =~ ^v ]]; then
+    VERSION_TAG="v$VERSION_INPUT"
+  else
+    VERSION_TAG="$VERSION_INPUT"
+  fi
+
+  echo -e "Using version: ${YELLOW}${VERSION_TAG}${NC}"
+  echo -e "Release message: ${YELLOW}${RELEASE_MESSAGE}${NC}"
+  echo ""
+else
+  # Interactive mode: ask for version
+  read -p "Enter new version tag (e.g., 2.0.0 or v2.0.0): " VERSION_INPUT
+
+  # Add 'v' prefix if not present
+  if [[ ! $VERSION_INPUT =~ ^v ]]; then
+    VERSION_TAG="v$VERSION_INPUT"
+  else
+    VERSION_TAG="$VERSION_INPUT"
+  fi
+
+  # Ask for release message
+  read -p "Release message: " RELEASE_MESSAGE
+  if [ -z "$RELEASE_MESSAGE" ]; then
+    RELEASE_MESSAGE="Release $VERSION_TAG"
+  fi
+fi
 
 # Validate version tag format
 if [[ ! $VERSION_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+.*$ ]]; then
-  echo -e "${RED}❌ Invalid version format. Use format: v0.2.13 or v0.2.13-darkmode${NC}"
+  echo -e "${RED}❌ Invalid version format. Use format: 2.0.0 or v2.0.0 or v2.0.0-beta${NC}"
   exit 1
 fi
 
@@ -103,7 +134,7 @@ echo -e "${GREEN}✓ Pushed to origin${NC}"
 # Create tag
 echo ""
 echo -e "${GREEN}🏷️  Creating tag $VERSION_TAG...${NC}"
-git tag -a "$VERSION_TAG" -m "Release $VERSION_TAG"
+git tag -a "$VERSION_TAG" -m "$RELEASE_MESSAGE"
 
 # Push tag
 echo -e "${GREEN}🔄 Pushing tag to origin...${NC}"
