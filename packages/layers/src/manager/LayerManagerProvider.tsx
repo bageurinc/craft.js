@@ -7,6 +7,7 @@ import { LayerManagerContext, LayerStore } from './context';
 import { LayerEventContextProvider } from '../events';
 import { LayerOptions } from '../interfaces';
 import { DefaultLayer } from '../layers';
+import { ThemeProvider } from '../layers/ThemeContext';
 
 type LayerManagerProviderProps = {
   options: Partial<LayerOptions>;
@@ -33,7 +34,9 @@ export const LayerManagerProvider = ({
 
   return (
     <LayerManagerContext.Provider value={{ store }}>
-      <LayerEventContextProvider>{children}</LayerEventContextProvider>
+      <ThemeProvider theme={options.theme} themeMode={options.themeMode}>
+        <LayerEventContextProvider>{children}</LayerEventContextProvider>
+      </ThemeProvider>
     </LayerManagerContext.Provider>
   );
 };

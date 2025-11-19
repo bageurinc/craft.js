@@ -7,17 +7,26 @@ import Arrow from './svg/arrow.svg';
 import Eye from './svg/eye.svg';
 import Linked from './svg/linked.svg';
 
+import { LayersTheme } from '../../theme';
+import { useLayerTheme } from '../ThemeContext';
 import { useLayer } from '../useLayer';
 
-const StyledDiv = styled.div<{ $depth: number; $selected: boolean }>`
+const StyledDiv = styled.div<{
+  $depth: number;
+  $selected: boolean;
+  $theme: LayersTheme;
+}>`
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 4px 10px;
-  background: ${(props) => (props.$selected ? '#2680eb' : 'transparent')};
-  color: ${(props) => (props.$selected ? '#fff' : 'inherit')};
+  background: ${(props) =>
+    props.$selected ? props.$theme.bgSelected : 'transparent'};
+  color: ${(props) =>
+    props.$selected ? props.$theme.textSelected : props.$theme.textPrimary};
   svg {
-    fill: ${(props) => (props.$selected ? '#fff' : '#808184')};
+    fill: ${(props) =>
+      props.$selected ? props.$theme.iconSelected : props.$theme.iconPrimary};
     margin-top: 2px;
   }
   .inner {
@@ -52,7 +61,11 @@ const Expand = styled.a<{ $expanded: boolean }>`
   cursor: pointer;
 `;
 
-const Hide = styled.a<{ $selected: boolean; $isHidden: boolean }>`
+const Hide = styled.a<{
+  $selected: boolean;
+  $isHidden: boolean;
+  $theme: LayersTheme;
+}>`
   width: 14px;
   height: 14px;
   margin-right: 10px;
@@ -73,7 +86,8 @@ const Hide = styled.a<{ $selected: boolean; $isHidden: boolean }>`
     position: absolute;
     left: 2px;
     top: 3px;
-    background: ${(props) => (props.$selected ? '#fff' : '#808184')};
+    background: ${(props) =>
+      props.$selected ? props.$theme.iconSelected : props.$theme.iconPrimary};
     transform: rotate(-45deg);
     transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
     transform-origin: 0% 0%;
@@ -92,6 +106,7 @@ const TopLevelIndicator = styled.div`
 `;
 
 export const DefaultLayerHeader = () => {
+  const theme = useLayerTheme();
   const {
     id,
     depth,
@@ -123,10 +138,12 @@ export const DefaultLayerHeader = () => {
         drag(dom);
       }}
       $depth={depth}
+      $theme={theme}
     >
       <Hide
         $selected={selected}
         $isHidden={hidden}
+        $theme={theme}
         onClick={() => actions.setHidden(id, !hidden)}
       >
         <Eye />

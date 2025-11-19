@@ -1,5 +1,7 @@
 import { NodeId, Indicator } from '@craftjs/core';
 
+import { LayersTheme } from './theme';
+
 export type Layer = {
   id: NodeId;
   dom: HTMLElement;
@@ -15,6 +17,8 @@ export type LayerEvents = 'selected' | 'hovered';
 export type LayerOptions = {
   expandRootOnLoad: boolean;
   renderLayer: React.ElementType;
+  theme?: LayersTheme;
+  themeMode?: 'light' | 'dark';
 };
 
 export type LayerIndicator = Indicator & {

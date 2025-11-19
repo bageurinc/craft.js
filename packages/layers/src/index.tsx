@@ -4,12 +4,16 @@ import React from 'react';
 import { LayerOptions } from './interfaces';
 import { LayerContextProvider } from './layers/LayerContextProvider';
 import { LayerManagerProvider } from './manager/LayerManagerProvider';
+
 export {
   useLayer,
   DefaultLayer,
   DefaultLayerHeader,
   EditableLayerName,
 } from './layers';
+
+export type { LayersTheme } from './theme';
+export { lightTheme, darkTheme, getTheme } from './theme';
 
 type LayersProps = Partial<LayerOptions>;
 

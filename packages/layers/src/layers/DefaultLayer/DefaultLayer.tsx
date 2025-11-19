@@ -4,30 +4,37 @@ import { styled } from 'styled-components';
 
 import { DefaultLayerHeader } from './DefaultLayerHeader';
 
+import { LayersTheme } from '../../theme';
+import { useLayerTheme } from '../ThemeContext';
 import { useLayer } from '../useLayer';
 
 const LayerNodeDiv = styled.div<{
   $expanded: boolean;
   $hasCanvases: boolean;
   $hovered: boolean;
+  $theme: LayersTheme;
 }>`
-  background: ${(props) => (props.$hovered ? '#f1f1f1' : 'transparent')};
+  background: ${(props) =>
+    props.$hovered ? props.$theme.bgHover : props.$theme.bgBase};
   display: block;
   padding-bottom: ${(props) =>
     props.$hasCanvases && props.$expanded ? 5 : 0}px;
 `;
 
-const LayerChildren = styled.div<{ $hasCanvases: boolean }>`
+const LayerChildren = styled.div<{
+  $hasCanvases: boolean;
+  $theme: LayersTheme;
+}>`
   margin: 0 0 0 ${(props) => (props.$hasCanvases ? 35 : 0)}px;
   background: ${(props) =>
-    props.$hasCanvases ? 'rgba(255, 255, 255, 0.02)' : 'transparent'};
+    props.$hasCanvases ? props.$theme.bgCanvas : 'transparent'};
   position: relative;
 
   ${(props) =>
     props.$hasCanvases
       ? `
 
-  box-shadow: 0px 0px 44px -1px #00000014;
+  box-shadow: 0px 0px 44px -1px ${props.$theme.shadowColor};
   border-radius: 10px;
   margin-right: 5px;
   margin-bottom:5px;
@@ -39,7 +46,7 @@ const LayerChildren = styled.div<{ $hasCanvases: boolean }>`
       width: 2px;
       height:100%;
       content: " ";
-      background:#00000012;
+      background:${props.$theme.borderColor};
     }
   `
       : ''}
@@ -50,6 +57,7 @@ export type DefaultLayerProps = {
 };
 
 export const DefaultLayer = ({ children }: DefaultLayerProps) => {
+  const theme = useLayerTheme();
   const {
     id,
     expanded,
@@ -73,11 +81,13 @@ export const DefaultLayer = ({ children }: DefaultLayerProps) => {
       $expanded={expanded}
       $hasCanvases={hasChildCanvases}
       $hovered={hovered}
+      $theme={theme}
     >
       <DefaultLayerHeader />
       {children ? (
         <LayerChildren
           $hasCanvases={hasChildCanvases}
+          $theme={theme}
           className="craft-layer-children"
         >
           {children}
