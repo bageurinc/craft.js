@@ -4,7 +4,14 @@
       "Bash(cat:*)",
       "Bash(git push:*)",
       "Bash(chmod:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(HUSKY_SKIP_HOOKS=1 git commit:*)",
+      "Bash(HUSKY_SKIP_HOOKS=1 git push:*)",
+      "Bash(yarn build:*)",
+      "Bash(yarn install:*)",
+      "Bash(git reset:*)",
+      "Bash(HUSKYSkip_HOOKS=1 git add:*)"
     ],
     "deny": [],
     "ask": []

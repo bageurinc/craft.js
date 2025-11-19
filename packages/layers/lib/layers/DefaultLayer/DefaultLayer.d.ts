@@ -1,7 +1,5 @@
 import React from 'react';
 export type DefaultLayerProps = {
-  children?: React.ReactNode;
+    children?: React.ReactNode;
 };
-export declare const DefaultLayer: ({
-  children,
-}: DefaultLayerProps) => React.JSX.Element;
+export declare const DefaultLayer: ({ children }: DefaultLayerProps) => React.JSX.Element;

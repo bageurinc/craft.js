@@ -4,62 +4,41 @@ import { LayerContextProvider } from './LayerContextProvider';
 import { useLayer } from './useLayer';
 import { useLayerManager } from '../manager/useLayerManager';
 export const LayerNode = () => {
-  const { id, depth, children, expanded } = useLayer((layer) => ({
-    expanded: layer.expanded,
-  }));
-  const { data, shouldBeExpanded } = useEditor((state, query) => {
-    // TODO: handle multiple selected elements
-    const selected = query.getEvent('selected').first();
-    return {
-      data: state.nodes[id] && state.nodes[id].data,
-      shouldBeExpanded:
-        selected && query.node(selected).ancestors(true).includes(id),
-    };
-  });
-  const {
-    actions: { registerLayer, toggleLayer },
-    renderLayer,
-    expandRootOnLoad,
-  } = useLayerManager((state) => ({
-    renderLayer: state.options.renderLayer,
-    expandRootOnLoad: state.options.expandRootOnLoad,
-  }));
-  const [isRegistered, setRegistered] = useState(false);
-  useLayoutEffect(() => {
-    registerLayer(id);
-    setRegistered(true);
-  }, [registerLayer, id]);
-  const expandedRef = useRef(expanded);
-  expandedRef.current = expanded;
-  const shouldBeExpandedOnLoad = useRef(expandRootOnLoad && id === ROOT_NODE);
-  useEffect(() => {
-    if (!expandedRef.current && shouldBeExpanded) {
-      toggleLayer(id);
-    }
-  }, [toggleLayer, id, shouldBeExpanded]);
-  useEffect(() => {
-    if (shouldBeExpandedOnLoad.current) {
-      toggleLayer(id);
-    }
-  }, [toggleLayer, id]);
-  return data && isRegistered
-    ? React.createElement(
-        'div',
-        { className: `craft-layer-node ${id}` },
-        React.createElement(
-          renderLayer,
-          {},
-          children && expanded
-            ? children.map((id) =>
-                React.createElement(LayerContextProvider, {
-                  key: id,
-                  id: id,
-                  depth: depth + 1,
-                })
-              )
-            : null
-        )
-      )
-    : null;
+    const { id, depth, children, expanded } = useLayer((layer) => ({
+        expanded: layer.expanded,
+    }));
+    const { data, shouldBeExpanded } = useEditor((state, query) => {
+        // TODO: handle multiple selected elements
+        const selected = query.getEvent('selected').first();
+        return {
+            data: state.nodes[id] && state.nodes[id].data,
+            shouldBeExpanded: selected && query.node(selected).ancestors(true).includes(id),
+        };
+    });
+    const { actions: { registerLayer, toggleLayer }, renderLayer, expandRootOnLoad, } = useLayerManager((state) => ({
+        renderLayer: state.options.renderLayer,
+        expandRootOnLoad: state.options.expandRootOnLoad,
+    }));
+    const [isRegistered, setRegistered] = useState(false);
+    useLayoutEffect(() => {
+        registerLayer(id);
+        setRegistered(true);
+    }, [registerLayer, id]);
+    const expandedRef = useRef(expanded);
+    expandedRef.current = expanded;
+    const shouldBeExpandedOnLoad = useRef(expandRootOnLoad && id === ROOT_NODE);
+    useEffect(() => {
+        if (!expandedRef.current && shouldBeExpanded) {
+            toggleLayer(id);
+        }
+    }, [toggleLayer, id, shouldBeExpanded]);
+    useEffect(() => {
+        if (shouldBeExpandedOnLoad.current) {
+            toggleLayer(id);
+        }
+    }, [toggleLayer, id]);
+    return data && isRegistered ? (React.createElement("div", { className: `craft-layer-node ${id}` }, React.createElement(renderLayer, {}, children && expanded
+        ? children.map((id) => (React.createElement(LayerContextProvider, { key: id, id: id, depth: depth + 1 })))
+        : null))) : null;
 };
 //# sourceMappingURL=LayerNode.js.map

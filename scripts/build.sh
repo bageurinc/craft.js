@@ -13,5 +13,5 @@ then
   defaultRollupConfig=rollup.config.js
 fi
 
-npx tsc --skipLibCheck --emitDeclarationOnly "${args[@]}" &
-npx rollup -c "${defaultRollupConfig}" "${args[@]}"
+yarn exec tsc --skipLibCheck --emitDeclarationOnly "${args[@]}" &
+yarn exec rollup -c "${defaultRollupConfig}" "${args[@]}"

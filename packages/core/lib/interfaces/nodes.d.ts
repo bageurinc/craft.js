@@ -2,71 +2,65 @@ import { QueryCallbacksFor } from '@craftjs/utils';
 import React from 'react';
 import { QueryMethods } from '../editor/query';
 export type UserComponentConfig<T> = {
-  displayName: string;
-  rules: Partial<NodeRules>;
-  related: Partial<NodeRelated>;
-  props: Partial<T>;
-  custom: Record<string, any>;
-  info: Record<string, any>;
-  isCanvas: boolean;
-  name: string;
-  defaultProps: Partial<T>;
+    displayName: string;
+    rules: Partial<NodeRules>;
+    related: Partial<NodeRelated>;
+    props: Partial<T>;
+    custom: Record<string, any>;
+    info: Record<string, any>;
+    isCanvas: boolean;
+    name: string;
+    defaultProps: Partial<T>;
 };
 export type UserComponent<T = any> = React.ComponentType<T> & {
-  craft?: Partial<UserComponentConfig<T>>;
+    craft?: Partial<UserComponentConfig<T>>;
 };
 export type NodeId = string;
 export type NodeEventTypes = 'selected' | 'dragged' | 'hovered';
 export type Node = {
-  id: NodeId;
-  data: NodeData;
-  info: Record<string, any>;
-  events: Record<NodeEventTypes, boolean>;
-  dom: HTMLElement | null;
-  related: Record<string, React.ElementType>;
-  rules: NodeRules;
-  _hydrationTimestamp: number;
+    id: NodeId;
+    data: NodeData;
+    info: Record<string, any>;
+    events: Record<NodeEventTypes, boolean>;
+    dom: HTMLElement | null;
+    related: Record<string, React.ElementType>;
+    rules: NodeRules;
+    _hydrationTimestamp: number;
 };
 export type NodeHelpersType = QueryCallbacksFor<typeof QueryMethods>['node'];
 export type NodeRules = {
-  canDrag(node: Node, helpers: NodeHelpersType): boolean;
-  canDrop(dropTarget: Node, self: Node, helpers: NodeHelpersType): boolean;
-  canMoveIn(canMoveIn: Node[], self: Node, helpers: NodeHelpersType): boolean;
-  canMoveOut(canMoveOut: Node[], self: Node, helpers: NodeHelpersType): boolean;
+    canDrag(node: Node, helpers: NodeHelpersType): boolean;
+    canDrop(dropTarget: Node, self: Node, helpers: NodeHelpersType): boolean;
+    canMoveIn(canMoveIn: Node[], self: Node, helpers: NodeHelpersType): boolean;
+    canMoveOut(canMoveOut: Node[], self: Node, helpers: NodeHelpersType): boolean;
 };
 export type NodeRelated = Record<string, React.ElementType>;
 export type NodeData = {
-  props: Record<string, any>;
-  type: string | React.ElementType;
-  name: string;
-  displayName: string;
-  isCanvas: boolean;
-  parent: NodeId | null;
-  linkedNodes: Record<string, NodeId>;
-  nodes: NodeId[];
-  hidden: boolean;
-  custom?: any;
-  _childCanvas?: Record<string, NodeId>;
+    props: Record<string, any>;
+    type: string | React.ElementType;
+    name: string;
+    displayName: string;
+    isCanvas: boolean;
+    parent: NodeId | null;
+    linkedNodes: Record<string, NodeId>;
+    nodes: NodeId[];
+    hidden: boolean;
+    custom?: any;
+    _childCanvas?: Record<string, NodeId>;
 };
 export type FreshNode = {
-  id?: NodeId;
-  data: Partial<NodeData> & Required<Pick<NodeData, 'type'>>;
+    id?: NodeId;
+    data: Partial<NodeData> & Required<Pick<NodeData, 'type'>>;
 };
-export type ReduceCompType =
-  | string
-  | {
-      resolvedName: string;
-    };
+export type ReduceCompType = string | {
+    resolvedName: string;
+};
 export type ReducedComp = {
-  type: ReduceCompType;
-  isCanvas: boolean;
-  props: any;
+    type: ReduceCompType;
+    isCanvas: boolean;
+    props: any;
 };
-export type SerializedNode = Omit<
-  NodeData,
-  'type' | 'subtype' | 'name' | 'event'
-> &
-  ReducedComp;
+export type SerializedNode = Omit<NodeData, 'type' | 'subtype' | 'name' | 'event'> & ReducedComp;
 export type SerializedNodes = Record<NodeId, SerializedNode>;
 export type SerializedNodeData = SerializedNode;
 export type Nodes = Record<NodeId, Node>;
@@ -78,25 +72,19 @@ export type Nodes = Record<NodeId, Node>;
  * need to drop more than a single component.
  */
 export interface NodeTree {
-  rootNodeId: NodeId;
-  nodes: Nodes;
+    rootNodeId: NodeId;
+    nodes: Nodes;
 }
 type NodeIdSelector = NodeId | NodeId[];
 type NodeObjSelector = Node | Node[];
 export declare enum NodeSelectorType {
-  Any = 0,
-  Id = 1,
-  Obj = 2,
+    Any = 0,
+    Id = 1,
+    Obj = 2
 }
-export type NodeSelector<
-  T extends NodeSelectorType = NodeSelectorType.Any
-> = T extends NodeSelectorType.Id
-  ? NodeIdSelector
-  : T extends NodeSelectorType.Obj
-  ? NodeObjSelector
-  : NodeIdSelector | NodeObjSelector;
+export type NodeSelector<T extends NodeSelectorType = NodeSelectorType.Any> = T extends NodeSelectorType.Id ? NodeIdSelector : T extends NodeSelectorType.Obj ? NodeObjSelector : NodeIdSelector | NodeObjSelector;
 export type NodeSelectorWrapper = {
-  node: Node;
-  exists: boolean;
+    node: Node;
+    exists: boolean;
 };
 export {};
