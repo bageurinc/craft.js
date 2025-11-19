@@ -72,9 +72,11 @@ if [ -f "package.json" ]; then
     echo -e "${GREEN}✓${NC} Backup created: package.json.backup"
 fi
 
+# Update @craftjs packages
+PACKAGES_UPDATED=0
+
 # Update @craftjs/core
 if grep -q "@craftjs/core" package.json; then
-    # Use Node.js to update the JSON properly
     node -e "
     const fs = require('fs');
     const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
@@ -90,13 +92,59 @@ if grep -q "@craftjs/core" package.json; then
     fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
     console.log('Updated @craftjs/core to: ' + gitUrl);
     "
+    echo -e "${GREEN}✓${NC} Updated @craftjs/core"
+    ((PACKAGES_UPDATED++))
+fi
 
-    echo -e "${GREEN}✓${NC} package.json updated"
-else
-    echo -e "${RED}✖ @craftjs/core not found in package.json${NC}"
+# Update @craftjs/layers
+if grep -q "@craftjs/layers" package.json; then
+    node -e "
+    const fs = require('fs');
+    const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+    const gitUrl = 'github:${CRAFT_REPO}#${TAG}';
+
+    if (pkg.dependencies && pkg.dependencies['@craftjs/layers']) {
+        pkg.dependencies['@craftjs/layers'] = gitUrl;
+    }
+    if (pkg.devDependencies && pkg.devDependencies['@craftjs/layers']) {
+        pkg.devDependencies['@craftjs/layers'] = gitUrl;
+    }
+
+    fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+    console.log('Updated @craftjs/layers to: ' + gitUrl);
+    "
+    echo -e "${GREEN}✓${NC} Updated @craftjs/layers"
+    ((PACKAGES_UPDATED++))
+fi
+
+# Update @craftjs/utils (if exists)
+if grep -q "@craftjs/utils" package.json; then
+    node -e "
+    const fs = require('fs');
+    const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+    const gitUrl = 'github:${CRAFT_REPO}#${TAG}';
+
+    if (pkg.dependencies && pkg.dependencies['@craftjs/utils']) {
+        pkg.dependencies['@craftjs/utils'] = gitUrl;
+    }
+    if (pkg.devDependencies && pkg.devDependencies['@craftjs/utils']) {
+        pkg.devDependencies['@craftjs/utils'] = gitUrl;
+    }
+
+    fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+    console.log('Updated @craftjs/utils to: ' + gitUrl);
+    "
+    echo -e "${GREEN}✓${NC} Updated @craftjs/utils"
+    ((PACKAGES_UPDATED++))
+fi
+
+if [ $PACKAGES_UPDATED -eq 0 ]; then
+    echo -e "${RED}✖ No @craftjs packages found in package.json${NC}"
     rm package.json.backup
     exit 1
 fi
+
+echo -e "${GREEN}✓${NC} Updated $PACKAGES_UPDATED package(s)"
 
 echo ""
 
@@ -128,7 +176,7 @@ echo -e "${GREEN}╔════════════════════
 echo -e "${GREEN}║           Update Completed Successfully       ║${NC}"
 echo -e "${GREEN}╚════════════════════════════════════════════════╝${NC}"
 echo ""
-echo -e "${BLUE}📦 Package:${NC}    @craftjs/core"
+echo -e "${BLUE}📦 Packages:${NC}   $PACKAGES_UPDATED package(s) updated"
 echo -e "${BLUE}🏷️  Tag:${NC}       $TAG"
 echo -e "${BLUE}📝 Commit:${NC}    ${COMMIT_HASH:0:7}"
 echo -e "${BLUE}📂 Location:${NC}  $CONSUMER_PATH"
