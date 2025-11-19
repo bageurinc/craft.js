@@ -1,11 +1,16 @@
 
 <div align="center" style={{d}}>
 <h1>craft.js</h1>
-<a href="https://www.npmjs.com/package/@craftjs/core">
-  <img src="https://img.shields.io/npm/v/@craftjs/core?color=%232680eb&label=NPM&logo=npm&logoColor=%232680eb&style=for-the-badge">
+<a href="https://github.com/gin31259461/craft.js">
+  <img src="https://img.shields.io/github/v/tag/gin31259461/craft.js?label=Version&style=for-the-badge&color=%232680eb">
 </a>
 <img src="https://img.shields.io/npm/l/@craftjs/core?color=%23000&style=for-the-badge">
+<a href="https://github.com/gin31259461/craft.js/releases">
+  <img src="https://img.shields.io/github/release-date/gin31259461/craft.js?label=Last%20Release&style=for-the-badge&color=%2300C853">
+</a>
 </div>
+
+> **Note:** This is a forked and customized version of Craft.js for use in the isi-page project. For the original Craft.js, visit [prevwong/craft.js](https://github.com/prevwong/craft.js).
 
 <div align="center" style={{d}}>
   <img src="https://user-images.githubusercontent.com/16416929/72202590-4d05f500-349c-11ea-9e43-1da1cb0c30e9.gif"/>
@@ -23,10 +28,59 @@ There're existing libraries that come with a fully working page editor out of th
 
 Craft.js solves this problem by modularising the building blocks of a page editor. It ships with a drag-n-drop system and handles the way user components should be rendered, updated and moved - among other things. With this, you'll be able to build your own page editor exactly how you want it to look and behave.
 
+## Installation
+
+### For isi-page-fe Project
+
+Install directly from GitHub using the latest tagged version:
+
+```bash
+npm install github:gin31259461/craft.js#latest
+```
+
+Or install a specific version:
+
+```bash
+npm install github:gin31259461/craft.js#v1.0.0
+```
+
+### Using Automated Scripts
+
+From the craft.js repository:
+
+```bash
+# Update isi-page-fe to latest version
+./scripts/update-consumer.sh
+
+# Or specify a tag
+./scripts/update-consumer.sh v1.0.0
+
+# Verify installation
+./scripts/verify-install.sh
+```
+
+For detailed installation instructions, see [INSTALLATION.md](./INSTALLATION.md).
+
+## Publishing New Versions
+
+To create a new release:
+
+```bash
+# Create and push a new tag
+./scripts/release.sh
+
+# Or specify version
+./scripts/release.sh 1.0.1 "Bug fixes and improvements"
+```
+
+See [PUBLISH-GUIDE.md](./PUBLISH-GUIDE.md) for complete publishing guidelines.
+
 ## Docs
-- [Core concepts](https://craft.js.org/docs/concepts/nodes)
-- [Tutorial](https://craft.js.org/docs/guides/basic-tutorial)
-- [API Reference](https://craft.js.org/docs/api/editor-state)
+- [Installation Guide](./INSTALLATION.md) - Complete installation and troubleshooting guide
+- [Publishing Guide](./PUBLISH-GUIDE.md) - How to create releases and manage versions
+- [Core concepts](https://craft.js.org/docs/concepts/nodes) - Original Craft.js documentation
+- [Tutorial](https://craft.js.org/docs/guides/basic-tutorial) - Basic tutorial
+- [API Reference](https://craft.js.org/docs/api/editor-state) - API documentation
 
 ## Examples
 These examples should give you an idea on the flexibility of Craft.js.
@@ -204,9 +258,44 @@ Although it is not actually used here, many aspects of Craft.js are written with
 - **[use-methods](https://github.com/pelotom/use-methods)** A super handy hook when dealing with reducers. Craft.js uses a slightly modified version of `use-methods` to better fit our API.
 
 
+## What's Different in This Fork?
+
+This fork maintains the core functionality of Craft.js while adding improvements for the isi-page project:
+
+- **Git-based Distribution**: Install directly from GitHub without npm publishing
+- **Automated Scripts**: Helper scripts for release management and updates
+- **Enhanced Documentation**: Complete installation and publishing guides
+- **Custom Improvements**: Project-specific enhancements and bug fixes
+
+See [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
+
+## Repository Structure
+
+```
+craft.js/
+├── packages/
+│   ├── core/              # @craftjs/core - Main library
+│   ├── layers/            # @craftjs/layers - Layers panel
+│   └── utils/             # @craftjs/utils - Shared utilities
+├── scripts/
+│   ├── release.sh         # Create and push git tags
+│   ├── update-consumer.sh # Update isi-page-fe automatically
+│   └── verify-install.sh  # Verify installation
+├── INSTALLATION.md        # Complete installation guide
+├── PUBLISH-GUIDE.md       # Publishing and release guide
+└── CLAUDE.md             # Development documentation
+```
+
 ## Getting Help :wave:
 
-If you have questions or there's something you'd like to discuss (eg: contributing), please head over to our [Discord](https://discord.gg/sPpF7fX) server.
+For this fork:
+- Check [INSTALLATION.md](./INSTALLATION.md) for installation issues
+- Check [PUBLISH-GUIDE.md](./PUBLISH-GUIDE.md) for release questions
+- Open an issue on [GitHub](https://github.com/gin31259461/craft.js/issues)
+
+For original Craft.js questions:
+- Visit the [Discord](https://discord.gg/sPpF7fX) server
+- Check the [official documentation](https://craft.js.org/)
 
 
 ## Sponsor :heart_decoration:
