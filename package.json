@@ -78,8 +78,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/prevwong/craft.js.git"
+    "url": "git+https://github.com/bageurinc/craft.js.git"
   },
+  "prepare": "pnpm run build || yarn build || npm run build",
   "lint-staged": {
     "packages/**/*.{js,jsx,ts,tsx}": [
       "pretty-quick --staged",
