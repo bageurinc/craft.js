@@ -1,954 +1,706 @@
-if (typeof window !== 'undefined') {
-  if (!window['__CRAFTJS__']) {
-    window['__CRAFTJS__'] = {};
-  }
-
-  window['__CRAFTJS__']['@craftjs/layers'] = '0.2.7';
-}
-
+'undefined' != typeof window &&
+  (window.__CRAFTJS__ || (window.__CRAFTJS__ = {}),
+  (window.__CRAFTJS__['@craftjs/layers'] = '0.2.7'));
 import {
-  useCollector,
-  wrapConnectorHooks,
-  useMethods,
-  ROOT_NODE as ROOT_NODE$1,
+  useCollector as e,
+  wrapConnectorHooks as t,
+  useMethods as n,
+  ROOT_NODE as r,
 } from '@craftjs/utils';
-import * as React from 'react';
-import React__default, {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-  useLayoutEffect,
-  useRef,
-  useEffect,
-  useCallback,
+import * as a from 'react';
+import o, {
+  createContext as i,
+  useContext as l,
+  useMemo as s,
+  useState as d,
+  useLayoutEffect as c,
+  useRef as p,
+  useEffect as h,
+  useCallback as u,
 } from 'react';
 import {
-  useEditor,
-  ROOT_NODE,
-  DerivedCoreEventHandlers,
-  useEventHandler,
+  useEditor as m,
+  ROOT_NODE as g,
+  DerivedCoreEventHandlers as v,
+  useEventHandler as f,
 } from '@craftjs/core';
-import { keyframes, styled } from 'styled-components';
-import ContentEditable from 'react-contenteditable';
-
-const LayerContext = React__default.createContext({});
-
-const LayerManagerContext = createContext({});
-
-function useLayerManager(collector) {
-  const { store } = useContext(LayerManagerContext);
-  const collected = useCollector(store, collector);
-  return useMemo(
-    () => ({
-      store,
-      ...collected,
-    }),
-    [store, collected]
-  );
+import { keyframes as y, styled as x } from 'styled-components';
+import b from 'react-contenteditable';
+const E = o.createContext({}),
+  w = i({});
+function $(t) {
+  const { store: n } = l(w),
+    r = e(n, t);
+  return s(() => ({ store: n, ...r }), [n, r]);
 }
-
-function useLayer(collect) {
-  const { id, depth, connectors: internalConnectors } = useContext(
-    LayerContext
-  );
-  const { actions: managerActions, ...collected } = useLayerManager((state) => {
-    return id && state.layers[id] && collect && collect(state.layers[id]);
-  });
-  const { children } = useEditor((state, query) => ({
-    children: state.nodes[id] && query.node(id).descendants(),
-  }));
-  const actions = useMemo(() => {
-    return {
-      toggleLayer: () => managerActions.toggleLayer(id),
-      setExpandedState: (expanded) =>
-        managerActions.setExpandedState(id, expanded),
-    };
-  }, [managerActions, id]);
-  const connectors = useMemo(
-    () =>
-      wrapConnectorHooks({
-        layer: (el) => internalConnectors.layer(el, id),
-        drag: (el) => internalConnectors.drag(el, id),
-        layerHeader: (el) => internalConnectors.layerHeader(el, id),
+function C(e) {
+  const { id: n, depth: r, connectors: a } = l(E),
+    { actions: o, ...i } = $((t) => n && t.layers[n] && e && e(t.layers[n])),
+    { children: d } = m((e, t) => ({
+      children: e.nodes[n] && t.node(n).descendants(),
+    })),
+    c = s(
+      () => ({
+        toggleLayer: () => o.toggleLayer(n),
+        setExpandedState: (e) => o.setExpandedState(n, e),
       }),
-    [internalConnectors, id]
-  );
-  return {
-    id,
-    depth,
-    children,
-    actions,
-    connectors,
-    ...collected,
-  };
+      [o, n]
+    ),
+    p = s(
+      () =>
+        t({
+          layer: (e) => a.layer(e, n),
+          drag: (e) => a.drag(e, n),
+          layerHeader: (e) => a.layerHeader(e, n),
+        }),
+      [a, n]
+    );
+  return { id: n, depth: r, children: d, actions: c, connectors: p, ...i };
 }
-
-const LayerNode = () => {
-  const { id, depth, children, expanded } = useLayer((layer) => ({
-    expanded: layer.expanded,
-  }));
-  const { data, shouldBeExpanded } = useEditor((state, query) => {
-    // TODO: handle multiple selected elements
-    const selected = query.getEvent('selected').first();
-    return {
-      data: state.nodes[id] && state.nodes[id].data,
-      shouldBeExpanded:
-        selected && query.node(selected).ancestors(true).includes(id),
-    };
-  });
-  const {
-    actions: { registerLayer, toggleLayer },
-    renderLayer,
-    expandRootOnLoad,
-  } = useLayerManager((state) => ({
-    renderLayer: state.options.renderLayer,
-    expandRootOnLoad: state.options.expandRootOnLoad,
-  }));
-  const [isRegistered, setRegistered] = useState(false);
-  useLayoutEffect(() => {
-    registerLayer(id);
-    setRegistered(true);
-  }, [registerLayer, id]);
-  const expandedRef = useRef(expanded);
-  expandedRef.current = expanded;
-  const shouldBeExpandedOnLoad = useRef(expandRootOnLoad && id === ROOT_NODE);
-  useEffect(() => {
-    if (!expandedRef.current && shouldBeExpanded) {
-      toggleLayer(id);
-    }
-  }, [toggleLayer, id, shouldBeExpanded]);
-  useEffect(() => {
-    if (shouldBeExpandedOnLoad.current) {
-      toggleLayer(id);
-    }
-  }, [toggleLayer, id]);
-  return data && isRegistered
-    ? React__default.createElement(
-        'div',
-        { className: `craft-layer-node ${id}` },
-        React__default.createElement(
-          renderLayer,
-          {},
-          children && expanded
-            ? children.map((id) =>
-                React__default.createElement(LayerContextProvider, {
-                  key: id,
-                  id: id,
-                  depth: depth + 1,
-                })
-              )
-            : null
+const O = () => {
+    const { id: e, depth: t, children: n, expanded: r } = C((e) => ({
+        expanded: e.expanded,
+      })),
+      { data: a, shouldBeExpanded: i } = m((t, n) => {
+        const r = n.getEvent('selected').first();
+        return {
+          data: t.nodes[e] && t.nodes[e].data,
+          shouldBeExpanded: r && n.node(r).ancestors(!0).includes(e),
+        };
+      }),
+      {
+        actions: { registerLayer: l, toggleLayer: s },
+        renderLayer: u,
+        expandRootOnLoad: v,
+      } = $((e) => ({
+        renderLayer: e.options.renderLayer,
+        expandRootOnLoad: e.options.expandRootOnLoad,
+      })),
+      [f, y] = d(!1);
+    c(() => {
+      l(e), y(!0);
+    }, [l, e]);
+    const x = p(r);
+    x.current = r;
+    const b = p(v && e === g);
+    return (
+      h(() => {
+        !x.current && i && s(e);
+      }, [s, e, i]),
+      h(() => {
+        b.current && s(e);
+      }, [s, e]),
+      a && f
+        ? o.createElement(
+            'div',
+            { className: `craft-layer-node ${e}` },
+            o.createElement(
+              u,
+              {},
+              n && r
+                ? n.map((e) =>
+                    o.createElement(S, { key: e, id: e, depth: t + 1 })
+                  )
+                : null
+            )
+          )
+        : null
+    );
+  },
+  L = i(null),
+  S = ({ id: e, depth: n }) => {
+    const r = l(L),
+      { store: a } = l(w);
+    p(a).current = a;
+    const i = s(() => r.createConnectorsUsage(), [r]),
+      d = s(() => t(i.connectors), [i]);
+    h(
+      () => (
+        i.register(),
+        () => {
+          i.cleanup();
+        }
+      ),
+      [i]
+    );
+    const { exists: c } = m((t) => ({ exists: !!t.nodes[e] }));
+    return c
+      ? o.createElement(
+          E.Provider,
+          { value: { id: e, depth: n, connectors: d } },
+          o.createElement(O, null)
         )
-      )
-    : null;
-};
-
-const LayerEventHandlerContext = createContext(null);
-const useLayerEventHandler = () => useContext(LayerEventHandlerContext);
-
-const LayerContextProvider = ({ id, depth }) => {
-  const handlers = useLayerEventHandler();
-  const { store } = useContext(LayerManagerContext);
-  const storeRef = useRef(store);
-  storeRef.current = store;
-  const connectorsUsage = useMemo(() => handlers.createConnectorsUsage(), [
-    handlers,
-  ]);
-  const connectors = useMemo(
-    () => wrapConnectorHooks(connectorsUsage.connectors),
-    [connectorsUsage]
-  );
-  useEffect(() => {
-    connectorsUsage.register();
-    return () => {
-      connectorsUsage.cleanup();
-    };
-  }, [connectorsUsage]);
-  const { exists } = useEditor((state) => ({
-    exists: !!state.nodes[id],
-  }));
-  if (!exists) {
-    return null;
-  }
-  return React__default.createElement(
-    LayerContext.Provider,
-    { value: { id, depth, connectors } },
-    React__default.createElement(LayerNode, null)
-  );
-};
-
-const LayerMethods = (state) => ({
-  setLayerEvent: (eventType, id) => {
-    if (id !== null && !state.layers[id]) return;
-    const current = state.events[eventType];
-    if (current && id !== current) {
-      state.layers[current].event[eventType] = false;
-    }
-    if (id) {
-      state.layers[id].event[eventType] = true;
-      state.events[eventType] = id;
-    } else {
-      state.events[eventType] = null;
-    }
+      : null;
   },
-  registerLayer: (id) => {
-    if (!state.layers[id]) {
-      state.layers[id] = {
-        dom: null,
-        headingDom: null,
-        expanded: false,
-        id,
-        event: {
-          selected: false,
-          hovered: false,
-        },
+  P = (e) => ({
+    setLayerEvent: (t, n) => {
+      if (null !== n && !e.layers[n]) return;
+      const r = e.events[t];
+      r && n !== r && (e.layers[r].event[t] = !1),
+        n
+          ? ((e.layers[n].event[t] = !0), (e.events[t] = n))
+          : (e.events[t] = null);
+    },
+    registerLayer: (t) => {
+      e.layers[t] ||
+        (e.layers[t] = {
+          dom: null,
+          headingDom: null,
+          expanded: !1,
+          id: t,
+          event: { selected: !1, hovered: !1 },
+        });
+    },
+    setDOM: (t, n) => {
+      e.layers[t] = {
+        ...e.layers[t],
+        ...(n.dom ? { dom: n.dom } : {}),
+        ...(n.headingDom ? { headingDom: n.headingDom } : {}),
       };
-    }
-  },
-  setDOM: (id, domCollection) => {
-    state.layers[id] = {
-      ...state.layers[id],
-      ...(domCollection.dom ? { dom: domCollection.dom } : {}),
-      ...(domCollection.headingDom
-        ? { headingDom: domCollection.headingDom }
-        : {}),
-    };
-  },
-  toggleLayer: (id) => {
-    state.layers[id].expanded = !state.layers[id].expanded;
-  },
-  setExpandedState: (id, expanded) => {
-    state.layers[id].expanded = expanded;
-  },
-  setIndicator: (indicator) => {
-    state.events.indicator = indicator;
-  },
-});
-
-function _defineProperty(e, r, t) {
+    },
+    toggleLayer: (t) => {
+      e.layers[t].expanded = !e.layers[t].expanded;
+    },
+    setExpandedState: (t, n) => {
+      e.layers[t].expanded = n;
+    },
+    setIndicator: (t) => {
+      e.events.indicator = t;
+    },
+  });
+function H(e, t, n) {
   return (
-    (r = _toPropertyKey(r)) in e
-      ? Object.defineProperty(e, r, {
-          value: t,
+    (t = (function (e) {
+      var t = (function (e) {
+        if ('object' != typeof e || !e) return e;
+        var t = e[Symbol.toPrimitive];
+        if (void 0 !== t) {
+          var n = t.call(e, 'string');
+          if ('object' != typeof n) return n;
+          throw new TypeError('@@toPrimitive must return a primitive value.');
+        }
+        return String(e);
+      })(e);
+      return 'symbol' == typeof t ? t : t + '';
+    })(t)) in e
+      ? Object.defineProperty(e, t, {
+          value: n,
           enumerable: !0,
           configurable: !0,
           writable: !0,
         })
-      : (e[r] = t),
+      : (e[t] = n),
     e
   );
 }
-function ownKeys(e, r) {
-  var t = Object.keys(e);
+function _(e, t) {
+  var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
-    var o = Object.getOwnPropertySymbols(e);
-    r &&
-      (o = o.filter(function (r) {
-        return Object.getOwnPropertyDescriptor(e, r).enumerable;
+    var r = Object.getOwnPropertySymbols(e);
+    t &&
+      (r = r.filter(function (t) {
+        return Object.getOwnPropertyDescriptor(e, t).enumerable;
       })),
-      t.push.apply(t, o);
+      n.push.apply(n, r);
   }
-  return t;
+  return n;
 }
-function _objectSpread2(e) {
-  for (var r = 1; r < arguments.length; r++) {
-    var t = null != arguments[r] ? arguments[r] : {};
-    r % 2
-      ? ownKeys(Object(t), !0).forEach(function (r) {
-          _defineProperty(e, r, t[r]);
+function D(e) {
+  for (var t = 1; t < arguments.length; t++) {
+    var n = null != arguments[t] ? arguments[t] : {};
+    t % 2
+      ? _(Object(n), !0).forEach(function (t) {
+          H(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
-      ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t))
-      : ownKeys(Object(t)).forEach(function (r) {
-          Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
+      ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
+      : _(Object(n)).forEach(function (t) {
+          Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
         });
   }
   return e;
 }
-function _toPrimitive(t, r) {
-  if ('object' != typeof t || !t) return t;
-  var e = t[Symbol.toPrimitive];
-  if (void 0 !== e) {
-    var i = e.call(t, r || 'default');
-    if ('object' != typeof i) return i;
-    throw new TypeError('@@toPrimitive must return a primitive value.');
-  }
-  return ('string' === r ? String : Number)(t);
-}
-function _toPropertyKey(t) {
-  var i = _toPrimitive(t, 'string');
-  return 'symbol' == typeof i ? i : i + '';
-}
-
-class LayerHandlers extends DerivedCoreEventHandlers {
+class j extends v {
   constructor() {
-    super(...arguments);
-    _defineProperty(this, 'autoScrollInterval', null);
-    _defineProperty(this, 'AUTO_SCROLL_THRESHOLD', 50);
-    // pixels from edge
-    _defineProperty(this, 'AUTO_SCROLL_SPEED', 5);
+    super(...arguments),
+      H(this, 'autoScrollInterval', null),
+      H(this, 'AUTO_SCROLL_THRESHOLD', 50),
+      H(this, 'AUTO_SCROLL_SPEED', 5);
   }
-  // pixels per frame
-  getLayer(id) {
-    return this.options.layerStore.getState().layers[id];
+  getLayer(e) {
+    return this.options.layerStore.getState().layers[e];
   }
-  handleAutoScroll(e, scrollContainer) {
-    if (!scrollContainer) return;
-    const rect = scrollContainer.getBoundingClientRect();
-    const distanceFromTop = e.clientY - rect.top;
-    const distanceFromBottom = rect.bottom - e.clientY;
-    // Clear existing interval
-    if (this.autoScrollInterval) {
-      cancelAnimationFrame(this.autoScrollInterval);
-      this.autoScrollInterval = null;
-    }
-    // Check if near top or bottom
+  handleAutoScroll(e, t) {
+    if (!t) return;
+    const n = t.getBoundingClientRect(),
+      r = e.clientY - n.top,
+      a = n.bottom - e.clientY;
     if (
-      distanceFromTop < this.AUTO_SCROLL_THRESHOLD &&
-      scrollContainer.scrollTop > 0
+      (this.autoScrollInterval &&
+        (cancelAnimationFrame(this.autoScrollInterval),
+        (this.autoScrollInterval = null)),
+      r < this.AUTO_SCROLL_THRESHOLD && t.scrollTop > 0)
     ) {
-      // Scroll up
-      const speed = Math.max(
-        1,
-        (this.AUTO_SCROLL_THRESHOLD - distanceFromTop) / 10
-      );
-      const scroll = () => {
-        scrollContainer.scrollTop -= speed;
-        if (scrollContainer.scrollTop > 0) {
-          this.autoScrollInterval = requestAnimationFrame(scroll);
-        }
-      };
-      this.autoScrollInterval = requestAnimationFrame(scroll);
-    } else if (distanceFromBottom < this.AUTO_SCROLL_THRESHOLD) {
-      // Scroll down
-      const maxScroll =
-        scrollContainer.scrollHeight - scrollContainer.clientHeight;
-      if (scrollContainer.scrollTop < maxScroll) {
-        const speed = Math.max(
-          1,
-          (this.AUTO_SCROLL_THRESHOLD - distanceFromBottom) / 10
-        );
-        const scroll = () => {
-          scrollContainer.scrollTop += speed;
-          const currentMaxScroll =
-            scrollContainer.scrollHeight - scrollContainer.clientHeight;
-          if (scrollContainer.scrollTop < currentMaxScroll) {
-            this.autoScrollInterval = requestAnimationFrame(scroll);
-          }
+      const e = Math.max(1, (this.AUTO_SCROLL_THRESHOLD - r) / 10),
+        n = () => {
+          (t.scrollTop -= e),
+            t.scrollTop > 0 &&
+              (this.autoScrollInterval = requestAnimationFrame(n));
         };
-        this.autoScrollInterval = requestAnimationFrame(scroll);
-      }
+      this.autoScrollInterval = requestAnimationFrame(n);
+    } else if (
+      a < this.AUTO_SCROLL_THRESHOLD &&
+      t.scrollTop < t.scrollHeight - t.clientHeight
+    ) {
+      const e = Math.max(1, (this.AUTO_SCROLL_THRESHOLD - a) / 10),
+        n = () => {
+          (t.scrollTop += e),
+            t.scrollTop < t.scrollHeight - t.clientHeight &&
+              (this.autoScrollInterval = requestAnimationFrame(n));
+        };
+      this.autoScrollInterval = requestAnimationFrame(n);
     }
   }
   stopAutoScroll() {
-    if (this.autoScrollInterval) {
-      cancelAnimationFrame(this.autoScrollInterval);
-      this.autoScrollInterval = null;
-    }
+    this.autoScrollInterval &&
+      (cancelAnimationFrame(this.autoScrollInterval),
+      (this.autoScrollInterval = null));
   }
   handlers() {
-    const editorStore = this.derived.options.store;
-    const { layerStore } = this.options;
+    const e = this.derived.options.store,
+      { layerStore: t } = this.options;
     return {
-      layer: (el, layerId) => {
-        layerStore.actions.setDOM(layerId, {
-          dom: el,
-        });
-        const cleanupParentConnectors = this.inherit((connectors) => {
-          connectors.select(el, layerId);
-          connectors.hover(el, layerId);
-          connectors.drag(el, layerId);
-        });
-        const unbindMouseOver = this.addCraftEventListener(
-          el,
-          'mouseover',
-          (e) => {
-            e.craft.stopPropagation();
-            layerStore.actions.setLayerEvent('hovered', layerId);
-          }
-        );
-        let unbindMouseleave = null;
-        if (this.derived.options.removeHoverOnMouseleave) {
-          unbindMouseleave = this.addCraftEventListener(
-            el,
-            'mouseleave',
-            (e) => {
-              e.craft.stopPropagation();
-              layerStore.actions.setLayerEvent('hovered', null);
-            }
-          );
-        }
-        const unbindDragOver = this.addCraftEventListener(
-          el,
-          'dragover',
-          (e) => {
-            e.craft.stopPropagation();
-            e.preventDefault();
-            // Auto-scroll handling
-            const scrollContainer = el.closest('.craft-layers-container');
-            this.handleAutoScroll(e, scrollContainer);
-            const { indicator, currentCanvasHovered } = LayerHandlers.events;
-            if (currentCanvasHovered && indicator) {
-              const heading = this.getLayer(
-                currentCanvasHovered.id
-              ).headingDom.getBoundingClientRect();
-              if (
-                e.clientY > heading.top + 20 &&
-                e.clientY < heading.bottom - 20
-              ) {
-                const currNode =
-                  currentCanvasHovered.data.nodes[
-                    currentCanvasHovered.data.nodes.length - 1
-                  ];
-                if (!currNode) {
-                  // If the currentCanvasHovered has no child nodes, then we place the indicator as the first child
-                  LayerHandlers.events.indicator = _objectSpread2(
-                    _objectSpread2({}, indicator),
+      layer: (n, r) => {
+        t.actions.setDOM(r, { dom: n });
+        const a = this.inherit((e) => {
+            e.select(n, r), e.hover(n, r), e.drag(n, r);
+          }),
+          o = this.addCraftEventListener(n, 'mouseover', (e) => {
+            e.craft.stopPropagation(), t.actions.setLayerEvent('hovered', r);
+          });
+        let i = null;
+        this.derived.options.removeHoverOnMouseleave &&
+          (i = this.addCraftEventListener(n, 'mouseleave', (e) => {
+            e.craft.stopPropagation(), t.actions.setLayerEvent('hovered', null);
+          }));
+        const l = this.addCraftEventListener(n, 'dragover', (r) => {
+            r.craft.stopPropagation(), r.preventDefault();
+            const a = n.closest('.craft-layers-container');
+            this.handleAutoScroll(r, a);
+            const { indicator: o, currentCanvasHovered: i } = j.events;
+            if (i && o) {
+              const n = this.getLayer(i.id).headingDom.getBoundingClientRect();
+              if (r.clientY > n.top + 20 && r.clientY < n.bottom - 20) {
+                const n = i.data.nodes[i.data.nodes.length - 1];
+                if (!n)
+                  return void (j.events.indicator = D(
+                    D({}, o),
                     {},
                     {
-                      placement: _objectSpread2(
-                        _objectSpread2({}, indicator.placement),
+                      placement: D(
+                        D({}, o.placement),
                         {},
-                        {
-                          index: 0,
-                          where: 'before',
-                          parent: currentCanvasHovered,
-                        }
+                        { index: 0, where: 'before', parent: i }
                       ),
-                      onCanvas: true,
+                      onCanvas: !0,
                     }
-                  );
-                  return;
-                }
-                LayerHandlers.events.indicator = _objectSpread2(
-                  _objectSpread2({}, indicator),
+                  ));
+                (j.events.indicator = D(
+                  D({}, o),
                   {},
                   {
                     placement: {
-                      currentNode: editorStore.query.node(currNode).get(),
-                      index: currentCanvasHovered.data.nodes.length,
+                      currentNode: e.query.node(n).get(),
+                      index: i.data.nodes.length,
                       where: 'after',
-                      parent: currentCanvasHovered,
+                      parent: i,
                     },
-                    onCanvas: true,
+                    onCanvas: !0,
                   }
-                );
-                layerStore.actions.setIndicator(LayerHandlers.events.indicator);
+                )),
+                  t.actions.setIndicator(j.events.indicator);
               }
             }
-          }
-        );
-        const unbindDragEnter = this.addCraftEventListener(
-          el,
-          'dragenter',
-          (e) => {
-            e.craft.stopPropagation();
-            e.preventDefault();
-            const dragId = LayerHandlers.draggedElement;
-            if (!dragId) return;
-            let target = layerId;
-            const indicatorInfo = editorStore.query.getDropPlaceholder(
-              dragId,
-              target,
-              {
-                x: e.clientX,
-                y: e.clientY,
-              },
-              (node) => {
-                const layer = this.getLayer(node.id);
-                return layer && layer.dom;
+          }),
+          s = this.addCraftEventListener(n, 'dragenter', (n) => {
+            n.craft.stopPropagation(), n.preventDefault();
+            const a = j.draggedElement;
+            if (!a) return;
+            const o = e.query.getDropPlaceholder(
+              a,
+              r,
+              { x: n.clientX, y: n.clientY },
+              (e) => {
+                const t = this.getLayer(e.id);
+                return t && t.dom;
               }
             );
-            if (indicatorInfo) {
+            if (o) {
               const {
-                placement: { parent },
-              } = indicatorInfo;
-              const parentHeadingInfo = this.getLayer(
-                parent.id
-              ).headingDom.getBoundingClientRect();
-              LayerHandlers.events.currentCanvasHovered = null;
-              if (editorStore.query.node(parent.id).isCanvas()) {
-                if (parent.data.parent) {
-                  const grandparent = editorStore.query
-                    .node(parent.data.parent)
-                    .get();
-                  if (editorStore.query.node(grandparent.id).isCanvas()) {
-                    LayerHandlers.events.currentCanvasHovered = parent;
-                    if (
-                      (e.clientY > parentHeadingInfo.bottom - 20 &&
-                        !this.getLayer(parent.id).expanded) ||
-                      e.clientY < parentHeadingInfo.top + 20
-                    ) {
-                      indicatorInfo.placement.parent = grandparent;
-                      indicatorInfo.placement.currentNode = parent;
-                      indicatorInfo.placement.index = grandparent.data.nodes
-                        ? grandparent.data.nodes.indexOf(parent.id)
-                        : 0;
-                      if (
-                        e.clientY > parentHeadingInfo.bottom - 20 &&
-                        !this.getLayer(parent.id).expanded
-                      ) {
-                        indicatorInfo.placement.where = 'after';
-                      } else if (e.clientY < parentHeadingInfo.top + 20) {
-                        indicatorInfo.placement.where = 'before';
-                      }
-                    }
-                  }
-                }
+                  placement: { parent: r },
+                } = o,
+                a = this.getLayer(r.id).headingDom.getBoundingClientRect();
+              if (
+                ((j.events.currentCanvasHovered = null),
+                e.query.node(r.id).isCanvas() && r.data.parent)
+              ) {
+                const t = e.query.node(r.data.parent).get();
+                e.query.node(t.id).isCanvas() &&
+                  ((j.events.currentCanvasHovered = r),
+                  ((n.clientY > a.bottom - 20 &&
+                    !this.getLayer(r.id).expanded) ||
+                    n.clientY < a.top + 20) &&
+                    ((o.placement.parent = t),
+                    (o.placement.currentNode = r),
+                    (o.placement.index = t.data.nodes
+                      ? t.data.nodes.indexOf(r.id)
+                      : 0),
+                    n.clientY > a.bottom - 20 && !this.getLayer(r.id).expanded
+                      ? (o.placement.where = 'after')
+                      : n.clientY < a.top + 20 &&
+                        (o.placement.where = 'before')));
               }
-              LayerHandlers.events.indicator = _objectSpread2(
-                _objectSpread2({}, indicatorInfo),
-                {},
-                {
-                  onCanvas: false,
-                }
-              );
-              layerStore.actions.setIndicator(LayerHandlers.events.indicator);
+              (j.events.indicator = D(D({}, o), {}, { onCanvas: !1 })),
+                t.actions.setIndicator(j.events.indicator);
             }
-          }
-        );
+          });
         return () => {
-          cleanupParentConnectors();
-          unbindMouseOver();
-          unbindDragOver();
-          unbindDragEnter();
-          if (!unbindMouseleave) {
-            return;
-          }
-          unbindMouseleave();
+          a(), o(), l(), s(), i && i();
         };
       },
-      layerHeader: (el, layerId) => {
-        layerStore.actions.setDOM(layerId, {
-          headingDom: el,
-        });
+      layerHeader: (e, n) => {
+        t.actions.setDOM(n, { headingDom: e });
       },
-      drag: (el, layerId) => {
-        el.setAttribute('draggable', 'true');
-        const unbindDragStart = this.addCraftEventListener(
-          el,
-          'dragstart',
-          (e) => {
-            e.craft.stopPropagation();
-            LayerHandlers.draggedElement = layerId;
-          }
-        );
-        const unbindDragEnd = this.addCraftEventListener(el, 'dragend', (e) => {
-          e.craft.stopPropagation();
-          this.stopAutoScroll(); // Stop auto-scroll on drag end
-          const events = LayerHandlers.events;
-          if (events.indicator && !events.indicator.error) {
-            const { placement } = events.indicator;
-            const { parent, index, where } = placement;
-            const { id: parentId } = parent;
-            editorStore.actions.move(
-              LayerHandlers.draggedElement,
-              parentId,
-              index + (where === 'after' ? 1 : 0)
-            );
-          }
-          LayerHandlers.draggedElement = null;
-          LayerHandlers.events.indicator = null;
-          layerStore.actions.setIndicator(null);
-        });
+      drag: (n, r) => {
+        n.setAttribute('draggable', 'true');
+        const a = this.addCraftEventListener(n, 'dragstart', (e) => {
+            e.craft.stopPropagation(), (j.draggedElement = r);
+          }),
+          o = this.addCraftEventListener(n, 'dragend', (n) => {
+            n.craft.stopPropagation(), this.stopAutoScroll();
+            const r = j.events;
+            if (r.indicator && !r.indicator.error) {
+              const { placement: t } = r.indicator,
+                { parent: n, index: a, where: o } = t,
+                { id: i } = n;
+              e.actions.move(j.draggedElement, i, a + ('after' === o ? 1 : 0));
+            }
+            (j.draggedElement = null),
+              (j.events.indicator = null),
+              t.actions.setIndicator(null);
+          });
         return () => {
-          el.removeAttribute('draggable');
-          unbindDragStart();
-          unbindDragEnd();
+          n.removeAttribute('draggable'), a(), o();
         };
       },
     };
   }
 }
-_defineProperty(LayerHandlers, 'draggedElement', void 0);
-_defineProperty(LayerHandlers, 'events', {
-  indicator: null,
-  currentCanvasHovered: null,
-});
-
-const pulse = keyframes`
+H(j, 'draggedElement', void 0),
+  H(j, 'events', { indicator: null, currentCanvasHovered: null });
+const M = y`
   0%, 100% {
     opacity: 1;
   }
   50% {
     opacity: 0.7;
   }
-`;
-const StyledIndicator = styled.div`
+`,
+  R = x.div`
   position: fixed;
   pointer-events: none;
   z-index: 99999;
-  box-shadow: ${(props) =>
-    props.$error
+  box-shadow: ${(e) =>
+    e.$error
       ? '0 0 8px rgba(239, 68, 68, 0.6)'
       : '0 0 8px rgba(59, 130, 246, 0.6)'};
-  animation: ${pulse} 1.5s ease-in-out infinite;
-`;
-const RenderLayerIndicator = ({ children }) => {
-  const { layers, events } = useLayerManager((state) => state);
-  const { query } = useEditor((state) => ({ enabled: state.options.enabled }));
-  const { indicator: indicatorStyles } = query.getOptions();
-  const indicatorPosition = useMemo(() => {
-    const { indicator } = events;
-    if (indicator) {
-      const {
-        placement: { where, parent, currentNode },
-        error,
-      } = indicator;
-      const layerId = currentNode ? currentNode.id : parent.id;
-      let top;
-      const color = error ? indicatorStyles.error : indicatorStyles.success;
-      if (indicator.onCanvas && layers[parent.id].dom != null) {
-        const parentPos = layers[parent.id].dom.getBoundingClientRect();
-        const parentHeadingPos = layers[
-          parent.id
-        ].headingDom.getBoundingClientRect();
-        return {
-          top: parentHeadingPos.top,
-          left: parentPos.left,
-          width: parentPos.width,
-          height: parentHeadingPos.height,
-          background: 'transparent',
-          borderWidth: '1px',
-          borderColor: color,
-        };
-      } else {
-        if (!layers[layerId]) return;
-        const headingPos = layers[layerId].headingDom.getBoundingClientRect();
-        const pos = layers[layerId].dom.getBoundingClientRect();
-        if (where === 'after' || !currentNode) {
-          top = pos.top + pos.height;
-        } else {
-          top = pos.top;
+  animation: ${M} 1.5s ease-in-out infinite;
+`,
+  A = ({ children: e }) => {
+    const { layers: t, events: n } = $((e) => e),
+      { query: r } = m((e) => ({ enabled: e.options.enabled })),
+      { indicator: a } = r.getOptions(),
+      i = s(() => {
+        const { indicator: e } = n;
+        if (e) {
+          const {
+              placement: { where: n, parent: r, currentNode: o },
+              error: i,
+            } = e,
+            l = o ? o.id : r.id;
+          let s;
+          const d = i ? a.error : a.success;
+          if (e.onCanvas && null != t[r.id].dom) {
+            const e = t[r.id].dom.getBoundingClientRect(),
+              n = t[r.id].headingDom.getBoundingClientRect();
+            return {
+              top: n.top,
+              left: e.left,
+              width: e.width,
+              height: n.height,
+              background: 'transparent',
+              borderWidth: '1px',
+              borderColor: d,
+            };
+          }
+          {
+            if (!t[l]) return;
+            const e = t[l].headingDom.getBoundingClientRect(),
+              r = t[l].dom.getBoundingClientRect();
+            return (
+              (s = 'after' !== n && o ? r.top : r.top + r.height),
+              {
+                top: s,
+                left: e.left,
+                width: r.width + r.left - e.left,
+                height: 4,
+                borderWidth: 0,
+                background: d,
+              }
+            );
+          }
         }
-        return {
-          top,
-          left: headingPos.left,
-          width: pos.width + pos.left - headingPos.left,
-          height: 4,
-          borderWidth: 0,
-          background: color,
-        };
-      }
-    }
-  }, [events, indicatorStyles.error, indicatorStyles.success, layers]);
-  return React__default.createElement(
-    'div',
-    null,
-    events.indicator
-      ? React__default.createElement(StyledIndicator, {
-          $error: !!events.indicator.error,
-          style: indicatorPosition,
-        })
-      : null,
-    children
-  );
-};
-
-const LayerEventContextProvider = ({ children }) => {
-  const { store: layerStore } = useLayerManager();
-  const coreEventHandler = useEventHandler();
-  const handler = useMemo(
-    () =>
-      coreEventHandler.derive(LayerHandlers, {
-        layerStore,
-      }),
-    [coreEventHandler, layerStore]
-  );
-  return React__default.createElement(
-    LayerEventHandlerContext.Provider,
-    { value: handler },
-    React__default.createElement(RenderLayerIndicator, null),
-    children
-  );
-};
-
-const EditableLayerName = () => {
-  const { id } = useLayer();
-  const { displayName, actions } = useEditor((state) => ({
-    displayName:
-      state.nodes[id] && state.nodes[id].data.custom.displayName
-        ? state.nodes[id].data.custom.displayName
-        : state.nodes[id].data.displayName,
-    hidden: state.nodes[id] && state.nodes[id].data.hidden,
-  }));
-  const [editingName, setEditingName] = useState(false);
-  const nameDOM = useRef(null);
-  const clickOutside = useCallback((e) => {
-    if (nameDOM.current && !nameDOM.current.contains(e.target)) {
-      setEditingName(false);
-    }
-  }, []);
-  useEffect(() => {
-    return () => {
-      window.removeEventListener('click', clickOutside);
-    };
-  }, [clickOutside]);
-  return React__default.createElement(ContentEditable, {
-    html: displayName,
-    disabled: !editingName,
-    ref: (ref) => {
-      if (ref) {
-        nameDOM.current = ref.el.current;
-        window.removeEventListener('click', clickOutside);
-        window.addEventListener('click', clickOutside);
-      }
-    },
-    onChange: (e) => {
-      actions.setCustom(id, (custom) => (custom.displayName = e.target.value));
-    },
-    tagName: 'h2',
-    onDoubleClick: () => {
-      if (!editingName) setEditingName(true);
-    },
-  });
-};
-
-var _path$2;
-function _extends$3() {
+      }, [n, a.error, a.success, t]);
+    return o.createElement(
+      'div',
+      null,
+      n.indicator
+        ? o.createElement(R, { $error: !!n.indicator.error, style: i })
+        : null,
+      e
+    );
+  },
+  T = ({ children: e }) => {
+    const { store: t } = $(),
+      n = f(),
+      r = s(() => n.derive(j, { layerStore: t }), [n, t]);
+    return o.createElement(
+      L.Provider,
+      { value: r },
+      o.createElement(A, null),
+      e
+    );
+  },
+  k = () => {
+    const { id: e } = C(),
+      { displayName: t, actions: n } = m((t) => ({
+        displayName:
+          t.nodes[e] && t.nodes[e].data.custom.displayName
+            ? t.nodes[e].data.custom.displayName
+            : t.nodes[e].data.displayName,
+        hidden: t.nodes[e] && t.nodes[e].data.hidden,
+      })),
+      [r, a] = d(!1),
+      i = p(null),
+      l = u((e) => {
+        i.current && !i.current.contains(e.target) && a(!1);
+      }, []);
+    return (
+      h(
+        () => () => {
+          window.removeEventListener('click', l);
+        },
+        [l]
+      ),
+      o.createElement(b, {
+        html: t,
+        disabled: !r,
+        ref: (e) => {
+          e &&
+            ((i.current = e.el.current),
+            window.removeEventListener('click', l),
+            window.addEventListener('click', l));
+        },
+        onChange: (t) => {
+          n.setCustom(e, (e) => (e.displayName = t.target.value));
+        },
+        tagName: 'h2',
+        onDoubleClick: () => {
+          r || a(!0);
+        },
+      })
+    );
+  };
+var N;
+function I() {
   return (
-    (_extends$3 = Object.assign
+    (I = Object.assign
       ? Object.assign.bind()
-      : function (n) {
-          for (var e = 1; e < arguments.length; e++) {
-            var t = arguments[e];
-            for (var r in t) ({}.hasOwnProperty.call(t, r) && (n[r] = t[r]));
+      : function (e) {
+          for (var t = 1; t < arguments.length; t++) {
+            var n = arguments[t];
+            for (var r in n) ({}.hasOwnProperty.call(n, r) && (e[r] = n[r]));
           }
-          return n;
+          return e;
         }),
-    _extends$3.apply(null, arguments)
+    I.apply(null, arguments)
   );
 }
-var SvgArrow = function SvgArrow(props) {
-  return /*#__PURE__*/ React.createElement(
-    'svg',
-    _extends$3(
-      {
-        xmlns: 'http://www.w3.org/2000/svg',
-        viewBox: '0 0 10 6',
-      },
-      props
-    ),
-    _path$2 ||
-      (_path$2 = /*#__PURE__*/ React.createElement('path', {
-        d:
-          'M9.99 1.01A1 1 0 0 0 8.283.303L5 3.586 1.717.303A1 1 0 1 0 .303 1.717l3.99 3.98a1 1 0 0 0 1.414 0l3.99-3.98a.997.997 0 0 0 .293-.707Z',
-      }))
-  );
-};
-
-var _path$1, _path2$1;
-function _extends$2() {
+var B,
+  z,
+  q = function (e) {
+    return a.createElement(
+      'svg',
+      I({ xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 10 6' }, e),
+      N ||
+        (N = a.createElement('path', {
+          d:
+            'M9.99 1.01A1 1 0 0 0 8.283.303L5 3.586 1.717.303A1 1 0 1 0 .303 1.717l3.99 3.98a1 1 0 0 0 1.414 0l3.99-3.98a.997.997 0 0 0 .293-.707Z',
+        }))
+    );
+  };
+function F() {
   return (
-    (_extends$2 = Object.assign
+    (F = Object.assign
       ? Object.assign.bind()
-      : function (n) {
-          for (var e = 1; e < arguments.length; e++) {
-            var t = arguments[e];
-            for (var r in t) ({}.hasOwnProperty.call(t, r) && (n[r] = t[r]));
+      : function (e) {
+          for (var t = 1; t < arguments.length; t++) {
+            var n = arguments[t];
+            for (var r in n) ({}.hasOwnProperty.call(n, r) && (e[r] = n[r]));
           }
-          return n;
+          return e;
         }),
-    _extends$2.apply(null, arguments)
+    F.apply(null, arguments)
   );
 }
-var SvgEye = function SvgEye(props) {
-  return /*#__PURE__*/ React.createElement(
-    'svg',
-    _extends$2(
-      {
-        xmlns: 'http://www.w3.org/2000/svg',
-        viewBox: '0 0 24 24',
-        width: 16,
-        height: 16,
-      },
-      props
-    ),
-    _path$1 ||
-      (_path$1 = /*#__PURE__*/ React.createElement('path', {
-        fill: 'none',
-        d: 'M0 0h24v24H0z',
-      })),
-    _path2$1 ||
-      (_path2$1 = /*#__PURE__*/ React.createElement('path', {
-        d:
-          'M1.181 12C2.121 6.88 6.608 3 12 3c5.392 0 9.878 3.88 10.819 9-.94 5.12-5.427 9-10.819 9-5.392 0-9.878-3.88-10.819-9zM12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0-2a3 3 0 1 1 0-6 3 3 0 0 1 0 6z',
-      }))
-  );
-};
-
-var _circle, _circle2, _circle3, _circle4, _circle5, _circle6;
-function _extends$1() {
+var U,
+  Y,
+  J,
+  V,
+  Z,
+  W,
+  X = function (e) {
+    return a.createElement(
+      'svg',
+      F(
+        {
+          xmlns: 'http://www.w3.org/2000/svg',
+          viewBox: '0 0 24 24',
+          width: 16,
+          height: 16,
+        },
+        e
+      ),
+      B || (B = a.createElement('path', { fill: 'none', d: 'M0 0h24v24H0z' })),
+      z ||
+        (z = a.createElement('path', {
+          d:
+            'M1.181 12C2.121 6.88 6.608 3 12 3c5.392 0 9.878 3.88 10.819 9-.94 5.12-5.427 9-10.819 9-5.392 0-9.878-3.88-10.819-9zM12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0-2a3 3 0 1 1 0-6 3 3 0 0 1 0 6z',
+        }))
+    );
+  };
+function G() {
   return (
-    (_extends$1 = Object.assign
+    (G = Object.assign
       ? Object.assign.bind()
-      : function (n) {
-          for (var e = 1; e < arguments.length; e++) {
-            var t = arguments[e];
-            for (var r in t) ({}.hasOwnProperty.call(t, r) && (n[r] = t[r]));
+      : function (e) {
+          for (var t = 1; t < arguments.length; t++) {
+            var n = arguments[t];
+            for (var r in n) ({}.hasOwnProperty.call(n, r) && (e[r] = n[r]));
           }
-          return n;
+          return e;
         }),
-    _extends$1.apply(null, arguments)
+    G.apply(null, arguments)
   );
 }
-var SvgGrip = function SvgGrip(props) {
-  return /*#__PURE__*/ React.createElement(
-    'svg',
-    _extends$1(
-      {
-        xmlns: 'http://www.w3.org/2000/svg',
-        width: 16,
-        height: 16,
-        fill: 'currentColor',
-      },
-      props
-    ),
-    _circle ||
-      (_circle = /*#__PURE__*/ React.createElement('circle', {
-        cx: 6,
-        cy: 4,
-        r: 1.5,
-      })),
-    _circle2 ||
-      (_circle2 = /*#__PURE__*/ React.createElement('circle', {
-        cx: 10,
-        cy: 4,
-        r: 1.5,
-      })),
-    _circle3 ||
-      (_circle3 = /*#__PURE__*/ React.createElement('circle', {
-        cx: 6,
-        cy: 8,
-        r: 1.5,
-      })),
-    _circle4 ||
-      (_circle4 = /*#__PURE__*/ React.createElement('circle', {
-        cx: 10,
-        cy: 8,
-        r: 1.5,
-      })),
-    _circle5 ||
-      (_circle5 = /*#__PURE__*/ React.createElement('circle', {
-        cx: 6,
-        cy: 12,
-        r: 1.5,
-      })),
-    _circle6 ||
-      (_circle6 = /*#__PURE__*/ React.createElement('circle', {
-        cx: 10,
-        cy: 12,
-        r: 1.5,
-      }))
-  );
-};
-
-var _path, _path2;
-function _extends() {
+var K,
+  Q,
+  ee = function (e) {
+    return a.createElement(
+      'svg',
+      G(
+        {
+          xmlns: 'http://www.w3.org/2000/svg',
+          width: 16,
+          height: 16,
+          fill: 'currentColor',
+        },
+        e
+      ),
+      U || (U = a.createElement('circle', { cx: 6, cy: 4, r: 1.5 })),
+      Y || (Y = a.createElement('circle', { cx: 10, cy: 4, r: 1.5 })),
+      J || (J = a.createElement('circle', { cx: 6, cy: 8, r: 1.5 })),
+      V || (V = a.createElement('circle', { cx: 10, cy: 8, r: 1.5 })),
+      Z || (Z = a.createElement('circle', { cx: 6, cy: 12, r: 1.5 })),
+      W || (W = a.createElement('circle', { cx: 10, cy: 12, r: 1.5 }))
+    );
+  };
+function te() {
   return (
-    (_extends = Object.assign
+    (te = Object.assign
       ? Object.assign.bind()
-      : function (n) {
-          for (var e = 1; e < arguments.length; e++) {
-            var t = arguments[e];
-            for (var r in t) ({}.hasOwnProperty.call(t, r) && (n[r] = t[r]));
+      : function (e) {
+          for (var t = 1; t < arguments.length; t++) {
+            var n = arguments[t];
+            for (var r in n) ({}.hasOwnProperty.call(n, r) && (e[r] = n[r]));
           }
-          return n;
+          return e;
         }),
-    _extends.apply(null, arguments)
+    te.apply(null, arguments)
   );
 }
-var SvgLinked = function SvgLinked(props) {
-  return /*#__PURE__*/ React.createElement(
+var ne = function (e) {
+  return a.createElement(
     'svg',
-    _extends(
-      {
-        xmlns: 'http://www.w3.org/2000/svg',
-        viewBox: '0 0 18 18',
-      },
-      props
-    ),
-    _path ||
-      (_path = /*#__PURE__*/ React.createElement('path', {
+    te({ xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 18 18' }, e),
+    K ||
+      (K = a.createElement('path', {
         className: 'linked_svg__a',
         d:
           'M16.5 9h-1a.5.5 0 0 0-.5.5V15H3V3h5.5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0-.5.5v15a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5Z',
       })),
-    _path2 ||
-      (_path2 = /*#__PURE__*/ React.createElement('path', {
+    Q ||
+      (Q = a.createElement('path', {
         className: 'linked_svg__a',
         d:
           'M16.75 1h-5.373a.4.4 0 0 0-.377.4.392.392 0 0 0 .117.28l1.893 1.895-3.52 3.521a.5.5 0 0 0 0 .707l.706.708a.5.5 0 0 0 .708 0l3.521-3.521 1.893 1.892A.39.39 0 0 0 16.6 7a.4.4 0 0 0 .4-.377V1.25a.25.25 0 0 0-.25-.25Z',
       }))
   );
 };
-
-// Light theme (default)
-const lightTheme = {
-  bgBase: 'transparent',
-  bgHover: '#f1f1f1',
-  bgSelected: '#2680eb',
-  bgCanvas: 'rgba(255, 255, 255, 0.02)',
-  textPrimary: 'inherit',
-  textSelected: '#fff',
-  iconPrimary: '#808184',
-  iconSelected: '#fff',
-  borderColor: '#00000012',
-  shadowColor: '#00000014',
-};
-// Dark theme
-const darkTheme = {
-  bgBase: 'transparent',
-  bgHover: '#2a2a2a',
-  bgSelected: '#2680eb',
-  bgCanvas: 'rgba(255, 255, 255, 0.05)',
-  textPrimary: '#e0e0e0',
-  textSelected: '#fff',
-  iconPrimary: '#b0b0b0',
-  iconSelected: '#fff',
-  borderColor: '#ffffff12',
-  shadowColor: '#00000040',
-};
-// Theme helper function
-const getTheme = (mode) => {
-  return mode === 'dark' ? darkTheme : lightTheme;
-};
-
-const ThemeContext = createContext(null);
-const ThemeProvider = ({ theme, themeMode, children }) => {
-  const value = useMemo(() => {
-    // Use custom theme if provided, otherwise use themeMode
-    const resolvedTheme = theme || getTheme(themeMode);
-    return { theme: resolvedTheme };
-  }, [theme, themeMode]);
-  return React__default.createElement(
-    ThemeContext.Provider,
-    { value: value },
-    children
-  );
-};
-const useLayerTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    // Return default light theme if no provider
-    return getTheme('light');
-  }
-  return context.theme;
-};
-
-const StyledDiv = styled.div`
+const re = {
+    bgBase: 'transparent',
+    bgHover: '#f1f1f1',
+    bgSelected: '#2680eb',
+    bgCanvas: 'rgba(255, 255, 255, 0.02)',
+    textPrimary: 'inherit',
+    textSelected: '#fff',
+    iconPrimary: '#808184',
+    iconSelected: '#fff',
+    borderColor: '#00000012',
+    shadowColor: '#00000014',
+  },
+  ae = {
+    bgBase: 'transparent',
+    bgHover: '#2a2a2a',
+    bgSelected: '#2680eb',
+    bgCanvas: 'rgba(255, 255, 255, 0.05)',
+    textPrimary: '#e0e0e0',
+    textSelected: '#fff',
+    iconPrimary: '#b0b0b0',
+    iconSelected: '#fff',
+    borderColor: '#ffffff12',
+    shadowColor: '#00000040',
+  },
+  oe = (e) => ('dark' === e ? ae : re),
+  ie = i(null),
+  le = ({ theme: e, themeMode: t, children: n }) => {
+    const r = s(() => ({ theme: e || oe(t) }), [e, t]);
+    return o.createElement(ie.Provider, { value: r }, n);
+  },
+  se = () => {
+    const e = l(ie);
+    return e ? e.theme : oe('light');
+  },
+  de = x.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 4px 10px;
-  background: ${(props) =>
-    props.$selected ? props.$theme.bgSelected : 'transparent'};
-  color: ${(props) =>
-    props.$selected ? props.$theme.textSelected : props.$theme.textPrimary};
+  background: ${(e) => (e.$selected ? e.$theme.bgSelected : 'transparent')};
+  color: ${(e) => (e.$selected ? e.$theme.textSelected : e.$theme.textPrimary)};
   svg {
-    fill: ${(props) =>
-      props.$selected ? props.$theme.iconSelected : props.$theme.iconPrimary};
+    fill: ${(e) =>
+      e.$selected ? e.$theme.iconSelected : e.$theme.iconPrimary};
     margin-top: 2px;
   }
   .inner {
@@ -957,7 +709,7 @@ const StyledDiv = styled.div`
       padding: 0px;
       flex: 1;
       display: flex;
-      margin-left: ${(props) => Math.min(props.$depth * 8, 40)}px;
+      margin-left: ${(e) => Math.min(8 * e.$depth, 40)}px;
       align-items: center;
       div.layer-name {
         flex: 1;
@@ -968,8 +720,8 @@ const StyledDiv = styled.div`
       }
     }
   }
-`;
-const Expand = styled.a`
+`,
+  ce = x.a`
   width: 8px;
   height: 8px;
   display: flex;
@@ -977,11 +729,11 @@ const Expand = styled.a`
   justify-content: center;
   transform-origin: center;
   transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-  transform: rotate(${(props) => (props.$expanded ? 180 : 0)}deg);
+  transform: rotate(${(e) => (e.$expanded ? 180 : 0)}deg);
   opacity: 0.7;
   cursor: pointer;
-`;
-const Hide = styled.a`
+`,
+  pe = x.a`
   width: 14px;
   height: 14px;
   margin-right: 10px;
@@ -993,24 +745,24 @@ const Hide = styled.a`
     width: 100%;
     height: 100%;
     object-fit: contain;
-    opacity: ${(props) => (props.$isHidden ? 0.2 : 1)};
+    opacity: ${(e) => (e.$isHidden ? 0.2 : 1)};
   }
   &:after {
     content: ' ';
     width: 2px;
-    height: ${(props) => (props.$isHidden ? 100 : 0)}%;
+    height: ${(e) => (e.$isHidden ? 100 : 0)}%;
     position: absolute;
     left: 2px;
     top: 3px;
-    background: ${(props) =>
-      props.$selected ? props.$theme.iconSelected : props.$theme.iconPrimary};
+    background: ${(e) =>
+      e.$selected ? e.$theme.iconSelected : e.$theme.iconPrimary};
     transform: rotate(-45deg);
     transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
     transform-origin: 0% 0%;
-    opacity: ${(props) => (props.$isHidden ? 0.4 : 1)};
+    opacity: ${(e) => (e.$isHidden ? 0.4 : 1)};
   }
-`;
-const TopLevelIndicator = styled.div`
+`,
+  he = x.div`
   margin-left: -22px;
   margin-right: 10px;
 
@@ -1018,8 +770,8 @@ const TopLevelIndicator = styled.div`
     width: 12px;
     height: 12px;
   }
-`;
-const DragHandle = styled.div`
+`,
+  ue = x.div`
   width: 20px;
   height: 20px;
   display: flex;
@@ -1045,15 +797,15 @@ const DragHandle = styled.div`
     height: 14px;
     pointer-events: none;
   }
-`;
-const ReorderButtons = styled.div`
+`,
+  me = x.div`
   display: flex;
   gap: 2px;
   margin-left: auto;
   opacity: 0;
   transition: opacity 0.2s ease;
-`;
-const ReorderButton = styled.button`
+`,
+  ge = x.button`
   width: 18px;
   height: 18px;
   display: flex;
@@ -1061,16 +813,15 @@ const ReorderButton = styled.button`
   justify-content: center;
   background: transparent;
   border: none;
-  cursor: ${(props) => (props.$disabled ? 'not-allowed' : 'pointer')};
-  opacity: ${(props) => (props.$disabled ? 0.3 : 0.6)};
+  cursor: ${(e) => (e.$disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${(e) => (e.$disabled ? 0.3 : 0.6)};
   transition: opacity 0.2s ease;
   padding: 0;
   border-radius: 3px;
 
   &:hover {
-    opacity: ${(props) => (props.$disabled ? 0.3 : 1)};
-    background: ${(props) =>
-      props.$disabled ? 'transparent' : props.$theme.bgHover};
+    opacity: ${(e) => (e.$disabled ? 0.3 : 1)};
+    background: ${(e) => (e.$disabled ? 'transparent' : e.$theme.bgHover)};
   }
 
   svg {
@@ -1078,289 +829,225 @@ const ReorderButton = styled.button`
     height: 12px;
     pointer-events: none;
   }
-`;
-const DefaultLayerHeader = () => {
-  const theme = useLayerTheme();
-  const {
-    id,
-    depth,
-    expanded,
-    children,
-    connectors: { drag, layerHeader },
-    actions: { toggleLayer },
-  } = useLayer((layer) => {
-    return {
-      expanded: layer.expanded,
-    };
-  });
-  const {
-    hidden,
-    actions,
-    selected,
-    topLevel,
-    parent,
-    currentIndex,
-    canMoveUp,
-    canMoveDown,
-  } = useEditor((state, query) => {
-    // TODO: handle multiple selected elements
-    const selected = query.getEvent('selected').first() === id;
-    const node = state.nodes[id];
-    const parent = node?.data?.parent ? state.nodes[node.data.parent] : null;
-    const siblings = parent?.data?.nodes || [];
-    const currentIndex = siblings.indexOf(id);
-    return {
-      hidden: node && node.data.hidden,
-      selected,
-      topLevel: query.node(id).isTopLevelCanvas(),
-      parent,
-      currentIndex,
-      canMoveUp: currentIndex > 0,
-      canMoveDown: currentIndex < siblings.length - 1 && currentIndex !== -1,
-    };
-  });
-  const handleMoveUp = (e) => {
-    e.stopPropagation();
-    if (!canMoveUp || !parent) return;
-    // Move to previous position
-    actions.move(id, parent.id, currentIndex - 1);
-  };
-  const handleMoveDown = (e) => {
-    e.stopPropagation();
-    if (!canMoveDown || !parent) return;
-    // When moving down, the node is removed first, so we need to add 2
-    // to account for: current position removal + skip the next sibling
-    actions.move(id, parent.id, currentIndex + 2);
-  };
-  const [isHovered, setIsHovered] = React__default.useState(false);
-  return React__default.createElement(
-    StyledDiv,
-    {
-      $selected: selected,
-      $depth: depth,
-      $theme: theme,
-      onMouseEnter: () => setIsHovered(true),
-      onMouseLeave: () => setIsHovered(false),
-    },
-    React__default.createElement(
-      DragHandle,
+`,
+  ve = () => {
+    const e = se(),
       {
-        ref: (dom) => {
-          drag(dom);
-        },
-        $theme: theme,
-      },
-      React__default.createElement(SvgGrip, null)
-    ),
-    React__default.createElement(
-      Hide,
+        id: t,
+        depth: n,
+        expanded: r,
+        children: a,
+        connectors: { drag: i, layerHeader: l },
+        actions: { toggleLayer: s },
+      } = C((e) => ({ expanded: e.expanded })),
       {
-        $selected: selected,
-        $isHidden: hidden,
-        $theme: theme,
-        onClick: () => actions.setHidden(id, !hidden),
+        hidden: d,
+        actions: c,
+        selected: p,
+        topLevel: h,
+        parent: u,
+        currentIndex: g,
+        canMoveUp: v,
+        canMoveDown: f,
+      } = m((e, n) => {
+        const r = n.getEvent('selected').first() === t,
+          a = e.nodes[t],
+          o = a?.data?.parent ? e.nodes[a.data.parent] : null,
+          i = o?.data?.nodes || [],
+          l = i.indexOf(t);
+        return {
+          hidden: a && a.data.hidden,
+          selected: r,
+          topLevel: n.node(t).isTopLevelCanvas(),
+          parent: o,
+          currentIndex: l,
+          canMoveUp: l > 0,
+          canMoveDown: l < i.length - 1 && -1 !== l,
+        };
+      }),
+      [y, x] = o.useState(!1);
+    return o.createElement(
+      de,
+      {
+        $selected: p,
+        $depth: n,
+        $theme: e,
+        onMouseEnter: () => x(!0),
+        onMouseLeave: () => x(!1),
       },
-      React__default.createElement(SvgEye, null)
-    ),
-    React__default.createElement(
-      'div',
-      { className: 'inner' },
-      React__default.createElement(
-        'div',
+      o.createElement(
+        ue,
         {
-          ref: (dom) => {
-            layerHeader(dom);
+          ref: (e) => {
+            i(e);
           },
+          $theme: e,
         },
-        topLevel
-          ? React__default.createElement(
-              TopLevelIndicator,
-              null,
-              React__default.createElement(SvgLinked, null)
-            )
-          : null,
-        React__default.createElement(
+        o.createElement(ee, null)
+      ),
+      o.createElement(
+        pe,
+        {
+          $selected: p,
+          $isHidden: d,
+          $theme: e,
+          onClick: () => c.setHidden(t, !d),
+        },
+        o.createElement(X, null)
+      ),
+      o.createElement(
+        'div',
+        { className: 'inner' },
+        o.createElement(
           'div',
-          { className: 'layer-name s' },
-          React__default.createElement(EditableLayerName, null)
-        ),
-        React__default.createElement(
-          'div',
-          { style: { display: 'flex', alignItems: 'center', gap: '4px' } },
-          !topLevel &&
-            isHovered &&
-            React__default.createElement(
-              ReorderButtons,
-              { $theme: theme, style: { opacity: isHovered ? 1 : 0 } },
-              React__default.createElement(
-                ReorderButton,
-                {
-                  $theme: theme,
-                  $disabled: !canMoveUp,
-                  onClick: handleMoveUp,
-                  title: 'Move up',
-                },
-                React__default.createElement(
-                  'svg',
-                  { viewBox: '0 0 16 16', fill: 'currentColor' },
-                  React__default.createElement('path', { d: 'M8 3l-5 5h10z' })
+          {
+            ref: (e) => {
+              l(e);
+            },
+          },
+          h ? o.createElement(he, null, o.createElement(ne, null)) : null,
+          o.createElement(
+            'div',
+            { className: 'layer-name s' },
+            o.createElement(k, null)
+          ),
+          o.createElement(
+            'div',
+            { style: { display: 'flex', alignItems: 'center', gap: '4px' } },
+            !h &&
+              y &&
+              o.createElement(
+                me,
+                { $theme: e, style: { opacity: y ? 1 : 0 } },
+                o.createElement(
+                  ge,
+                  {
+                    $theme: e,
+                    $disabled: !v,
+                    onClick: (e) => {
+                      e.stopPropagation(), v && u && c.move(t, u.id, g - 1);
+                    },
+                    title: 'Move up',
+                  },
+                  o.createElement(
+                    'svg',
+                    { viewBox: '0 0 16 16', fill: 'currentColor' },
+                    o.createElement('path', { d: 'M8 3l-5 5h10z' })
+                  )
+                ),
+                o.createElement(
+                  ge,
+                  {
+                    $theme: e,
+                    $disabled: !f,
+                    onClick: (e) => {
+                      e.stopPropagation(), f && u && c.move(t, u.id, g + 2);
+                    },
+                    title: 'Move down',
+                  },
+                  o.createElement(
+                    'svg',
+                    { viewBox: '0 0 16 16', fill: 'currentColor' },
+                    o.createElement('path', { d: 'M8 13l5-5H3z' })
+                  )
                 )
               ),
-              React__default.createElement(
-                ReorderButton,
-                {
-                  $theme: theme,
-                  $disabled: !canMoveDown,
-                  onClick: handleMoveDown,
-                  title: 'Move down',
-                },
-                React__default.createElement(
-                  'svg',
-                  { viewBox: '0 0 16 16', fill: 'currentColor' },
-                  React__default.createElement('path', { d: 'M8 13l5-5H3z' })
+            a && a.length
+              ? o.createElement(
+                  ce,
+                  { $expanded: r, onMouseDown: () => s() },
+                  o.createElement(q, null)
                 )
-              )
-            ),
-          children && children.length
-            ? React__default.createElement(
-                Expand,
-                { $expanded: expanded, onMouseDown: () => toggleLayer() },
-                React__default.createElement(SvgArrow, null)
-              )
-            : null
+              : null
+          )
         )
       )
-    )
-  );
-};
-
-const LayerNodeDiv = styled.div`
-  background: ${(props) =>
-    props.$hovered ? props.$theme.bgHover : props.$theme.bgBase};
+    );
+  },
+  fe = x.div`
+  background: ${(e) => (e.$hovered ? e.$theme.bgHover : e.$theme.bgBase)};
   display: block;
-  padding-bottom: ${(props) =>
-    props.$hasCanvases && props.$expanded ? 5 : 0}px;
-`;
-const LayerChildren = styled.div`
-  margin: 0 0 0 ${(props) => (props.$hasCanvases ? 28 : 0)}px;
-  background: ${(props) =>
-    props.$hasCanvases ? props.$theme.bgCanvas : 'transparent'};
+  padding-bottom: ${(e) => (e.$hasCanvases && e.$expanded ? 5 : 0)}px;
+`,
+  ye = x.div`
+  margin: 0 0 0 ${(e) => (e.$hasCanvases ? 28 : 0)}px;
+  background: ${(e) => (e.$hasCanvases ? e.$theme.bgCanvas : 'transparent')};
   position: relative;
 
-  ${(props) =>
-    props.$hasCanvases
-      ? `
-
-  box-shadow: 0px 0px 44px -1px ${props.$theme.shadowColor};
-  border-radius: 10px;
-  margin-right: 5px;
-  margin-bottom:5px;
-  margin-top:5px;
-  > * { overflow:hidden; }
-    &:before {
-      position:absolute;
-      left:-19px;
-      width: 2px;
-      height:100%;
-      content: " ";
-      background:${props.$theme.borderColor};
-    }
-  `
+  ${(e) =>
+    e.$hasCanvases
+      ? `\n\n  box-shadow: 0px 0px 44px -1px ${e.$theme.shadowColor};\n  border-radius: 10px;\n  margin-right: 5px;\n  margin-bottom:5px;\n  margin-top:5px;\n  > * { overflow:hidden; }\n    &:before {\n      position:absolute;\n      left:-19px;\n      width: 2px;\n      height:100%;\n      content: " ";\n      background:${e.$theme.borderColor};\n    }\n  `
       : ''}
-`;
-const DefaultLayer = ({ children }) => {
-  const theme = useLayerTheme();
-  const {
-    id,
-    expanded,
-    hovered,
-    connectors: { layer },
-  } = useLayer((layer) => ({
-    hovered: layer.event.hovered,
-    expanded: layer.expanded,
-  }));
-  const { hasChildCanvases } = useEditor((state, query) => {
-    return {
-      hasChildCanvases: query.node(id).isParentOfTopLevelNodes(),
-    };
-  });
-  return React__default.createElement(
-    LayerNodeDiv,
-    {
-      ref: (dom) => {
-        layer(dom);
+`,
+  xe = ({ children: e }) => {
+    const t = se(),
+      {
+        id: n,
+        expanded: r,
+        hovered: a,
+        connectors: { layer: i },
+      } = C((e) => ({ hovered: e.event.hovered, expanded: e.expanded })),
+      { hasChildCanvases: l } = m((e, t) => ({
+        hasChildCanvases: t.node(n).isParentOfTopLevelNodes(),
+      }));
+    return o.createElement(
+      fe,
+      {
+        ref: (e) => {
+          i(e);
+        },
+        $expanded: r,
+        $hasCanvases: l,
+        $hovered: a,
+        $theme: t,
       },
-      $expanded: expanded,
-      $hasCanvases: hasChildCanvases,
-      $hovered: hovered,
-      $theme: theme,
-    },
-    React__default.createElement(DefaultLayerHeader, null),
-    children
-      ? React__default.createElement(
-          LayerChildren,
-          {
-            $hasCanvases: hasChildCanvases,
-            $theme: theme,
-            className: 'craft-layer-children',
-          },
-          children
-        )
-      : null
-  );
-};
-
-const LayerManagerProvider = ({ children, options }) => {
-  // TODO: fix type
-  const store = useMethods(LayerMethods, {
-    layers: {},
-    events: {
-      selected: null,
-      dragged: null,
-      hovered: null,
-    },
-    options: {
-      renderLayer: DefaultLayer,
-      ...options,
-    },
-  });
-  return React__default.createElement(
-    LayerManagerContext.Provider,
-    { value: { store } },
-    React__default.createElement(
-      ThemeProvider,
-      { theme: options.theme, themeMode: options.themeMode },
-      React__default.createElement(LayerEventContextProvider, null, children)
-    )
-  );
-};
-
-const Layers = ({ ...options }) => {
-  return React__default.createElement(
-    'div',
-    {
-      className: 'craft-layers-container',
-      style: { height: '100%', overflow: 'auto' },
-    },
-    React__default.createElement(
-      LayerManagerProvider,
-      { options: options },
-      React__default.createElement(LayerContextProvider, {
-        id: ROOT_NODE$1,
-        depth: 0,
-      })
-    )
-  );
-};
-
+      o.createElement(ve, null),
+      e
+        ? o.createElement(
+            ye,
+            { $hasCanvases: l, $theme: t, className: 'craft-layer-children' },
+            e
+          )
+        : null
+    );
+  },
+  be = ({ children: e, options: t }) => {
+    const r = n(P, {
+      layers: {},
+      events: { selected: null, dragged: null, hovered: null },
+      options: { renderLayer: xe, ...t },
+    });
+    return o.createElement(
+      w.Provider,
+      { value: { store: r } },
+      o.createElement(
+        le,
+        { theme: t.theme, themeMode: t.themeMode },
+        o.createElement(T, null, e)
+      )
+    );
+  },
+  Ee = ({ ...e }) =>
+    o.createElement(
+      'div',
+      {
+        className: 'craft-layers-container',
+        style: { height: '100%', overflow: 'auto' },
+      },
+      o.createElement(
+        be,
+        { options: e },
+        o.createElement(S, { id: r, depth: 0 })
+      )
+    );
 export {
-  DefaultLayer,
-  DefaultLayerHeader,
-  EditableLayerName,
-  Layers,
-  darkTheme,
-  getTheme,
-  lightTheme,
-  useLayer,
+  xe as DefaultLayer,
+  ve as DefaultLayerHeader,
+  k as EditableLayerName,
+  Ee as Layers,
+  ae as darkTheme,
+  oe as getTheme,
+  re as lightTheme,
+  C as useLayer,
 };
 //# sourceMappingURL=index.js.map
