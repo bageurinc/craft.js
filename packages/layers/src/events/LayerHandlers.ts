@@ -14,8 +14,71 @@ export class LayerHandlers extends DerivedCoreEventHandlers<{
     currentCanvasHovered: null,
   };
 
+  private autoScrollInterval: number | null = null;
+  private readonly AUTO_SCROLL_THRESHOLD = 50; // pixels from edge
+  private readonly AUTO_SCROLL_SPEED = 5; // pixels per frame
+
   getLayer(id: NodeId) {
     return this.options.layerStore.getState().layers[id];
+  }
+
+  private handleAutoScroll(e: DragEvent, scrollContainer: HTMLElement | null) {
+    if (!scrollContainer) return;
+
+    const rect = scrollContainer.getBoundingClientRect();
+    const distanceFromTop = e.clientY - rect.top;
+    const distanceFromBottom = rect.bottom - e.clientY;
+
+    // Clear existing interval
+    if (this.autoScrollInterval) {
+      cancelAnimationFrame(this.autoScrollInterval);
+      this.autoScrollInterval = null;
+    }
+
+    // Check if near top or bottom
+    if (
+      distanceFromTop < this.AUTO_SCROLL_THRESHOLD &&
+      scrollContainer.scrollTop > 0
+    ) {
+      // Scroll up
+      const speed = Math.max(
+        1,
+        (this.AUTO_SCROLL_THRESHOLD - distanceFromTop) / 10
+      );
+      const scroll = () => {
+        scrollContainer.scrollTop -= speed;
+        if (scrollContainer.scrollTop > 0) {
+          this.autoScrollInterval = requestAnimationFrame(scroll);
+        }
+      };
+      this.autoScrollInterval = requestAnimationFrame(scroll);
+    } else if (distanceFromBottom < this.AUTO_SCROLL_THRESHOLD) {
+      // Scroll down
+      const maxScroll =
+        scrollContainer.scrollHeight - scrollContainer.clientHeight;
+      if (scrollContainer.scrollTop < maxScroll) {
+        const speed = Math.max(
+          1,
+          (this.AUTO_SCROLL_THRESHOLD - distanceFromBottom) / 10
+        );
+        const scroll = () => {
+          scrollContainer.scrollTop += speed;
+          const currentMaxScroll =
+            scrollContainer.scrollHeight - scrollContainer.clientHeight;
+          if (scrollContainer.scrollTop < currentMaxScroll) {
+            this.autoScrollInterval = requestAnimationFrame(scroll);
+          }
+        };
+        this.autoScrollInterval = requestAnimationFrame(scroll);
+      }
+    }
+  }
+
+  private stopAutoScroll() {
+    if (this.autoScrollInterval) {
+      cancelAnimationFrame(this.autoScrollInterval);
+      this.autoScrollInterval = null;
+    }
   }
 
   handlers() {
@@ -62,6 +125,12 @@ export class LayerHandlers extends DerivedCoreEventHandlers<{
             e.craft.stopPropagation();
             e.preventDefault();
 
+            // Auto-scroll handling
+            const scrollContainer = el.closest(
+              '.craft-layers-container'
+            ) as HTMLElement;
+            this.handleAutoScroll(e, scrollContainer);
+
             const { indicator, currentCanvasHovered } = LayerHandlers.events;
 
             if (currentCanvasHovered && indicator) {
@@ -70,8 +139,8 @@ export class LayerHandlers extends DerivedCoreEventHandlers<{
               ).headingDom.getBoundingClientRect();
 
               if (
-                e.clientY > heading.top + 10 &&
-                e.clientY < heading.bottom - 10
+                e.clientY > heading.top + 20 &&
+                e.clientY < heading.bottom - 20
               ) {
                 const currNode =
                   currentCanvasHovered.data.nodes[
@@ -150,9 +219,9 @@ export class LayerHandlers extends DerivedCoreEventHandlers<{
                   if (editorStore.query.node(grandparent.id).isCanvas()) {
                     LayerHandlers.events.currentCanvasHovered = parent;
                     if (
-                      (e.clientY > parentHeadingInfo.bottom - 10 &&
+                      (e.clientY > parentHeadingInfo.bottom - 20 &&
                         !this.getLayer(parent.id).expanded) ||
-                      e.clientY < parentHeadingInfo.top + 10
+                      e.clientY < parentHeadingInfo.top + 20
                     ) {
                       indicatorInfo.placement.parent = grandparent;
                       indicatorInfo.placement.currentNode = parent;
@@ -160,11 +229,11 @@ export class LayerHandlers extends DerivedCoreEventHandlers<{
                         ? grandparent.data.nodes.indexOf(parent.id)
                         : 0;
                       if (
-                        e.clientY > parentHeadingInfo.bottom - 10 &&
+                        e.clientY > parentHeadingInfo.bottom - 20 &&
                         !this.getLayer(parent.id).expanded
                       ) {
                         indicatorInfo.placement.where = 'after';
-                      } else if (e.clientY < parentHeadingInfo.top + 10) {
+                      } else if (e.clientY < parentHeadingInfo.top + 20) {
                         indicatorInfo.placement.where = 'before';
                       }
                     }
@@ -214,6 +283,7 @@ export class LayerHandlers extends DerivedCoreEventHandlers<{
 
         const unbindDragEnd = this.addCraftEventListener(el, 'dragend', (e) => {
           e.craft.stopPropagation();
+          this.stopAutoScroll(); // Stop auto-scroll on drag end
           const events = LayerHandlers.events;
 
           if (events.indicator && !events.indicator.error) {

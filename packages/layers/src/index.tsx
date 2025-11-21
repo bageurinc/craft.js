@@ -19,8 +19,13 @@ type LayersProps = Partial<LayerOptions>;
 
 export const Layers = ({ ...options }: LayersProps) => {
   return (
-    <LayerManagerProvider options={options}>
-      <LayerContextProvider id={ROOT_NODE} depth={0} />
-    </LayerManagerProvider>
+    <div
+      className="craft-layers-container"
+      style={{ height: '100%', overflow: 'auto' }}
+    >
+      <LayerManagerProvider options={options}>
+        <LayerContextProvider id={ROOT_NODE} depth={0} />
+      </LayerManagerProvider>
+    </div>
   );
 };

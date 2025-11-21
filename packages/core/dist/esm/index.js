@@ -1,2 +1,2849 @@
-"undefined"!=typeof window&&(window.__CRAFTJS__||(window.__CRAFTJS__={}),window.__CRAFTJS__["@craftjs/core"]="0.2.12");import{ERROR_USE_EDITOR_OUTSIDE_OF_EDITOR_CONTEXT as e,useCollector as t,wrapConnectorHooks as n,ERROR_USE_NODE_OUTSIDE_OF_EDITOR_CONTEXT as r,deprecationWarning as o,ERROR_TOP_LEVEL_ELEMENT_NO_ID as s,ROOT_NODE as d,ERROR_INVALID_NODEID as a,ERROR_DELETE_TOP_LEVEL_NODE as i,ERROR_NOPARENT as c,DEPRECATED_ROOT_NODE as l,ERROR_NOT_IN_RESOLVER as p,ERROR_INVALID_NODE_ID as u,ERROR_MOVE_TOP_LEVEL_NODE as h,ERROR_MOVE_NONCANVAS_CHILD as g,ERROR_CANNOT_DRAG as f,ERROR_MOVE_TO_NONCANVAS_PARENT as m,ERROR_MOVE_INCOMING_PARENT as v,ERROR_MOVE_CANNOT_DROP as y,ERROR_MOVE_TO_DESCENDANT as N,ERROR_DUPLICATE_NODEID as E,ERROR_MOVE_OUTGOING_PARENT as b,getRandomId as O,ERROR_DESERIALIZE_COMPONENT_NOT_IN_RESOLVER as T,getDOMInfo as C,EventHandlers as w,DerivedEventHandlers as D,isChromium as k,isLinux as S,RenderIndicator as x,useMethods as I,ERROR_RESOLVER_NOT_AN_OBJECT as j,HISTORY_ACTIONS as P}from"@craftjs/utils";export{ROOT_NODE}from"@craftjs/utils";import*as L from"react";import q,{createContext as R,useContext as A,useMemo as _,useEffect as F,useState as M,useRef as z,Children as H,Fragment as B}from"react";import $ from"tiny-invariant";import J from"lodash/isFunction";import W from"lodash/cloneDeep";const V=q.createContext(null),X=({id:e,related:t=!1,children:n})=>q.createElement(V.Provider,{value:{id:e,related:t}},n);function Y(e,t,n){return(t=function(e){var t=function(e){if("object"!=typeof e||!e)return e;var t=e[Symbol.toPrimitive];if(void 0!==t){var n=t.call(e,"string");if("object"!=typeof n)return n;throw new TypeError("@@toPrimitive must return a primitive value.")}return String(e)}(e);return"symbol"==typeof t?t:t+""}(t))in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function G(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(e);t&&(r=r.filter(function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable})),n.push.apply(n,r)}return n}function K(e){for(var t=1;t<arguments.length;t++){var n=null!=arguments[t]?arguments[t]:{};t%2?G(Object(n),!0).forEach(function(t){Y(e,t,n[t])}):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(n)):G(Object(n)).forEach(function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(n,t))})}return e}function U(e,t){if(null==e)return{};var n,r,o=function(e,t){if(null==e)return{};var n={};for(var r in e)if({}.hasOwnProperty.call(e,r)){if(-1!==t.indexOf(r))continue;n[r]=e[r]}return n}(e,t);if(Object.getOwnPropertySymbols){var s=Object.getOwnPropertySymbols(e);for(r=0;r<s.length;r++)-1===t.indexOf(n=s[r])&&{}.propertyIsEnumerable.call(e,n)&&(o[n]=e[n])}return o}const Q=R(null),Z=R(null),ee=()=>A(Z);function te(r){const o=ee(),s=A(Q);$(s,e);const d=t(s,r),a=_(()=>o&&o.createConnectorsUsage(),[o]);F(()=>(a.register(),()=>{a.cleanup()}),[a]);const i=_(()=>a&&n(a.connectors),[a]);return K(K({},d),{},{connectors:i,inContext:!!s,store:s})}const ne=["actions","query","connectors"];function re(e){const t=A(V);$(t,r);const{id:o,related:s}=t,d=te(t=>o&&t.nodes[o]&&e&&e(t.nodes[o])),{actions:a,connectors:i}=d,c=U(d,ne),l=_(()=>n({connect:e=>i.connect(e,o),drag:e=>i.drag(e,o)}),[i,o]),p=_(()=>({setProp:(e,t)=>{t?a.history.throttle(t).setProp(o,e):a.setProp(o,e)},setCustom:(e,t)=>{t?a.history.throttle(t).setCustom(o,e):a.setCustom(o,e)},setHidden:e=>a.setHidden(o,e)}),[a,o]);return K(K({},c),{},{id:o,related:s,inNodeContext:!!t,actions:p,connectors:l})}const oe=["id","related","actions","inNodeContext","connectors"];function se(e){const t=re(e),{id:n,related:r,actions:s,inNodeContext:d,connectors:a}=t;return K(K({},U(t,oe)),{},{actions:s,id:n,related:r,setProp:(e,t)=>(o("useNode().setProp()",{suggest:"useNode().actions.setProp()"}),s.setProp(e,t)),inNodeContext:d,connectors:a})}const de=({render:e})=>{const{connectors:{connect:t,drag:n}}=se();return"string"==typeof e.type?t(n(q.cloneElement(e))):e},ae=()=>{const{type:e,props:t,nodes:n,hydrationTimestamp:r}=re(e=>({type:e.data.type,props:e.data.props,nodes:e.data.nodes,hydrationTimestamp:e._hydrationTimestamp}));return _(()=>{let r=t.children;n&&n.length>0&&(r=q.createElement(q.Fragment,null,n.map(e=>q.createElement(ce,{id:e,key:e}))));const o=q.createElement(e,t,r);return"string"==typeof e?q.createElement(de,{render:o}):o},[e,t,r,n])},ie=({render:e})=>{const{hidden:t}=re(e=>({hidden:e.data.hidden})),{onRender:n}=te(e=>({onRender:e.options.onRender}));return t?null:q.createElement(n,{render:e||q.createElement(ae,null)})},ce=({id:e,render:t})=>q.createElement(X,{id:e},q.createElement(ie,{render:t})),le={is:"div",canvas:!1,custom:{},hidden:!1},pe={is:"type",canvas:"isCanvas"};function ue({id:e,children:t,...n}){const{is:r}={...le,...n},{query:o,actions:d}=te(),{id:a,inNodeContext:i}=re(),[c]=M(()=>{$(!!e,s);const c=o.node(a).get();if(i){const s=c.data.linkedNodes[e]?o.node(c.data.linkedNodes[e]).get():null;if(s&&s.data.type===r)return s.id;const i=q.createElement(ue,n,t),l=o.parseReactElement(i).toNodeTree();return d.history.ignore().addLinkedNodeFromTree(l,a,e),l.rootNodeId}return null});return c?q.createElement(ce,{id:c}):null}const he=()=>o("<Canvas />",{suggest:"<Element canvas={true} />"});function Canvas({...e}){return F(()=>he(),[]),q.createElement(ue,{...e,canvas:!0})}const ge=()=>{const{timestamp:e}=te(e=>({timestamp:e.nodes[d]&&e.nodes[d]._hydrationTimestamp}));return e?q.createElement(ce,{id:d,key:e}):null},fe=({children:e,json:t,data:n})=>{const{actions:r,query:s}=te();t&&o("<Frame json={...} />",{suggest:"<Frame data={...} />"});const a=z(!1);if(!a.current){const o=n||t;if(o)r.history.ignore().deserialize(o);else if(e){const t=q.Children.only(e),n=s.parseReactElement(t).toNodeTree((e,n)=>(n===t&&(e.id=d),e));r.history.ignore().addNodeTree(n)}a.current=!0}return q.createElement(ge,null)};var me;!function(e){e[e.Any=0]="Any",e[e.Id=1]="Id",e[e.Obj=2]="Obj"}(me||(me={}));const ve=e=>{const{addLinkedNodeFromTree:t,setDOM:n,setNodeEvent:r,replaceNodes:o,reset:s,...d}=e;return d};function ye(e){const{connectors:t,actions:n,query:r,store:o,...s}=te(e),d=ve(n);return{connectors:t,actions:_(()=>({...d,history:{...d.history,ignore:(...e)=>ve(d.history.ignore(...e)),throttle:(...e)=>ve(d.history.throttle(...e))}}),[d]),query:r,store:o,...s}}function Ne(e){return t=>n=>{const r=e?ye(e):ye();return q.createElement(t,{...r,...n})}}function Ee(e){return function(t){return n=>{const r=se(e);return q.createElement(t,{...r,...n})}}}const be=e=>Object.fromEntries?Object.fromEntries(e):e.reduce((e,t)=>{let[n,r]=t;return K(K({},e),{},{[n]:r})},{}),Oe=(e,t,n)=>{const r=Array.isArray(t)?t:[t],o=K({existOnly:!1,idOnly:!1},n||{}),s=r.filter(e=>!!e).map(t=>"string"==typeof t?{node:e[t],exists:!!e[t]}:"object"!=typeof t||o.idOnly?{node:null,exists:!1}:{node:t,exists:!!e[t.id]});return o.existOnly&&$(0===s.filter(e=>!e.exists).length,a),s},Te=["history"],Ce=(e,t)=>{const n=(t,n,o)=>{const s=(n,r)=>{const o=t.nodes[n];"string"!=typeof o.data.type&&$(e.options.resolver[o.data.name],p.replace("%node_type%","".concat(o.data.type.name))),e.nodes[n]=K(K({},o),{},{data:K(K({},o.data),{},{parent:r})}),o.data.nodes.length>0&&(delete e.nodes[n].data.props.children,o.data.nodes.forEach(e=>s(e,o.id))),Object.values(o.data.linkedNodes).forEach(e=>s(e,o.id))};if(s(t.rootNodeId,n),!n&&t.rootNodeId===d)return;const a=r(n);if("child"===o.type){const e=o.index;return void(null!=e?a.data.nodes.splice(e,0,t.rootNodeId):a.data.nodes.push(t.rootNodeId))}a.data.linkedNodes[o.id]=t.rootNodeId},r=t=>{$(t,c);const n=e.nodes[t];return $(n,a),n},s=t=>{const n=e.nodes[t],r=e.nodes[n.data.parent];if(n.data.nodes&&[...n.data.nodes].forEach(e=>s(e)),n.data.linkedNodes&&Object.values(n.data.linkedNodes).map(e=>s(e)),r.data.nodes.includes(t)){const e=r.data.nodes;e.splice(e.indexOf(t),1)}else{const e=Object.keys(r.data.linkedNodes).find(e=>r.data.linkedNodes[e]===e);e&&delete r.data.linkedNodes[e]}((e,t)=>{Object.keys(e.events).forEach(n=>{const r=e.events[n];r&&r.has&&r.has(t)&&(e.events[n]=new Set(Array.from(r).filter(e=>t!==e)))})})(e,t),delete e.nodes[t]};return{addLinkedNodeFromTree(e,t,o){const d=r(t).data.linkedNodes[o];d&&s(d),n(e,t,{type:"linked",id:o})},add(e,t,r){let s=[e];Array.isArray(e)&&(o("actions.add(node: Node[])",{suggest:"actions.add(node: Node)"}),s=e),s.forEach(e=>{n({nodes:{[e.id]:e},rootNodeId:e.id},t,{type:"child",index:r})})},addNodeTree(e,t,r){n(e,t,{type:"child",index:r})},delete(n){Oe(e.nodes,n,{existOnly:!0,idOnly:!0}).forEach(e=>{let{node:n}=e;$(!t.node(n.id).isTopLevelNode(),i),s(n.id)})},deserialize(e){const n="string"==typeof e?JSON.parse(e):e,r=Object.keys(n).map(e=>{let r=e;return e===l&&(r=d),[r,t.parseSerializedNode(n[e]).toNode(e=>e.id=r)]});this.replaceNodes(be(r))},move(n,r,o){const s=Oe(e.nodes,n,{existOnly:!0}),d=e.nodes[r],a=new Set;s.forEach((n,s)=>{let{node:i}=n;const c=i.id,l=i.data.parent;t.node(r).isDroppable([c],e=>{throw new Error(e)}),e.options.onBeforeMoveEnd(i,d,e.nodes[l]);const p=e.nodes[l].data.nodes;a.add(p);const u=p.indexOf(c);p[u]="$$",d.data.nodes.splice(o+s,0,c),e.nodes[c].data.parent=r}),a.forEach(e=>{const t=e.length;[...e].reverse().forEach((n,r)=>{"$$"===n&&e.splice(t-1-r,1)})})},replaceNodes(t){this.clearEvents(),e.nodes=t},clearEvents(){this.setNodeEvent("selected",null),this.setNodeEvent("hovered",null),this.setNodeEvent("dragged",null),this.setIndicator(null)},reset(){this.clearEvents(),this.replaceNodes({})},setOptions(t){t(e.options)},setNodeEvent(t,n){if(e.events[t].forEach(n=>{e.nodes[n]&&(e.nodes[n].events[t]=!1)}),e.events[t]=new Set,!n)return;const r=Oe(e.nodes,n,{idOnly:!0,existOnly:!0}),o=new Set(r.map(e=>{let{node:t}=e;return t.id}));o.forEach(n=>{e.nodes[n].events[t]=!0}),e.events[t]=o},setCustom(t,n){Oe(e.nodes,t,{idOnly:!0,existOnly:!0}).forEach(t=>{let{node:r}=t;return n(e.nodes[r.id].data.custom)})},setDOM(t,n){e.nodes[t]&&(e.nodes[t].dom=n)},setIndicator(t){t&&(!t.placement.parent.dom||t.placement.currentNode&&!t.placement.currentNode.dom)||(e.indicator=t)},setHidden(t,n){e.nodes[t].data.hidden=n},setProp(t,n){Oe(e.nodes,t,{idOnly:!0,existOnly:!0}).forEach(t=>{let{node:r}=t;return n(e.nodes[r.id].data.props)})},selectNode(t){if(t){const n=Oe(e.nodes,t,{idOnly:!0,existOnly:!0});this.setNodeEvent("selected",n.map(e=>{let{node:t}=e;return t.id}))}else this.setNodeEvent("selected",null);this.setNodeEvent("hovered",null)}}};let we=null;const De=(e,t)=>{if("string"==typeof t)return t;const n=((e,t)=>{const n=(e=>{if(we&&we.resolver===e)return we.reversed;we={resolver:e,reversed:new Map};for(const[t,n]of Object.entries(e))we.reversed.set(n,t);return we.reversed})(e).get(t);return void 0!==n?n:null})(e,t);var r;return $(n,p.replace("%node_type%",(r=t).name||r.displayName)),n},ke=(e,t)=>"string"==typeof e?e:{resolvedName:De(t,e)},Se=(e,t)=>{let{type:n,isCanvas:r,props:o}=e;return o=Object.keys(o).reduce((e,n)=>{const r=o[n];return null==r||"function"==typeof r||(e[n]="children"===n&&"string"!=typeof r?H.map(r,e=>"string"==typeof e?e:Se(e,t)):"function"==typeof r.type?Se(r,t):r),e},{}),{type:ke(n,t),isCanvas:!!r,props:o}},xe=(e,t)=>{const{type:n,props:r,isCanvas:o,name:s,...d}=e;return{...Se({type:n,isCanvas:o,props:r},t),...d}};function Ie(e,t){$("string"==typeof t,u);const n=e.nodes[t],r=t=>Ie(e,t);return{isCanvas:()=>!!n.data.isCanvas,isRoot:()=>n.id===d,isLinkedNode:()=>n.data.parent&&r(n.data.parent).linkedNodes().includes(n.id),isTopLevelNode(){return this.isRoot()||this.isLinkedNode()},isDeletable(){return!this.isTopLevelNode()},isParentOfTopLevelNodes:()=>n.data.linkedNodes&&Object.keys(n.data.linkedNodes).length>0,isParentOfTopLevelCanvas(){return o("query.node(id).isParentOfTopLevelCanvas",{suggest:"query.node(id).isParentOfTopLevelNodes"}),this.isParentOfTopLevelNodes()},isSelected:()=>e.events.selected.has(t),isHovered:()=>e.events.hovered.has(t),isDragged:()=>e.events.dragged.has(t),get:()=>n,ancestors(){let t=arguments.length>0&&void 0!==arguments[0]&&arguments[0];return function n(r){let o=arguments.length>1&&void 0!==arguments[1]?arguments[1]:[],s=arguments.length>2&&void 0!==arguments[2]?arguments[2]:0;const d=e.nodes[r];return d?(o.push(r),d.data.parent?((t||!t&&0===s)&&(o=n(d.data.parent,o,s+1)),o):o):o}(n.data.parent)},descendants(){let n=arguments.length>0&&void 0!==arguments[0]&&arguments[0],o=arguments.length>1?arguments[1]:void 0;return function t(s){let d=arguments.length>1&&void 0!==arguments[1]?arguments[1]:[],a=arguments.length>2&&void 0!==arguments[2]?arguments[2]:0;return(n||!n&&0===a)&&e.nodes[s]?("childNodes"!==o&&r(s).linkedNodes().forEach(e=>{d.push(e),d=t(e,d,a+1)}),"linkedNodes"!==o&&r(s).childNodes().forEach(e=>{d.push(e),d=t(e,d,a+1)}),d):d}(t)},linkedNodes:()=>Object.values(n.data.linkedNodes||{}),childNodes:()=>n.data.nodes||[],isDraggable(t){try{const t=n;return $(!this.isTopLevelNode(),h),$(Ie(e,t.data.parent).isCanvas(),g),$(t.rules.canDrag(t,r),f),!0}catch(e){return t&&t(e),!1}},isDroppable(t,o){const s=Oe(e.nodes,t),d=n;try{$(this.isCanvas(),m),$(d.rules.canMoveIn(s.map(e=>e.node),d,r),v);const t={};return s.forEach(n=>{let{node:o,exists:s}=n;if($(o.rules.canDrop(d,o,r),y),!s)return;$(!r(o.id).isTopLevelNode(),h);const a=r(o.id).descendants(!0);$(!a.includes(d.id)&&d.id!==o.id,N);const i=o.data.parent&&e.nodes[o.data.parent];$(i.data.isCanvas,g),$(i||!i&&!e.nodes[o.id],E),i.id!==d.id&&(t[i.id]||(t[i.id]=[]),t[i.id].push(o))}),Object.keys(t).forEach(n=>{const o=e.nodes[n];$(o.rules.canMoveOut(t[n],o,r),b)}),!0}catch(e){return o&&o(e),!1}},toSerializedNode:()=>xe(n.data,e.options.resolver),toNodeTree(e){const n=[t,...this.descendants(!0,e)].reduce((e,t)=>(e[t]=r(t).get(),e),{});return{rootNodeId:t,nodes:n}},decendants(){let e=arguments.length>0&&void 0!==arguments[0]&&arguments[0];return o("query.node(id).decendants",{suggest:"query.node(id).descendants"}),this.descendants(e)},isTopLevelCanvas(){return!this.isRoot()&&!n.data.parent}}}function je(e,t,n,r){let o={parent:e,index:0,where:"before"},s=0,d=0,a=0,i=0,c=0,l=0,p=0;for(let e=0,u=t.length;e<u;e++){const u=t[e];if(a=u.left+u.outerWidth,p=u.top+u.outerHeight,c=u.left+u.outerWidth/2,l=u.top+u.outerHeight/2,!(d&&u.left>d||i&&l>=i||s&&a<s))if(o.index=e,u.inFlow){if(r<l){o.where="before";break}o.where="after"}else r<p&&(i=p),n<c?(d=c,o.where="before"):(s=c,o.where="after")}return o}const Pe=e=>"string"==typeof e?e:e.name;function Le(e,t){let n=e.data.type;const r={id:e.id||O(),_hydrationTimestamp:Date.now(),data:K({type:n,name:Pe(n),displayName:Pe(n),props:{},custom:{},parent:null,isCanvas:!1,hidden:!1,nodes:[],linkedNodes:{}},e.data),info:{},related:{},events:{selected:!1,dragged:!1,hovered:!1},rules:{canDrag:()=>!0,canDrop:()=>!0,canMoveIn:()=>!0,canMoveOut:()=>!0},dom:null};if(r.data.type===ue||r.data.type===Canvas){const e=K(K({},le),r.data.props);r.data.props=Object.keys(r.data.props).reduce((t,n)=>(Object.keys(le).includes(n)?r.data[pe[n]||n]=e[n]:t[n]=r.data.props[n],t),{}),n=r.data.type,r.data.name=Pe(n),r.data.displayName=Pe(n),r.data.type===Canvas&&(r.data.isCanvas=!0,he())}t&&t(r);const o=n.craft;if(o){if(r.data.displayName=o.displayName||o.name||r.data.displayName,r.data.props=K(K({},o.props||o.defaultProps||{}),r.data.props),r.data.custom=K(K({},o.custom||{}),r.data.custom),null!=o.isCanvas&&(r.data.isCanvas=o.isCanvas),o.rules&&Object.keys(o.rules).forEach(e=>{["canDrag","canDrop","canMoveIn","canMoveOut"].includes(e)&&(r.rules[e]=o.rules[e])}),o.related){const e={id:r.id,related:!0};Object.keys(o.related).forEach(t=>{r.related[t]=n=>q.createElement(X,e,q.createElement(o.related[t],n))})}o.info&&(r.info=o.info)}return r}const qe=(e,t,n)=>{let{type:r,props:o}=e;const s=((e,t)=>"object"==typeof e&&e.resolvedName?"Canvas"===e.resolvedName?Canvas:t[e.resolvedName]:"string"==typeof e?e:null)(r,t);if(!s)return;o=Object.keys(o).reduce((e,n)=>{const r=o[n];return e[n]=null==r?null:"object"==typeof r&&r.resolvedName?qe(r,t):"children"===n&&Array.isArray(r)?r.map(e=>"string"==typeof e?e:qe(e,t)):r,e},{}),n&&(o.key=n);const d={...q.createElement(s,{...o})};return{...d,name:De(t,d.type)}},Re=(e,t)=>{if(t.length<1)return{[e.id]:e};const n=t.map(({rootNodeId:e})=>e),r={...e,data:{...e.data,nodes:n}};return t.reduce((t,n)=>{const r=n.nodes[n.rootNodeId];return{...t,...n.nodes,[r.id]:{...r,data:{...r.data,parent:e.id}}}},{[e.id]:r})};function Ae(e){const t=e&&e.options,n=()=>Ae(e);return{getDropPlaceholder:(t,r,o,s=t=>e.nodes[t.id].dom)=>{const d=e.nodes[r],a=n().node(d.id).isCanvas()?d:e.nodes[d.data.parent];if(!a)return;const i=a.data.nodes||[],c=je(a,i?i.reduce((t,n)=>{const r=s(e.nodes[n]);if(r){const e={id:n,...C(r)};t.push(e)}return t},[]):[],o.x,o.y),l=i.length&&e.nodes[i[c.index]],p={placement:{...c,currentNode:l},error:null};return Oe(e.nodes,t).forEach(({node:e,exists:t})=>{t&&n().node(e.id).isDraggable(e=>p.error=e)}),n().node(a.id).isDroppable(t,e=>p.error=e),p},getOptions:()=>t,getNodes:()=>e.nodes,node:t=>Ie(e,t),getSerializedNodes(){const t=Object.keys(e.nodes).map(e=>[e,this.node(e).toSerializedNode()]);return be(t)},getEvent:t=>function(e,t){const n=e.events[t];return{contains:e=>n.has(e),isEmpty(){return 0===this.all().length},first(){return this.all()[0]},last(){const e=this.all();return e[e.length-1]},all:()=>Array.from(n),size(){return this.all().length},at(e){return this.all()[e]},raw:()=>n}}(e,t),serialize(){return JSON.stringify(this.getSerializedNodes())},parseReactElement:t=>({toNodeTree(r){let o=function(e,t){let n=e;return"string"==typeof n&&(n=q.createElement(B,{},n)),Le({data:{type:n.type,props:{...n.props}}},e=>{t&&t(e,n)})}(t,(t,n)=>{const o=De(e.options.resolver,t.data.type);t.data.displayName=t.data.displayName||o,t.data.name=o,r&&r(t,n)}),s=[];return t.props&&t.props.children&&(s=q.Children.toArray(t.props.children).reduce((e,t)=>(q.isValidElement(t)&&e.push(n().parseReactElement(t).toNodeTree(r)),e),[])),((e,t)=>({rootNodeId:e.id,nodes:Re(e,t)}))(o,s)}}),parseSerializedNode:t=>({toNode(r){const s=((e,t)=>{const{type:n,props:r,...o}=e;$(void 0!==n&&"string"==typeof n||void 0!==n&&void 0!==n.resolvedName,T.replace("%displayName%",e.displayName).replace("%availableComponents%",Object.keys(t).join(", ")));const{type:s,name:d,props:a}=qe(e,t),{parent:i,custom:c,displayName:l,isCanvas:p,nodes:u,hidden:h}=o;return{type:s,name:d,displayName:l||d,props:a,custom:c||{},isCanvas:!!p,hidden:!!h,parent:i,linkedNodes:o.linkedNodes||o._childCanvas||{},nodes:u||[]}})(t,e.options.resolver);$(s.type,p);const d="string"==typeof r&&r;return d&&o("query.parseSerializedNode(...).toNode(id)",{suggest:"query.parseSerializedNode(...).toNode(node => node.id = id)"}),n().parseFreshNode({...d?{id:d}:{},data:s}).toNode(!d&&r)}}),parseFreshNode:t=>({toNode:n=>Le(t,t=>{t.data.parent===l&&(t.data.parent=d);const r=De(e.options.resolver,t.data.type);$(null!==r,p),t.data.displayName=t.data.displayName||r,t.data.name=r,n&&n(t)})}),createNode(e,t){o(`query.createNode(${e})`,{suggest:`query.parseReactElement(${e}).toNodeTree()`});const n=this.parseReactElement(e).toNodeTree(),r=n.nodes[n.rootNodeId];return t?(t.id&&(r.id=t.id),t.data&&(r.data={...r.data,...t.data}),r):r},getState:()=>e}}class _e extends w{handlers(){return{connect:(e,t)=>{},select:(e,t)=>{},hover:(e,t)=>{},drag:(e,t)=>{},drop:(e,t)=>{},create:(e,t,n)=>{}}}}class Fe extends D{}const Me=e=>{e.preventDefault()};class ze{constructor(e,t){Y(this,"store",void 0),Y(this,"dragTarget",void 0),Y(this,"currentDropTargetId",void 0),Y(this,"currentDropTargetCanvasAncestorId",void 0),Y(this,"currentIndicator",null),Y(this,"currentTargetId",void 0),Y(this,"currentTargetChildDimensions",void 0),Y(this,"dragError",void 0),Y(this,"draggedNodes",void 0),Y(this,"onScrollListener",void 0),this.store=e,this.dragTarget=t,this.currentDropTargetId=null,this.currentDropTargetCanvasAncestorId=null,this.currentTargetId=null,this.currentTargetChildDimensions=null,this.currentIndicator=null,this.dragError=null,this.draggedNodes=this.getDraggedNodes(),this.validateDraggedNodes(),this.onScrollListener=this.onScroll.bind(this),window.addEventListener("scroll",this.onScrollListener,!0),window.addEventListener("dragover",Me,!1)}cleanup(){window.removeEventListener("scroll",this.onScrollListener,!0),window.removeEventListener("dragover",Me,!1)}onScroll(e){const t=e.target,n=this.store.query.node(d).get();t instanceof Element&&n&&n.dom&&t.contains(n.dom)&&(this.currentTargetChildDimensions=null)}getDraggedNodes(){return Oe(this.store.query.getNodes(),"new"===this.dragTarget.type?this.dragTarget.tree.nodes[this.dragTarget.tree.rootNodeId]:this.dragTarget.nodes)}validateDraggedNodes(){"new"!==this.dragTarget.type&&this.draggedNodes.forEach(e=>{let{node:t,exists:n}=e;n&&this.store.query.node(t.id).isDraggable(e=>{this.dragError=e})})}isNearBorders(e,t,n){const{top:r,bottom:o,left:s,right:d}=e;return r+ze.BORDER_OFFSET>n||o-ze.BORDER_OFFSET<n||s+ze.BORDER_OFFSET>t||d-ze.BORDER_OFFSET<t}isDiff(e){return!this.currentIndicator||this.currentIndicator.placement.parent.id!==e.parent.id||this.currentIndicator.placement.index!==e.index||this.currentIndicator.placement.where!==e.where}getChildDimensions(e){const t=this.currentTargetChildDimensions;return this.currentTargetId===e.id&&t?t:e.data.nodes.reduce((e,t)=>{const n=this.store.query.node(t).get().dom;return n&&e.push(K({id:t},C(n))),e},[])}getCanvasAncestor(e){if(e===this.currentDropTargetId&&this.currentDropTargetCanvasAncestorId){const e=this.store.query.node(this.currentDropTargetCanvasAncestorId).get();if(e)return e}const t=e=>{const n=this.store.query.node(e).get();return n&&n.data.isCanvas?n:n.data.parent?t(n.data.parent):null};return t(e)}computeIndicator(e,t,n){let r=this.getCanvasAncestor(e);if(!r)return;if(this.currentDropTargetId=e,this.currentDropTargetCanvasAncestorId=r.id,r.data.parent&&this.isNearBorders(C(r.dom),t,n)&&!this.store.query.node(r.id).isLinkedNode()&&(r=this.store.query.node(r.data.parent).get()),!r)return;this.currentTargetChildDimensions=this.getChildDimensions(r),this.currentTargetId=r.id;const o=je(r,this.currentTargetChildDimensions,t,n);if(!this.isDiff(o))return;let s=this.dragError;s||this.store.query.node(r.id).isDroppable(this.draggedNodes.map(e=>e.node),e=>{s=e});const d=r.data.nodes[o.index],a=d&&this.store.query.node(d).get();return this.currentIndicator={placement:K(K({},o),{},{currentNode:a}),error:s},this.currentIndicator}getIndicator(){return this.currentIndicator}}Y(ze,"BORDER_OFFSET",10);const He=function(e,t){if(1===t.length||arguments.length>2&&void 0!==arguments[2]&&arguments[2]){const{width:n,height:r}=t[0].getBoundingClientRect(),o=t[0].cloneNode(!0);return o.style.position="absolute",o.style.left="-100%",o.style.top="-100%",o.style.width="".concat(n,"px"),o.style.height="".concat(r,"px"),o.style.pointerEvents="none",o.classList.add("drag-shadow"),document.body.appendChild(o),e.dataTransfer.setDragImage(o,0,0),o}const n=document.createElement("div");return n.style.position="absolute",n.style.left="-100%",n.style.top="-100%",n.style.width="100%",n.style.height="100%",n.style.pointerEvents="none",n.classList.add("drag-shadow-container"),t.forEach(e=>{const{width:t,height:r,top:o,left:s}=e.getBoundingClientRect(),d=e.cloneNode(!0);d.style.position="absolute",d.style.left="".concat(s,"px"),d.style.top="".concat(o,"px"),d.style.width="".concat(t,"px"),d.style.height="".concat(r,"px"),d.classList.add("drag-shadow"),n.appendChild(d)}),document.body.appendChild(n),e.dataTransfer.setDragImage(n,e.clientX,e.clientY),n};class Be extends _e{constructor(){super(...arguments),Y(this,"draggedElementShadow",void 0),Y(this,"dragTarget",void 0),Y(this,"positioner",null),Y(this,"currentSelectedElementIds",[])}onDisable(){this.options.store.actions.clearEvents()}handlers(){const e=this.options.store;return{connect:(t,n)=>(e.actions.setDOM(n,t),this.reflect(e=>{e.select(t,n),e.hover(t,n),e.drop(t,n)})),select:(t,n)=>{const r=this.addCraftEventListener(t,"mousedown",t=>{t.craft.stopPropagation();let r=[];if(n){const{query:o}=e,s=o.getEvent("selected").all();(this.options.isMultiSelectEnabled(t)||s.includes(n))&&(r=s.filter(e=>{const t=o.node(e).descendants(!0),r=o.node(e).ancestors(!0);return!t.includes(n)&&!r.includes(n)})),r.includes(n)||r.push(n)}e.actions.setNodeEvent("selected",r)}),o=this.addCraftEventListener(t,"click",t=>{t.craft.stopPropagation();const{query:r}=e,o=r.getEvent("selected").all(),s=this.options.isMultiSelectEnabled(t),d=this.currentSelectedElementIds.includes(n);let a=[...o];s&&d?(a.splice(a.indexOf(n),1),e.actions.setNodeEvent("selected",a)):!s&&o.length>1&&(a=[n],e.actions.setNodeEvent("selected",a)),this.currentSelectedElementIds=a});return()=>{r(),o()}},hover:(t,n)=>{const r=this.addCraftEventListener(t,"mouseover",t=>{t.craft.stopPropagation(),e.actions.setNodeEvent("hovered",n)});let o=null;return this.options.removeHoverOnMouseleave&&(o=this.addCraftEventListener(t,"mouseleave",t=>{t.craft.stopPropagation(),e.actions.setNodeEvent("hovered",null)})),()=>{r(),o&&o()}},drop:(t,n)=>{const r=this.addCraftEventListener(t,"dragover",t=>{if(t.craft.stopPropagation(),t.preventDefault(),!this.positioner)return;const r=this.positioner.computeIndicator(n,t.clientX,t.clientY);r&&e.actions.setIndicator(r)}),o=this.addCraftEventListener(t,"dragenter",e=>{e.craft.stopPropagation(),e.preventDefault()});return()=>{o(),r()}},drag:(t,n)=>{if(!e.query.node(n).isDraggable())return()=>{};t.setAttribute("draggable","true");const r=this.addCraftEventListener(t,"dragstart",t=>{t.craft.stopPropagation();const{query:r,actions:o}=e;let s=r.getEvent("selected").all();const d=this.options.isMultiSelectEnabled(t);this.currentSelectedElementIds.includes(n)||(s=d?[...s,n]:[n],e.actions.setNodeEvent("selected",s)),o.setNodeEvent("dragged",s);const a=s.map(e=>r.node(e).get().dom);this.draggedElementShadow=He(t,a,Be.forceSingleDragShadow),this.dragTarget={type:"existing",nodes:s},this.positioner=new ze(this.options.store,this.dragTarget)}),o=this.addCraftEventListener(t,"dragend",t=>{t.craft.stopPropagation(),this.dropElement((t,n)=>{"new"!==t.type&&e.actions.move(t.nodes,n.placement.parent.id,n.placement.index+("after"===n.placement.where?1:0))})});return()=>{t.setAttribute("draggable","false"),r(),o()}},create:(t,n,r)=>{t.setAttribute("draggable","true");const o=this.addCraftEventListener(t,"dragstart",t=>{let r;if(t.craft.stopPropagation(),"function"==typeof n){const t=n();r=q.isValidElement(t)?e.query.parseReactElement(t).toNodeTree():t}else r=e.query.parseReactElement(n).toNodeTree();this.draggedElementShadow=He(t,[t.currentTarget],Be.forceSingleDragShadow),this.dragTarget={type:"new",tree:r},this.positioner=new ze(this.options.store,this.dragTarget)}),s=this.addCraftEventListener(t,"dragend",t=>{t.craft.stopPropagation(),this.dropElement((t,n)=>{"existing"!==t.type&&(e.actions.addNodeTree(t.tree,n.placement.parent.id,n.placement.index+("after"===n.placement.where?1:0)),r&&J(r.onCreate)&&r.onCreate(t.tree))})});return()=>{t.removeAttribute("draggable"),o(),s()}}}}dropElement(e){const t=this.options.store;if(!this.positioner)return;const n=this.draggedElementShadow,r=this.positioner.getIndicator();this.dragTarget&&r&&!r.error&&e(this.dragTarget,r),n&&(n.parentNode.removeChild(n),this.draggedElementShadow=null),this.dragTarget=null,t.actions.setIndicator(null),t.actions.setNodeEvent("dragged",null),this.positioner.cleanup(),this.positioner=null}}function $e(e,t,n){let r=arguments.length>3&&void 0!==arguments[3]?arguments[3]:2,o=0,s=0,d=0,a=0,i=e.where;return n?n.inFlow?(d=n.outerWidth,a=r,o="before"===i?n.top:n.bottom,s=n.left):(d=r,a=n.outerHeight,o=n.top,s="before"===i?n.left:n.left+n.outerWidth):t&&(o=t.top+t.padding.top,s=t.left+t.padding.left,d=t.outerWidth-t.padding.right-t.padding.left-t.margin.left-t.margin.right,a=r),{top:"".concat(o,"px"),left:"".concat(s,"px"),width:"".concat(d,"px"),height:"".concat(a,"px")}}Y(Be,"forceSingleDragShadow",k()&&S());const Je=()=>{const{indicator:e,indicatorOptions:t,enabled:n}=te(e=>({indicator:e.indicator,indicatorOptions:e.options.indicator,enabled:e.options.enabled})),r=ee();return F(()=>{r&&(n?r.enable():r.disable())},[n,r]),e?q.createElement(x,{className:t.className,style:{...$e(e.placement,C(e.placement.parent.dom),e.placement.currentNode&&C(e.placement.currentNode.dom),t.thickness),backgroundColor:e.error?t.error:t.success,transition:t.transition||"0.2s ease-in",...t.style??{}},parentDom:e.placement.parent.dom}):null},We=({children:e})=>{const t=A(Q),n=_(()=>t.query.getOptions().handlers(t),[t]);return n?q.createElement(Z.Provider,{value:n},q.createElement(Je,null),e):null},Ve={nodes:{},events:{dragged:new Set,selected:new Set,hovered:new Set},indicator:null,options:{onNodesChange:()=>null,onRender:({render:e})=>e,onBeforeMoveEnd:()=>null,resolver:{},enabled:!0,indicator:{error:"red",success:"rgb(98, 196, 98)"},handlers:e=>new Be({store:e,removeHoverOnMouseleave:!1,isMultiSelectEnabled:e=>!!e.metaKey}),normalizeNodes:()=>{}}},Xe={methods:(e,t)=>K(K({},Ce(e,t)),{},{setState(t){const n=U(this,Te);t(e,n)}}),ignoreHistoryForActions:["setDOM","setNodeEvent","selectNode","clearEvents","setOptions","setIndicator"],normalizeHistory:e=>{Object.keys(e.events).forEach(t=>{Array.from(e.events[t]||[]).forEach(n=>{e.nodes[n]||e.events[t].delete(n)})}),Object.keys(e.nodes).forEach(t=>{const n=e.nodes[t];Object.keys(n.events).forEach(t=>{n.events[t]&&e.events[t]&&!e.events[t].has(n.id)&&(n.events[t]=!1)})})}},Ye=(e,t)=>I(Xe,{...Ve,options:{...Ve.options,...e}},Ae,t),Ge=({children:e,...t})=>{void 0!==t.resolver&&$("object"==typeof t.resolver&&!Array.isArray(t.resolver)&&null!==t.resolver,j);const n=L.useRef(t),r=Ye(n.current,(e,t,n,r,o)=>{if(!n)return;const{patches:s,...d}=n;for(let n=0;n<s.length;n++){const{path:a}=s[n],i=a.length>2&&"nodes"===a[0]&&"data"===a[2];if([P.IGNORE,P.THROTTLE].includes(d.type)&&d.params&&(d.type=d.params[0]),["setState","deserialize"].includes(d.type)||i){o(n=>{e.options.normalizeNodes&&e.options.normalizeNodes(n,t,d,r)});break}}});return L.useEffect(()=>{r&&void 0!==t.enabled&&r.query.getOptions().enabled!==t.enabled&&r.actions.setOptions(e=>{e.enabled=t.enabled})},[r,t.enabled]),L.useEffect(()=>{r.subscribe(e=>({json:r.query.serialize()}),()=>{r.query.getOptions().onNodesChange(r.query)})},[r]),r?L.createElement(Q.Provider,{value:r},L.createElement(We,null,e)):null},Ke=["events","data"],Ue=["nodes"],Qe=["nodes"],Ze=["_hydrationTimestamp","rules"],et=["_hydrationTimestamp","rules"],tt=e=>{const{events:t,data:{nodes:n,linkedNodes:r}}=e,o=U(e,Ke),s=Le(W(e));return{node:e=K(K(K({},s),o),{},{events:K(K({},s.events),t),dom:e.dom||s.dom}),childNodes:n,linkedNodes:r}},nt=(e,t)=>{const{nodes:n}=t,r=U(t,Ue),{nodes:o}=e,s=U(e,Qe);expect(s).toEqual(r);const d=Object.keys(n).reduce((e,t)=>{const r=U(n[t],Ze);return e[t]=r,e},{}),a=Object.keys(o).reduce((e,t)=>{const n=U(o[t],et);return e[t]=n,e},{});expect(a).toEqual(d)},rt=e=>{const t={},n=e=>{const{node:r,childNodes:o,linkedNodes:s}=tt(e);t[r.id]=r,o&&o.forEach((e,o)=>{const{node:s,childNodes:d,linkedNodes:a}=tt(e);s.data.parent=r.id,t[s.id]=s,r.data.nodes[o]=s.id,n(K(K({},s),{},{data:K(K({},s.data),{},{nodes:d||[],linkedNodes:a||{}})}))}),s&&Object.keys(s).forEach(e=>{const{node:o,childNodes:d,linkedNodes:a}=tt(s[e]);r.data.linkedNodes[e]=o.id,o.data.parent=r.id,t[o.id]=o,n(K(K({},o),{},{data:K(K({},o.data),{},{nodes:d||[],linkedNodes:a||{}})}))})};return n(e),t},ot=function(){let e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};const{nodes:t,events:n}=e;return K(K(K({},Ve),e),{},{nodes:t?rt(t):{},events:K(K({},Ve.events),n||{})})};export{Xe as ActionMethodsWithConfig,Canvas,_e as CoreEventHandlers,Be as DefaultEventHandlers,Fe as DerivedCoreEventHandlers,Ge as Editor,ue as Element,We as Events,fe as Frame,ce as NodeElement,Ie as NodeHelpers,X as NodeProvider,me as NodeSelectorType,ze as Positioner,Ae as QueryMethods,Ne as connectEditor,Ee as connectNode,He as createShadow,rt as createTestNodes,ot as createTestState,le as defaultElementProps,he as deprecateCanvasComponent,Ve as editorInitialState,pe as elementPropToNodeData,nt as expectEditorState,xe as serializeNode,ye as useEditor,Ye as useEditorStore,ee as useEventHandler,se as useNode};
+if (typeof window !== 'undefined') {
+  if (!window['__CRAFTJS__']) {
+    window['__CRAFTJS__'] = {};
+  }
+
+  window['__CRAFTJS__']['@craftjs/core'] = '0.2.12';
+}
+
+import {
+  ERROR_USE_EDITOR_OUTSIDE_OF_EDITOR_CONTEXT,
+  useCollector,
+  wrapConnectorHooks,
+  ERROR_USE_NODE_OUTSIDE_OF_EDITOR_CONTEXT,
+  deprecationWarning,
+  ERROR_TOP_LEVEL_ELEMENT_NO_ID,
+  ROOT_NODE,
+  ERROR_INVALID_NODEID,
+  ERROR_DELETE_TOP_LEVEL_NODE,
+  ERROR_NOPARENT,
+  DEPRECATED_ROOT_NODE,
+  ERROR_NOT_IN_RESOLVER,
+  ERROR_INVALID_NODE_ID,
+  ERROR_MOVE_TOP_LEVEL_NODE,
+  ERROR_MOVE_NONCANVAS_CHILD,
+  ERROR_CANNOT_DRAG,
+  ERROR_MOVE_TO_NONCANVAS_PARENT,
+  ERROR_MOVE_INCOMING_PARENT,
+  ERROR_MOVE_CANNOT_DROP,
+  ERROR_MOVE_TO_DESCENDANT,
+  ERROR_DUPLICATE_NODEID,
+  ERROR_MOVE_OUTGOING_PARENT,
+  getRandomId,
+  ERROR_DESERIALIZE_COMPONENT_NOT_IN_RESOLVER,
+  getDOMInfo,
+  EventHandlers,
+  DerivedEventHandlers,
+  isChromium,
+  isLinux,
+  RenderIndicator,
+  useMethods,
+  ERROR_RESOLVER_NOT_AN_OBJECT,
+  HISTORY_ACTIONS,
+} from '@craftjs/utils';
+export { ROOT_NODE } from '@craftjs/utils';
+import * as React from 'react';
+import React__default, {
+  createContext,
+  useContext,
+  useMemo,
+  useEffect,
+  useState,
+  useRef,
+  Children,
+  Fragment,
+} from 'react';
+import invariant from 'tiny-invariant';
+import isFunction from 'lodash/isFunction';
+import cloneDeep from 'lodash/cloneDeep';
+
+const NodeContext = React__default.createContext(null);
+const NodeProvider = ({ id, related = false, children }) => {
+  return React__default.createElement(
+    NodeContext.Provider,
+    { value: { id, related } },
+    children
+  );
+};
+
+function _defineProperty(e, r, t) {
+  return (
+    (r = _toPropertyKey(r)) in e
+      ? Object.defineProperty(e, r, {
+          value: t,
+          enumerable: !0,
+          configurable: !0,
+          writable: !0,
+        })
+      : (e[r] = t),
+    e
+  );
+}
+function ownKeys(e, r) {
+  var t = Object.keys(e);
+  if (Object.getOwnPropertySymbols) {
+    var o = Object.getOwnPropertySymbols(e);
+    r &&
+      (o = o.filter(function (r) {
+        return Object.getOwnPropertyDescriptor(e, r).enumerable;
+      })),
+      t.push.apply(t, o);
+  }
+  return t;
+}
+function _objectSpread2(e) {
+  for (var r = 1; r < arguments.length; r++) {
+    var t = null != arguments[r] ? arguments[r] : {};
+    r % 2
+      ? ownKeys(Object(t), !0).forEach(function (r) {
+          _defineProperty(e, r, t[r]);
+        })
+      : Object.getOwnPropertyDescriptors
+      ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t))
+      : ownKeys(Object(t)).forEach(function (r) {
+          Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
+        });
+  }
+  return e;
+}
+function _objectWithoutProperties(e, t) {
+  if (null == e) return {};
+  var o,
+    r,
+    i = _objectWithoutPropertiesLoose(e, t);
+  if (Object.getOwnPropertySymbols) {
+    var n = Object.getOwnPropertySymbols(e);
+    for (r = 0; r < n.length; r++)
+      (o = n[r]),
+        -1 === t.indexOf(o) &&
+          {}.propertyIsEnumerable.call(e, o) &&
+          (i[o] = e[o]);
+  }
+  return i;
+}
+function _objectWithoutPropertiesLoose(r, e) {
+  if (null == r) return {};
+  var t = {};
+  for (var n in r)
+    if ({}.hasOwnProperty.call(r, n)) {
+      if (-1 !== e.indexOf(n)) continue;
+      t[n] = r[n];
+    }
+  return t;
+}
+function _toPrimitive(t, r) {
+  if ('object' != typeof t || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || 'default');
+    if ('object' != typeof i) return i;
+    throw new TypeError('@@toPrimitive must return a primitive value.');
+  }
+  return ('string' === r ? String : Number)(t);
+}
+function _toPropertyKey(t) {
+  var i = _toPrimitive(t, 'string');
+  return 'symbol' == typeof i ? i : i + '';
+}
+
+const EditorContext = createContext(null);
+
+const EventHandlerContext = createContext(null);
+const useEventHandler = () => useContext(EventHandlerContext);
+
+function useInternalEditor(collector) {
+  const handler = useEventHandler();
+  const store = useContext(EditorContext);
+  invariant(store, ERROR_USE_EDITOR_OUTSIDE_OF_EDITOR_CONTEXT);
+  const collected = useCollector(store, collector);
+  const connectorsUsage = useMemo(
+    () => handler && handler.createConnectorsUsage(),
+    [handler]
+  );
+  useEffect(() => {
+    connectorsUsage.register();
+    return () => {
+      connectorsUsage.cleanup();
+    };
+  }, [connectorsUsage]);
+  const connectors = useMemo(
+    () => connectorsUsage && wrapConnectorHooks(connectorsUsage.connectors),
+    [connectorsUsage]
+  );
+  return _objectSpread2(
+    _objectSpread2({}, collected),
+    {},
+    {
+      connectors,
+      inContext: !!store,
+      store,
+    }
+  );
+}
+
+const _excluded$3 = ['actions', 'query', 'connectors'];
+function useInternalNode(collect) {
+  const context = useContext(NodeContext);
+  invariant(context, ERROR_USE_NODE_OUTSIDE_OF_EDITOR_CONTEXT);
+  const { id, related } = context;
+  const _useInternalEditor = useInternalEditor(
+      (state) => id && state.nodes[id] && collect && collect(state.nodes[id])
+    ),
+    {
+      actions: EditorActions,
+      query,
+      connectors: editorConnectors,
+    } = _useInternalEditor,
+    collected = _objectWithoutProperties(_useInternalEditor, _excluded$3);
+  const connectors = useMemo(
+    () =>
+      wrapConnectorHooks({
+        connect: (dom) => editorConnectors.connect(dom, id),
+        drag: (dom) => editorConnectors.drag(dom, id),
+      }),
+    [editorConnectors, id]
+  );
+  const actions = useMemo(() => {
+    return {
+      setProp: (cb, throttleRate) => {
+        if (throttleRate) {
+          EditorActions.history.throttle(throttleRate).setProp(id, cb);
+        } else {
+          EditorActions.setProp(id, cb);
+        }
+      },
+      setCustom: (cb, throttleRate) => {
+        if (throttleRate) {
+          EditorActions.history.throttle(throttleRate).setCustom(id, cb);
+        } else {
+          EditorActions.setCustom(id, cb);
+        }
+      },
+      setHidden: (bool) => EditorActions.setHidden(id, bool),
+    };
+  }, [EditorActions, id]);
+  return _objectSpread2(
+    _objectSpread2({}, collected),
+    {},
+    {
+      id,
+      related,
+      inNodeContext: !!context,
+      actions,
+      connectors,
+    }
+  );
+}
+
+const _excluded$2 = ['id', 'related', 'actions', 'inNodeContext', 'connectors'];
+/**
+ * A Hook to that provides methods and state information related to the corresponding Node that manages the current component.
+ * @param collect - Collector function to consume values from the corresponding Node's state
+ */
+function useNode(collect) {
+  const _useInternalNode = useInternalNode(collect),
+    { id, related, actions, inNodeContext, connectors } = _useInternalNode,
+    collected = _objectWithoutProperties(_useInternalNode, _excluded$2);
+  return _objectSpread2(
+    _objectSpread2({}, collected),
+    {},
+    {
+      actions,
+      id,
+      related,
+      setProp: (cb, throttleRate) => {
+        deprecationWarning('useNode().setProp()', {
+          suggest: 'useNode().actions.setProp()',
+        });
+        return actions.setProp(cb, throttleRate);
+      },
+      inNodeContext,
+      connectors,
+    }
+  );
+}
+
+const SimpleElement = ({ render }) => {
+  const {
+    connectors: { connect, drag },
+  } = useNode();
+  return typeof render.type === 'string'
+    ? connect(drag(React__default.cloneElement(render)))
+    : render;
+};
+
+const DefaultRender = () => {
+  const { type, props, nodes, hydrationTimestamp } = useInternalNode(
+    (node) => ({
+      type: node.data.type,
+      props: node.data.props,
+      nodes: node.data.nodes,
+      hydrationTimestamp: node._hydrationTimestamp,
+    })
+  );
+  return useMemo(() => {
+    let children = props.children;
+    if (nodes && nodes.length > 0) {
+      children = React__default.createElement(
+        React__default.Fragment,
+        null,
+        nodes.map((id) =>
+          React__default.createElement(NodeElement, { id: id, key: id })
+        )
+      );
+    }
+    const render = React__default.createElement(type, props, children);
+    if (typeof type == 'string') {
+      return React__default.createElement(SimpleElement, { render: render });
+    }
+    return render;
+    // eslint-disable-next-line  react-hooks/exhaustive-deps
+  }, [type, props, hydrationTimestamp, nodes]);
+};
+
+const RenderNodeToElement = ({ render }) => {
+  const { hidden } = useInternalNode((node) => ({
+    hidden: node.data.hidden,
+  }));
+  const { onRender } = useInternalEditor((state) => ({
+    onRender: state.options.onRender,
+  }));
+  // don't display the node since it's hidden
+  if (hidden) {
+    return null;
+  }
+  return React__default.createElement(onRender, {
+    render: render || React__default.createElement(DefaultRender, null),
+  });
+};
+
+const NodeElement = ({ id, render }) => {
+  return React__default.createElement(
+    NodeProvider,
+    { id: id },
+    React__default.createElement(RenderNodeToElement, { render: render })
+  );
+};
+
+const defaultElementProps = {
+  is: 'div',
+  canvas: false,
+  custom: {},
+  hidden: false,
+};
+const elementPropToNodeData = {
+  is: 'type',
+  canvas: 'isCanvas',
+};
+function Element$1({ id, children, ...elementProps }) {
+  const { is } = {
+    ...defaultElementProps,
+    ...elementProps,
+  };
+  const { query, actions } = useInternalEditor();
+  const { id: nodeId, inNodeContext } = useInternalNode();
+  const [linkedNodeId] = useState(() => {
+    invariant(!!id, ERROR_TOP_LEVEL_ELEMENT_NO_ID);
+    const node = query.node(nodeId).get();
+    if (inNodeContext) {
+      const existingNode = node.data.linkedNodes[id]
+        ? query.node(node.data.linkedNodes[id]).get()
+        : null;
+      // Render existing linked Node if it already exists (and is the same type as the JSX)
+      if (existingNode && existingNode.data.type === is) {
+        return existingNode.id;
+      }
+      // otherwise, create and render a new linked Node
+      const linkedElement = React__default.createElement(
+        Element$1,
+        elementProps,
+        children
+      );
+      const tree = query.parseReactElement(linkedElement).toNodeTree();
+      actions.history.ignore().addLinkedNodeFromTree(tree, nodeId, id);
+      return tree.rootNodeId;
+    }
+    return null;
+  });
+  return linkedNodeId
+    ? React__default.createElement(NodeElement, { id: linkedNodeId })
+    : null;
+}
+
+const deprecateCanvasComponent = () =>
+  deprecationWarning('<Canvas />', {
+    suggest: '<Element canvas={true} />',
+  });
+function Canvas({ ...props }) {
+  useEffect(() => deprecateCanvasComponent(), []);
+  return React__default.createElement(Element$1, { ...props, canvas: true });
+}
+
+const RenderRootNode = () => {
+  const { timestamp } = useInternalEditor((state) => ({
+    timestamp:
+      state.nodes[ROOT_NODE] && state.nodes[ROOT_NODE]._hydrationTimestamp,
+  }));
+  if (!timestamp) {
+    return null;
+  }
+  return React__default.createElement(NodeElement, {
+    id: ROOT_NODE,
+    key: timestamp,
+  });
+};
+/**
+ * A React Component that defines the editable area
+ */
+const Frame = ({ children, json, data }) => {
+  const { actions, query } = useInternalEditor();
+  if (!!json) {
+    deprecationWarning('<Frame json={...} />', {
+      suggest: '<Frame data={...} />',
+    });
+  }
+  const isLoaded = useRef(false);
+  if (!isLoaded.current) {
+    const initialData = data || json;
+    if (initialData) {
+      actions.history.ignore().deserialize(initialData);
+    } else if (children) {
+      const rootNode = React__default.Children.only(children);
+      const node = query.parseReactElement(rootNode).toNodeTree((node, jsx) => {
+        if (jsx === rootNode) {
+          node.id = ROOT_NODE;
+        }
+        return node;
+      });
+      actions.history.ignore().addNodeTree(node);
+    }
+    isLoaded.current = true;
+  }
+  return React__default.createElement(RenderRootNode, null);
+};
+
+var NodeSelectorType;
+(function (NodeSelectorType) {
+  NodeSelectorType[(NodeSelectorType['Any'] = 0)] = 'Any';
+  NodeSelectorType[(NodeSelectorType['Id'] = 1)] = 'Id';
+  NodeSelectorType[(NodeSelectorType['Obj'] = 2)] = 'Obj';
+})(NodeSelectorType || (NodeSelectorType = {}));
+
+const getPublicActions = (actions) => {
+  const {
+    addLinkedNodeFromTree,
+    setDOM,
+    setNodeEvent,
+    replaceNodes,
+    reset,
+    ...EditorActions
+  } = actions;
+  return EditorActions;
+};
+function useEditor(collect) {
+  const {
+    connectors,
+    actions: internalActions,
+    query,
+    store,
+    ...collected
+  } = useInternalEditor(collect);
+  const EditorActions = getPublicActions(internalActions);
+  const actions = useMemo(() => {
+    return {
+      ...EditorActions,
+      history: {
+        ...EditorActions.history,
+        ignore: (...args) =>
+          getPublicActions(EditorActions.history.ignore(...args)),
+        throttle: (...args) =>
+          getPublicActions(EditorActions.history.throttle(...args)),
+      },
+    };
+  }, [EditorActions]);
+  return {
+    connectors,
+    actions,
+    query,
+    store,
+    ...collected,
+  };
+}
+
+function connectEditor(collect) {
+  return (WrappedComponent) => {
+    return (props) => {
+      const Editor = collect ? useEditor(collect) : useEditor();
+      return React__default.createElement(WrappedComponent, {
+        ...Editor,
+        ...props,
+      });
+    };
+  };
+}
+
+function connectNode(collect) {
+  return function (WrappedComponent) {
+    return (props) => {
+      const node = useNode(collect);
+      return React__default.createElement(WrappedComponent, {
+        ...node,
+        ...props,
+      });
+    };
+  };
+}
+
+const fromEntries = (pairs) => {
+  if (Object.fromEntries) {
+    return Object.fromEntries(pairs);
+  }
+  return pairs.reduce((accum, _ref) => {
+    let [id, value] = _ref;
+    return _objectSpread2(
+      _objectSpread2({}, accum),
+      {},
+      {
+        [id]: value,
+      }
+    );
+  }, {});
+};
+
+const getNodesFromSelector = (nodes, selector, config) => {
+  const items = Array.isArray(selector) ? selector : [selector];
+  const mergedConfig = _objectSpread2(
+    {
+      existOnly: false,
+      idOnly: false,
+    },
+    config || {}
+  );
+  const nodeSelectors = items
+    .filter((item) => !!item)
+    .map((item) => {
+      if (typeof item === 'string') {
+        return {
+          node: nodes[item],
+          exists: !!nodes[item],
+        };
+      }
+      if (typeof item === 'object' && !mergedConfig.idOnly) {
+        const node = item;
+        return {
+          node,
+          exists: !!nodes[node.id],
+        };
+      }
+      return {
+        node: null,
+        exists: false,
+      };
+    });
+  if (mergedConfig.existOnly) {
+    invariant(
+      nodeSelectors.filter((selector) => !selector.exists).length === 0,
+      ERROR_INVALID_NODEID
+    );
+  }
+  return nodeSelectors;
+};
+
+const removeNodeFromEvents = (state, nodeId) =>
+  Object.keys(state.events).forEach((key) => {
+    const eventSet = state.events[key];
+    if (eventSet && eventSet.has && eventSet.has(nodeId)) {
+      state.events[key] = new Set(
+        Array.from(eventSet).filter((id) => nodeId !== id)
+      );
+    }
+  });
+
+const _excluded$1 = ['history'];
+const Methods = (state, query) => {
+  /** Helper functions */
+  const addNodeTreeToParent = (tree, parentId, addNodeType) => {
+    const iterateChildren = (id, parentId) => {
+      const node = tree.nodes[id];
+      if (typeof node.data.type !== 'string') {
+        invariant(
+          state.options.resolver[node.data.name],
+          ERROR_NOT_IN_RESOLVER.replace(
+            '%node_type%',
+            ''.concat(node.data.type.name)
+          )
+        );
+      }
+      state.nodes[id] = _objectSpread2(
+        _objectSpread2({}, node),
+        {},
+        {
+          data: _objectSpread2(
+            _objectSpread2({}, node.data),
+            {},
+            {
+              parent: parentId,
+            }
+          ),
+        }
+      );
+      if (node.data.nodes.length > 0) {
+        delete state.nodes[id].data.props.children;
+        node.data.nodes.forEach((childNodeId) =>
+          iterateChildren(childNodeId, node.id)
+        );
+      }
+      Object.values(node.data.linkedNodes).forEach((linkedNodeId) =>
+        iterateChildren(linkedNodeId, node.id)
+      );
+    };
+    iterateChildren(tree.rootNodeId, parentId);
+    if (!parentId && tree.rootNodeId === ROOT_NODE) {
+      return;
+    }
+    const parent = getParentAndValidate(parentId);
+    if (addNodeType.type === 'child') {
+      const index = addNodeType.index;
+      if (index != null) {
+        parent.data.nodes.splice(index, 0, tree.rootNodeId);
+      } else {
+        parent.data.nodes.push(tree.rootNodeId);
+      }
+      return;
+    }
+    parent.data.linkedNodes[addNodeType.id] = tree.rootNodeId;
+  };
+  const getParentAndValidate = (parentId) => {
+    invariant(parentId, ERROR_NOPARENT);
+    const parent = state.nodes[parentId];
+    invariant(parent, ERROR_INVALID_NODEID);
+    return parent;
+  };
+  const deleteNode = (id) => {
+    const targetNode = state.nodes[id],
+      parentNode = state.nodes[targetNode.data.parent];
+    if (targetNode.data.nodes) {
+      // we deep clone here because otherwise immer will mutate the node
+      // object as we remove nodes
+      [...targetNode.data.nodes].forEach((childId) => deleteNode(childId));
+    }
+    if (targetNode.data.linkedNodes) {
+      Object.values(targetNode.data.linkedNodes).map((linkedNodeId) =>
+        deleteNode(linkedNodeId)
+      );
+    }
+    const isChildNode = parentNode.data.nodes.includes(id);
+    if (isChildNode) {
+      const parentChildren = parentNode.data.nodes;
+      parentChildren.splice(parentChildren.indexOf(id), 1);
+    } else {
+      const linkedId = Object.keys(parentNode.data.linkedNodes).find(
+        (id) => parentNode.data.linkedNodes[id] === id
+      );
+      if (linkedId) {
+        delete parentNode.data.linkedNodes[linkedId];
+      }
+    }
+    removeNodeFromEvents(state, id);
+    delete state.nodes[id];
+  };
+  return {
+    /**
+     * @private
+     * Add a new linked Node to the editor.
+     * Only used internally by the <Element /> component
+     *
+     * @param tree
+     * @param parentId
+     * @param id
+     */
+    addLinkedNodeFromTree(tree, parentId, id) {
+      const parent = getParentAndValidate(parentId);
+      const existingLinkedNode = parent.data.linkedNodes[id];
+      if (existingLinkedNode) {
+        deleteNode(existingLinkedNode);
+      }
+      addNodeTreeToParent(tree, parentId, {
+        type: 'linked',
+        id,
+      });
+    },
+    /**
+     * Add a new Node to the editor.
+     *
+     * @param nodeToAdd
+     * @param parentId
+     * @param index
+     */
+    add(nodeToAdd, parentId, index) {
+      // TODO: Deprecate adding array of Nodes to keep implementation simpler
+      let nodes = [nodeToAdd];
+      if (Array.isArray(nodeToAdd)) {
+        deprecationWarning('actions.add(node: Node[])', {
+          suggest: 'actions.add(node: Node)',
+        });
+        nodes = nodeToAdd;
+      }
+      nodes.forEach((node) => {
+        addNodeTreeToParent(
+          {
+            nodes: {
+              [node.id]: node,
+            },
+            rootNodeId: node.id,
+          },
+          parentId,
+          {
+            type: 'child',
+            index,
+          }
+        );
+      });
+    },
+    /**
+     * Add a NodeTree to the editor
+     *
+     * @param tree
+     * @param parentId
+     * @param index
+     */
+    addNodeTree(tree, parentId, index) {
+      addNodeTreeToParent(tree, parentId, {
+        type: 'child',
+        index,
+      });
+    },
+    /**
+     * Delete a Node
+     * @param id
+     */
+    delete(selector) {
+      const targets = getNodesFromSelector(state.nodes, selector, {
+        existOnly: true,
+        idOnly: true,
+      });
+      targets.forEach((_ref) => {
+        let { node } = _ref;
+        invariant(
+          !query.node(node.id).isTopLevelNode(),
+          ERROR_DELETE_TOP_LEVEL_NODE
+        );
+        deleteNode(node.id);
+      });
+    },
+    deserialize(input) {
+      const dehydratedNodes =
+        typeof input == 'string' ? JSON.parse(input) : input;
+      const nodePairs = Object.keys(dehydratedNodes).map((id) => {
+        let nodeId = id;
+        if (id === DEPRECATED_ROOT_NODE) {
+          nodeId = ROOT_NODE;
+        }
+        return [
+          nodeId,
+          query
+            .parseSerializedNode(dehydratedNodes[id])
+            .toNode((node) => (node.id = nodeId)),
+        ];
+      });
+      this.replaceNodes(fromEntries(nodePairs));
+    },
+    /**
+     * Move a target Node to a new Parent at a given index
+     * @param targetId
+     * @param newParentId
+     * @param index
+     */
+    move(selector, newParentId, index) {
+      const targets = getNodesFromSelector(state.nodes, selector, {
+        existOnly: true,
+      });
+      const newParent = state.nodes[newParentId];
+      const nodesArrToCleanup = new Set();
+      targets.forEach((_ref2, i) => {
+        let { node: targetNode } = _ref2;
+        const targetId = targetNode.id;
+        const currentParentId = targetNode.data.parent;
+        query.node(newParentId).isDroppable([targetId], (err) => {
+          throw new Error(err);
+        });
+        // modify node props
+        state.options.onBeforeMoveEnd(
+          targetNode,
+          newParent,
+          state.nodes[currentParentId]
+        );
+        const currentParent = state.nodes[currentParentId];
+        const currentParentNodes = currentParent.data.nodes;
+        nodesArrToCleanup.add(currentParentNodes);
+        const oldIndex = currentParentNodes.indexOf(targetId);
+        currentParentNodes[oldIndex] = '$$'; // mark for deletion
+        newParent.data.nodes.splice(index + i, 0, targetId);
+        state.nodes[targetId].data.parent = newParentId;
+      });
+      nodesArrToCleanup.forEach((nodes) => {
+        const length = nodes.length;
+        [...nodes].reverse().forEach((value, index) => {
+          if (value !== '$$') {
+            return;
+          }
+          nodes.splice(length - 1 - index, 1);
+        });
+      });
+    },
+    replaceNodes(nodes) {
+      this.clearEvents();
+      state.nodes = nodes;
+    },
+    clearEvents() {
+      this.setNodeEvent('selected', null);
+      this.setNodeEvent('hovered', null);
+      this.setNodeEvent('dragged', null);
+      this.setIndicator(null);
+    },
+    /**
+     * Resets all the editor state.
+     */
+    reset() {
+      this.clearEvents();
+      this.replaceNodes({});
+    },
+    /**
+     * Set editor options via a callback function
+     *
+     * @param cb: function used to set the options.
+     */
+    setOptions(cb) {
+      cb(state.options);
+    },
+    setNodeEvent(eventType, nodeIdSelector) {
+      state.events[eventType].forEach((id) => {
+        if (state.nodes[id]) {
+          state.nodes[id].events[eventType] = false;
+        }
+      });
+      state.events[eventType] = new Set();
+      if (!nodeIdSelector) {
+        return;
+      }
+      const targets = getNodesFromSelector(state.nodes, nodeIdSelector, {
+        idOnly: true,
+        existOnly: true,
+      });
+      const nodeIds = new Set(
+        targets.map((_ref3) => {
+          let { node } = _ref3;
+          return node.id;
+        })
+      );
+      nodeIds.forEach((id) => {
+        state.nodes[id].events[eventType] = true;
+      });
+      state.events[eventType] = nodeIds;
+    },
+    /**
+     * Set custom values to a Node
+     * @param id
+     * @param cb
+     */
+    setCustom(selector, cb) {
+      const targets = getNodesFromSelector(state.nodes, selector, {
+        idOnly: true,
+        existOnly: true,
+      });
+      targets.forEach((_ref4) => {
+        let { node } = _ref4;
+        return cb(state.nodes[node.id].data.custom);
+      });
+    },
+    /**
+     * Given a `id`, it will set the `dom` porperty of that node.
+     *
+     * @param id of the node we want to set
+     * @param dom
+     */
+    setDOM(id, dom) {
+      if (!state.nodes[id]) {
+        return;
+      }
+      state.nodes[id].dom = dom;
+    },
+    setIndicator(indicator) {
+      if (
+        indicator &&
+        (!indicator.placement.parent.dom ||
+          (indicator.placement.currentNode &&
+            !indicator.placement.currentNode.dom))
+      )
+        return;
+      state.indicator = indicator;
+    },
+    /**
+     * Hide a Node
+     * @param id
+     * @param bool
+     */
+    setHidden(id, bool) {
+      state.nodes[id].data.hidden = bool;
+    },
+    /**
+     * Update the props of a Node
+     * @param id
+     * @param cb
+     */
+    setProp(selector, cb) {
+      const targets = getNodesFromSelector(state.nodes, selector, {
+        idOnly: true,
+        existOnly: true,
+      });
+      targets.forEach((_ref5) => {
+        let { node } = _ref5;
+        return cb(state.nodes[node.id].data.props);
+      });
+    },
+    selectNode(nodeIdSelector) {
+      if (nodeIdSelector) {
+        const targets = getNodesFromSelector(state.nodes, nodeIdSelector, {
+          idOnly: true,
+          existOnly: true,
+        });
+        this.setNodeEvent(
+          'selected',
+          targets.map((_ref6) => {
+            let { node } = _ref6;
+            return node.id;
+          })
+        );
+      } else {
+        this.setNodeEvent('selected', null);
+      }
+      this.setNodeEvent('hovered', null);
+    },
+  };
+};
+const ActionMethods = (state, query) => {
+  return _objectSpread2(
+    _objectSpread2({}, Methods(state, query)),
+    {},
+    {
+      // Note: Beware: advanced method! You most likely don't need to use this
+      // TODO: fix parameter types and cleanup the method
+      setState(cb) {
+        const _this = this,
+          actions = _objectWithoutProperties(_this, _excluded$1);
+        // We pass the other actions as the second parameter, so that devs could still make use of the predefined actions
+        cb(state, actions);
+      },
+    }
+  );
+};
+
+function EventHelpers(state, eventType) {
+  const event = state.events[eventType];
+  return {
+    contains(id) {
+      return event.has(id);
+    },
+    isEmpty() {
+      return this.all().length === 0;
+    },
+    first() {
+      const values = this.all();
+      return values[0];
+    },
+    last() {
+      const values = this.all();
+      return values[values.length - 1];
+    },
+    all() {
+      return Array.from(event);
+    },
+    size() {
+      return this.all().length;
+    },
+    at(i) {
+      return this.all()[i];
+    },
+    raw() {
+      return event;
+    },
+  };
+}
+
+let CACHED_RESOLVER_DATA = null;
+const getReversedResolver = (resolver) => {
+  if (CACHED_RESOLVER_DATA && CACHED_RESOLVER_DATA.resolver === resolver) {
+    return CACHED_RESOLVER_DATA.reversed;
+  }
+  CACHED_RESOLVER_DATA = {
+    resolver,
+    reversed: new Map(),
+  };
+  for (const [name, comp] of Object.entries(resolver)) {
+    CACHED_RESOLVER_DATA.reversed.set(comp, name);
+  }
+  return CACHED_RESOLVER_DATA.reversed;
+};
+const getComponentName = (component) => {
+  return component.name || component.displayName;
+};
+const searchComponentInResolver = (resolver, comp) => {
+  const name = getReversedResolver(resolver).get(comp);
+  return name !== undefined ? name : null;
+};
+const resolveComponent = (resolver, comp) => {
+  if (typeof comp === 'string') {
+    return comp;
+  }
+  const resolvedName = searchComponentInResolver(resolver, comp);
+  invariant(
+    resolvedName,
+    ERROR_NOT_IN_RESOLVER.replace('%node_type%', getComponentName(comp))
+  );
+  return resolvedName;
+};
+
+const reduceType = (type, resolver) => {
+  if (typeof type === 'string') {
+    return type;
+  }
+  return { resolvedName: resolveComponent(resolver, type) };
+};
+const serializeComp = (data, resolver) => {
+  let { type, isCanvas, props } = data;
+  props = Object.keys(props).reduce((result, key) => {
+    const prop = props[key];
+    if (prop === undefined || prop === null || typeof prop === 'function') {
+      return result;
+    }
+    if (key === 'children' && typeof prop !== 'string') {
+      result[key] = Children.map(prop, (child) => {
+        if (typeof child === 'string') {
+          return child;
+        }
+        return serializeComp(child, resolver);
+      });
+    } else if (typeof prop.type === 'function') {
+      result[key] = serializeComp(prop, resolver);
+    } else {
+      result[key] = prop;
+    }
+    return result;
+  }, {});
+  return {
+    type: reduceType(type, resolver),
+    isCanvas: !!isCanvas,
+    props,
+  };
+};
+const serializeNode = (data, resolver) => {
+  const { type, props, isCanvas, name, ...nodeData } = data;
+  const reducedComp = serializeComp({ type, isCanvas, props }, resolver);
+  return {
+    ...reducedComp,
+    ...nodeData,
+  };
+};
+
+function NodeHelpers(state, id) {
+  invariant(typeof id == 'string', ERROR_INVALID_NODE_ID);
+  const node = state.nodes[id];
+  const nodeHelpers = (id) => NodeHelpers(state, id);
+  return {
+    isCanvas() {
+      return !!node.data.isCanvas;
+    },
+    isRoot() {
+      return node.id === ROOT_NODE;
+    },
+    isLinkedNode() {
+      return (
+        node.data.parent &&
+        nodeHelpers(node.data.parent).linkedNodes().includes(node.id)
+      );
+    },
+    isTopLevelNode() {
+      return this.isRoot() || this.isLinkedNode();
+    },
+    isDeletable() {
+      return !this.isTopLevelNode();
+    },
+    isParentOfTopLevelNodes: () =>
+      node.data.linkedNodes && Object.keys(node.data.linkedNodes).length > 0,
+    isParentOfTopLevelCanvas() {
+      deprecationWarning('query.node(id).isParentOfTopLevelCanvas', {
+        suggest: 'query.node(id).isParentOfTopLevelNodes',
+      });
+      return this.isParentOfTopLevelNodes();
+    },
+    isSelected() {
+      return state.events.selected.has(id);
+    },
+    isHovered() {
+      return state.events.hovered.has(id);
+    },
+    isDragged() {
+      return state.events.dragged.has(id);
+    },
+    get() {
+      return node;
+    },
+    ancestors() {
+      let deep =
+        arguments.length > 0 && arguments[0] !== undefined
+          ? arguments[0]
+          : false;
+      function appendParentNode(id) {
+        let ancestors =
+          arguments.length > 1 && arguments[1] !== undefined
+            ? arguments[1]
+            : [];
+        let depth =
+          arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+        const node = state.nodes[id];
+        if (!node) {
+          return ancestors;
+        }
+        ancestors.push(id);
+        if (!node.data.parent) {
+          return ancestors;
+        }
+        if (deep || (!deep && depth === 0)) {
+          ancestors = appendParentNode(node.data.parent, ancestors, depth + 1);
+        }
+        return ancestors;
+      }
+      return appendParentNode(node.data.parent);
+    },
+    descendants() {
+      let deep =
+        arguments.length > 0 && arguments[0] !== undefined
+          ? arguments[0]
+          : false;
+      let includeOnly = arguments.length > 1 ? arguments[1] : undefined;
+      function appendChildNode(id) {
+        let descendants =
+          arguments.length > 1 && arguments[1] !== undefined
+            ? arguments[1]
+            : [];
+        let depth =
+          arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+        if (deep || (!deep && depth === 0)) {
+          const node = state.nodes[id];
+          if (!node) {
+            return descendants;
+          }
+          if (includeOnly !== 'childNodes') {
+            // Include linkedNodes if any
+            const linkedNodes = nodeHelpers(id).linkedNodes();
+            linkedNodes.forEach((nodeId) => {
+              descendants.push(nodeId);
+              descendants = appendChildNode(nodeId, descendants, depth + 1);
+            });
+          }
+          if (includeOnly !== 'linkedNodes') {
+            const childNodes = nodeHelpers(id).childNodes();
+            childNodes.forEach((nodeId) => {
+              descendants.push(nodeId);
+              descendants = appendChildNode(nodeId, descendants, depth + 1);
+            });
+          }
+          return descendants;
+        }
+        return descendants;
+      }
+      return appendChildNode(id);
+    },
+    linkedNodes() {
+      return Object.values(node.data.linkedNodes || {});
+    },
+    childNodes() {
+      return node.data.nodes || [];
+    },
+    isDraggable(onError) {
+      try {
+        const targetNode = node;
+        invariant(!this.isTopLevelNode(), ERROR_MOVE_TOP_LEVEL_NODE);
+        invariant(
+          NodeHelpers(state, targetNode.data.parent).isCanvas(),
+          ERROR_MOVE_NONCANVAS_CHILD
+        );
+        invariant(
+          targetNode.rules.canDrag(targetNode, nodeHelpers),
+          ERROR_CANNOT_DRAG
+        );
+        return true;
+      } catch (err) {
+        if (onError) {
+          onError(err);
+        }
+        return false;
+      }
+    },
+    isDroppable(selector, onError) {
+      const targets = getNodesFromSelector(state.nodes, selector);
+      const newParentNode = node;
+      try {
+        invariant(this.isCanvas(), ERROR_MOVE_TO_NONCANVAS_PARENT);
+        invariant(
+          newParentNode.rules.canMoveIn(
+            targets.map((selector) => selector.node),
+            newParentNode,
+            nodeHelpers
+          ),
+          ERROR_MOVE_INCOMING_PARENT
+        );
+        const parentNodes = {};
+        targets.forEach((_ref) => {
+          let { node: targetNode, exists } = _ref;
+          invariant(
+            targetNode.rules.canDrop(newParentNode, targetNode, nodeHelpers),
+            ERROR_MOVE_CANNOT_DROP
+          );
+          // Ignore other checking if the Node is new
+          if (!exists) {
+            return;
+          }
+          invariant(
+            !nodeHelpers(targetNode.id).isTopLevelNode(),
+            ERROR_MOVE_TOP_LEVEL_NODE
+          );
+          const targetDeepNodes = nodeHelpers(targetNode.id).descendants(true);
+          invariant(
+            !targetDeepNodes.includes(newParentNode.id) &&
+              newParentNode.id !== targetNode.id,
+            ERROR_MOVE_TO_DESCENDANT
+          );
+          const currentParentNode =
+            targetNode.data.parent && state.nodes[targetNode.data.parent];
+          invariant(
+            currentParentNode.data.isCanvas,
+            ERROR_MOVE_NONCANVAS_CHILD
+          );
+          invariant(
+            currentParentNode ||
+              (!currentParentNode && !state.nodes[targetNode.id]),
+            ERROR_DUPLICATE_NODEID
+          );
+          if (currentParentNode.id !== newParentNode.id) {
+            if (!parentNodes[currentParentNode.id]) {
+              parentNodes[currentParentNode.id] = [];
+            }
+            parentNodes[currentParentNode.id].push(targetNode);
+          }
+        });
+        Object.keys(parentNodes).forEach((parentNodeId) => {
+          const childNodes = parentNodes[parentNodeId];
+          const parentNode = state.nodes[parentNodeId];
+          invariant(
+            parentNode.rules.canMoveOut(childNodes, parentNode, nodeHelpers),
+            ERROR_MOVE_OUTGOING_PARENT
+          );
+        });
+        return true;
+      } catch (err) {
+        if (onError) {
+          onError(err);
+        }
+        return false;
+      }
+    },
+    toSerializedNode() {
+      return serializeNode(node.data, state.options.resolver);
+    },
+    toNodeTree(includeOnly) {
+      const nodes = [id, ...this.descendants(true, includeOnly)].reduce(
+        (accum, descendantId) => {
+          accum[descendantId] = nodeHelpers(descendantId).get();
+          return accum;
+        },
+        {}
+      );
+      return {
+        rootNodeId: id,
+        nodes,
+      };
+    },
+    /**
+     Deprecated NodeHelpers
+     **/
+    decendants() {
+      let deep =
+        arguments.length > 0 && arguments[0] !== undefined
+          ? arguments[0]
+          : false;
+      deprecationWarning('query.node(id).decendants', {
+        suggest: 'query.node(id).descendants',
+      });
+      return this.descendants(deep);
+    },
+    isTopLevelCanvas() {
+      return !this.isRoot() && !node.data.parent;
+    },
+  };
+}
+
+function findPosition(parent, dims, posX, posY) {
+  let result = {
+    parent,
+    index: 0,
+    where: 'before',
+  };
+  let leftLimit = 0,
+    xLimit = 0,
+    dimRight = 0,
+    yLimit = 0,
+    xCenter = 0,
+    yCenter = 0,
+    dimDown = 0;
+  // Each dim is: Top, Left, Height, Width
+  for (let i = 0, len = dims.length; i < len; i++) {
+    const dim = dims[i];
+    // Right position of the element. Left + Width
+    dimRight = dim.left + dim.outerWidth;
+    // Bottom position of the element. Top + Height
+    dimDown = dim.top + dim.outerHeight;
+    // X center position of the element. Left + (Width / 2)
+    xCenter = dim.left + dim.outerWidth / 2;
+    // Y center position of the element. Top + (Height / 2)
+    yCenter = dim.top + dim.outerHeight / 2;
+    // Skip if over the limits
+    if (
+      (xLimit && dim.left > xLimit) ||
+      (yLimit && yCenter >= yLimit) ||
+      // >= avoid issue with clearfixes
+      (leftLimit && dimRight < leftLimit)
+    )
+      continue;
+    result.index = i;
+    // If it's not in flow (like 'float' element)
+    if (!dim.inFlow) {
+      if (posY < dimDown) yLimit = dimDown;
+      //If x lefter than center
+      if (posX < xCenter) {
+        xLimit = xCenter;
+        result.where = 'before';
+      } else {
+        leftLimit = xCenter;
+        result.where = 'after';
+      }
+    } else {
+      // If y upper than center
+      if (posY < yCenter) {
+        result.where = 'before';
+        break;
+      } else result.where = 'after'; // After last element
+    }
+  }
+  return result;
+}
+
+const getNodeTypeName = (type) => (typeof type == 'string' ? type : type.name);
+function createNode(newNode, normalize) {
+  let actualType = newNode.data.type;
+  let id = newNode.id || getRandomId();
+  const node = {
+    id,
+    _hydrationTimestamp: Date.now(),
+    data: _objectSpread2(
+      {
+        type: actualType,
+        name: getNodeTypeName(actualType),
+        displayName: getNodeTypeName(actualType),
+        props: {},
+        custom: {},
+        parent: null,
+        isCanvas: false,
+        hidden: false,
+        nodes: [],
+        linkedNodes: {},
+      },
+      newNode.data
+    ),
+    info: {},
+    related: {},
+    events: {
+      selected: false,
+      dragged: false,
+      hovered: false,
+    },
+    rules: {
+      canDrag: () => true,
+      canDrop: () => true,
+      canMoveIn: () => true,
+      canMoveOut: () => true,
+    },
+    dom: null,
+  };
+  // @ts-ignore
+  if (node.data.type === Element$1 || node.data.type === Canvas) {
+    const mergedProps = _objectSpread2(
+      _objectSpread2({}, defaultElementProps),
+      node.data.props
+    );
+    node.data.props = Object.keys(node.data.props).reduce((props, key) => {
+      if (Object.keys(defaultElementProps).includes(key)) {
+        // If a <Element /> specific props is found (ie: "is", "canvas")
+        // Replace the node.data with the value specified in the prop
+        node.data[elementPropToNodeData[key] || key] = mergedProps[key];
+      } else {
+        // Otherwise include the props in the node as usual
+        props[key] = node.data.props[key];
+      }
+      return props;
+    }, {});
+    actualType = node.data.type;
+    node.data.name = getNodeTypeName(actualType);
+    node.data.displayName = getNodeTypeName(actualType);
+    const usingDeprecatedCanvas = node.data.type === Canvas;
+    if (usingDeprecatedCanvas) {
+      node.data.isCanvas = true;
+      deprecateCanvasComponent();
+    }
+  }
+  if (normalize) {
+    normalize(node);
+  }
+  // TODO: use UserComponentConfig type
+  const userComponentConfig = actualType.craft;
+  if (userComponentConfig) {
+    node.data.displayName =
+      userComponentConfig.displayName ||
+      userComponentConfig.name ||
+      node.data.displayName;
+    node.data.props = _objectSpread2(
+      _objectSpread2(
+        {},
+        userComponentConfig.props || userComponentConfig.defaultProps || {}
+      ),
+      node.data.props
+    );
+    node.data.custom = _objectSpread2(
+      _objectSpread2({}, userComponentConfig.custom || {}),
+      node.data.custom
+    );
+    if (
+      userComponentConfig.isCanvas !== undefined &&
+      userComponentConfig.isCanvas !== null
+    ) {
+      node.data.isCanvas = userComponentConfig.isCanvas;
+    }
+    if (userComponentConfig.rules) {
+      Object.keys(userComponentConfig.rules).forEach((key) => {
+        if (['canDrag', 'canDrop', 'canMoveIn', 'canMoveOut'].includes(key)) {
+          node.rules[key] = userComponentConfig.rules[key];
+        }
+      });
+    }
+    if (userComponentConfig.related) {
+      const relatedNodeContext = {
+        id: node.id,
+        related: true,
+      };
+      Object.keys(userComponentConfig.related).forEach((comp) => {
+        node.related[comp] = (props) =>
+          React__default.createElement(
+            NodeProvider,
+            relatedNodeContext,
+            React__default.createElement(
+              userComponentConfig.related[comp],
+              props
+            )
+          );
+      });
+    }
+    if (userComponentConfig.info) {
+      node.info = userComponentConfig.info;
+    }
+  }
+  return node;
+}
+
+const restoreType = (type, resolver) =>
+  typeof type === 'object' && type.resolvedName
+    ? type.resolvedName === 'Canvas'
+      ? Canvas
+      : resolver[type.resolvedName]
+    : typeof type === 'string'
+    ? type
+    : null;
+const deserializeComp = (data, resolver, index) => {
+  let { type, props } = data;
+  const main = restoreType(type, resolver);
+  if (!main) {
+    return;
+  }
+  props = Object.keys(props).reduce((result, key) => {
+    const prop = props[key];
+    if (prop === null || prop === undefined) {
+      result[key] = null;
+    } else if (typeof prop === 'object' && prop.resolvedName) {
+      result[key] = deserializeComp(prop, resolver);
+    } else if (key === 'children' && Array.isArray(prop)) {
+      result[key] = prop.map((child) => {
+        if (typeof child === 'string') {
+          return child;
+        }
+        return deserializeComp(child, resolver);
+      });
+    } else {
+      result[key] = prop;
+    }
+    return result;
+  }, {});
+  if (index) {
+    props.key = index;
+  }
+  const jsx = {
+    ...React__default.createElement(main, {
+      ...props,
+    }),
+  };
+  return {
+    ...jsx,
+    name: resolveComponent(resolver, jsx.type),
+  };
+};
+const deserializeNode = (data, resolver) => {
+  const { type: Comp, props: Props, ...nodeData } = data;
+  const isCompAnHtmlElement = Comp !== undefined && typeof Comp === 'string';
+  const isCompAUserComponent =
+    Comp !== undefined && Comp.resolvedName !== undefined;
+  invariant(
+    isCompAnHtmlElement || isCompAUserComponent,
+    ERROR_DESERIALIZE_COMPONENT_NOT_IN_RESOLVER.replace(
+      '%displayName%',
+      data.displayName
+    ).replace('%availableComponents%', Object.keys(resolver).join(', '))
+  );
+  const { type, name, props } = deserializeComp(data, resolver);
+  const { parent, custom, displayName, isCanvas, nodes, hidden } = nodeData;
+  const linkedNodes = nodeData.linkedNodes || nodeData._childCanvas;
+  return {
+    type,
+    name,
+    displayName: displayName || name,
+    props,
+    custom: custom || {},
+    isCanvas: !!isCanvas,
+    hidden: !!hidden,
+    parent,
+    linkedNodes: linkedNodes || {},
+    nodes: nodes || [],
+  };
+};
+
+const mergeNodes = (rootNode, childrenNodes) => {
+  if (childrenNodes.length < 1) {
+    return { [rootNode.id]: rootNode };
+  }
+  const nodes = childrenNodes.map(({ rootNodeId }) => rootNodeId);
+  const nodeWithChildren = { ...rootNode, data: { ...rootNode.data, nodes } };
+  const rootNodes = { [rootNode.id]: nodeWithChildren };
+  return childrenNodes.reduce((accum, tree) => {
+    const currentNode = tree.nodes[tree.rootNodeId];
+    return {
+      ...accum,
+      ...tree.nodes,
+      // set the parent id for the current node
+      [currentNode.id]: {
+        ...currentNode,
+        data: {
+          ...currentNode.data,
+          parent: rootNode.id,
+        },
+      },
+    };
+  }, rootNodes);
+};
+const mergeTrees = (rootNode, childrenNodes) => ({
+  rootNodeId: rootNode.id,
+  nodes: mergeNodes(rootNode, childrenNodes),
+});
+
+function parseNodeFromJSX(jsx, normalize) {
+  let element = jsx;
+  if (typeof element === 'string') {
+    element = React__default.createElement(Fragment, {}, element);
+  }
+  let actualType = element.type;
+  return createNode(
+    {
+      data: {
+        type: actualType,
+        props: { ...element.props },
+      },
+    },
+    (node) => {
+      if (normalize) {
+        normalize(node, element);
+      }
+    }
+  );
+}
+
+function QueryMethods(state) {
+  const options = state && state.options;
+  const _ = () => QueryMethods(state);
+  return {
+    /**
+     * Determine the best possible location to drop the source Node relative to the target Node
+     *
+     * TODO: replace with Positioner.computeIndicator();
+     */
+    getDropPlaceholder: (
+      source,
+      target,
+      pos,
+      nodesToDOM = (node) => state.nodes[node.id].dom
+    ) => {
+      const targetNode = state.nodes[target],
+        isTargetCanvas = _().node(targetNode.id).isCanvas();
+      const targetParent = isTargetCanvas
+        ? targetNode
+        : state.nodes[targetNode.data.parent];
+      if (!targetParent) return;
+      const targetParentNodes = targetParent.data.nodes || [];
+      const dimensionsInContainer = targetParentNodes
+        ? targetParentNodes.reduce((result, id) => {
+            const dom = nodesToDOM(state.nodes[id]);
+            if (dom) {
+              const info = {
+                id,
+                ...getDOMInfo(dom),
+              };
+              result.push(info);
+            }
+            return result;
+          }, [])
+        : [];
+      const dropAction = findPosition(
+        targetParent,
+        dimensionsInContainer,
+        pos.x,
+        pos.y
+      );
+      const currentNode =
+        targetParentNodes.length &&
+        state.nodes[targetParentNodes[dropAction.index]];
+      const output = {
+        placement: {
+          ...dropAction,
+          currentNode,
+        },
+        error: null,
+      };
+      const sourceNodes = getNodesFromSelector(state.nodes, source);
+      sourceNodes.forEach(({ node, exists }) => {
+        // If source Node is already in the editor, check if it's draggable
+        if (exists) {
+          _()
+            .node(node.id)
+            .isDraggable((err) => (output.error = err));
+        }
+      });
+      // Check if source Node is droppable in target
+      _()
+        .node(targetParent.id)
+        .isDroppable(source, (err) => (output.error = err));
+      return output;
+    },
+    /**
+     * Get the current Editor options
+     */
+    getOptions() {
+      return options;
+    },
+    getNodes() {
+      return state.nodes;
+    },
+    /**
+     * Helper methods to describe the specified Node
+     * @param id
+     */
+    node(id) {
+      return NodeHelpers(state, id);
+    },
+    /**
+     * Returns all the `nodes` in a serialized format
+     */
+    getSerializedNodes() {
+      const nodePairs = Object.keys(state.nodes).map((id) => [
+        id,
+        this.node(id).toSerializedNode(),
+      ]);
+      return fromEntries(nodePairs);
+    },
+    getEvent(eventType) {
+      return EventHelpers(state, eventType);
+    },
+    /**
+     * Retrieve the JSON representation of the editor's Nodes
+     */
+    serialize() {
+      return JSON.stringify(this.getSerializedNodes());
+    },
+    parseReactElement: (reactElement) => ({
+      toNodeTree(normalize) {
+        let node = parseNodeFromJSX(reactElement, (node, jsx) => {
+          const name = resolveComponent(state.options.resolver, node.data.type);
+          node.data.displayName = node.data.displayName || name;
+          node.data.name = name;
+          if (normalize) {
+            normalize(node, jsx);
+          }
+        });
+        let childrenNodes = [];
+        if (reactElement.props && reactElement.props.children) {
+          childrenNodes = React__default.Children.toArray(
+            reactElement.props.children
+          ).reduce((accum, child) => {
+            if (React__default.isValidElement(child)) {
+              accum.push(_().parseReactElement(child).toNodeTree(normalize));
+            }
+            return accum;
+          }, []);
+        }
+        return mergeTrees(node, childrenNodes);
+      },
+    }),
+    parseSerializedNode: (serializedNode) => ({
+      toNode(normalize) {
+        const data = deserializeNode(serializedNode, state.options.resolver);
+        invariant(data.type, ERROR_NOT_IN_RESOLVER);
+        const id = typeof normalize === 'string' && normalize;
+        if (id) {
+          deprecationWarning(`query.parseSerializedNode(...).toNode(id)`, {
+            suggest: `query.parseSerializedNode(...).toNode(node => node.id = id)`,
+          });
+        }
+        return _()
+          .parseFreshNode({
+            ...(id ? { id } : {}),
+            data,
+          })
+          .toNode(!id && normalize);
+      },
+    }),
+    parseFreshNode: (node) => ({
+      toNode(normalize) {
+        return createNode(node, (node) => {
+          if (node.data.parent === DEPRECATED_ROOT_NODE) {
+            node.data.parent = ROOT_NODE;
+          }
+          const name = resolveComponent(state.options.resolver, node.data.type);
+          invariant(name !== null, ERROR_NOT_IN_RESOLVER);
+          node.data.displayName = node.data.displayName || name;
+          node.data.name = name;
+          if (normalize) {
+            normalize(node);
+          }
+        });
+      },
+    }),
+    createNode(reactElement, extras) {
+      deprecationWarning(`query.createNode(${reactElement})`, {
+        suggest: `query.parseReactElement(${reactElement}).toNodeTree()`,
+      });
+      const tree = this.parseReactElement(reactElement).toNodeTree();
+      const node = tree.nodes[tree.rootNodeId];
+      if (!extras) {
+        return node;
+      }
+      if (extras.id) {
+        node.id = extras.id;
+      }
+      if (extras.data) {
+        node.data = {
+          ...node.data,
+          ...extras.data,
+        };
+      }
+      return node;
+    },
+    getState() {
+      return state;
+    },
+  };
+}
+
+class CoreEventHandlers extends EventHandlers {
+  handlers() {
+    return {
+      connect: (el, id) => {},
+      select: (el, id) => {},
+      hover: (el, id) => {},
+      drag: (el, id) => {},
+      drop: (el, id) => {},
+      create: (el, UserElement, options) => {},
+    };
+  }
+}
+class DerivedCoreEventHandlers extends DerivedEventHandlers {}
+
+// Hack: to trigger dragend event immediate
+// Otherwise we would have to wait until the native animation is completed before we can actually drop an block
+const documentDragoverEventHandler = (e) => {
+  e.preventDefault();
+};
+/**
+ * Positioner is responsible for computing the drop Indicator during a sequence of drag-n-drop events
+ */
+class Positioner {
+  constructor(store, dragTarget) {
+    _defineProperty(this, 'store', void 0);
+    _defineProperty(this, 'dragTarget', void 0);
+    // Current Node being hovered on
+    _defineProperty(this, 'currentDropTargetId', void 0);
+    // Current closest Canvas Node relative to the currentDropTarget
+    _defineProperty(this, 'currentDropTargetCanvasAncestorId', void 0);
+    _defineProperty(this, 'currentIndicator', null);
+    _defineProperty(this, 'currentTargetId', void 0);
+    _defineProperty(this, 'currentTargetChildDimensions', void 0);
+    _defineProperty(this, 'dragError', void 0);
+    _defineProperty(this, 'draggedNodes', void 0);
+    _defineProperty(this, 'onScrollListener', void 0);
+    this.store = store;
+    this.dragTarget = dragTarget;
+    this.currentDropTargetId = null;
+    this.currentDropTargetCanvasAncestorId = null;
+    this.currentTargetId = null;
+    this.currentTargetChildDimensions = null;
+    this.currentIndicator = null;
+    this.dragError = null;
+    this.draggedNodes = this.getDraggedNodes();
+    this.validateDraggedNodes();
+    this.onScrollListener = this.onScroll.bind(this);
+    window.addEventListener('scroll', this.onScrollListener, true);
+    window.addEventListener('dragover', documentDragoverEventHandler, false);
+  }
+  cleanup() {
+    window.removeEventListener('scroll', this.onScrollListener, true);
+    window.removeEventListener('dragover', documentDragoverEventHandler, false);
+  }
+  onScroll(e) {
+    const scrollBody = e.target;
+    const rootNode = this.store.query.node(ROOT_NODE).get();
+    // Clear the currentTargetChildDimensions if the user has scrolled
+    // Because we will have to recompute new dimensions relative to the new scroll pos
+    const shouldClearChildDimensionsCache =
+      scrollBody instanceof Element &&
+      rootNode &&
+      rootNode.dom &&
+      scrollBody.contains(rootNode.dom);
+    if (!shouldClearChildDimensionsCache) {
+      return;
+    }
+    this.currentTargetChildDimensions = null;
+  }
+  getDraggedNodes() {
+    if (this.dragTarget.type === 'new') {
+      return getNodesFromSelector(
+        this.store.query.getNodes(),
+        this.dragTarget.tree.nodes[this.dragTarget.tree.rootNodeId]
+      );
+    }
+    return getNodesFromSelector(
+      this.store.query.getNodes(),
+      this.dragTarget.nodes
+    );
+  }
+  // Check if the elements being dragged are allowed to be dragged
+  validateDraggedNodes() {
+    // We don't need to check for dragTarget.type = "new" because those nodes are not yet in the state (ie: via the .create() connector)
+    if (this.dragTarget.type === 'new') {
+      return;
+    }
+    this.draggedNodes.forEach((_ref) => {
+      let { node, exists } = _ref;
+      if (!exists) {
+        return;
+      }
+      this.store.query.node(node.id).isDraggable((err) => {
+        this.dragError = err;
+      });
+    });
+  }
+  isNearBorders(domInfo, x, y) {
+    const { top, bottom, left, right } = domInfo;
+    if (
+      top + Positioner.BORDER_OFFSET > y ||
+      bottom - Positioner.BORDER_OFFSET < y ||
+      left + Positioner.BORDER_OFFSET > x ||
+      right - Positioner.BORDER_OFFSET < x
+    ) {
+      return true;
+    }
+    return false;
+  }
+  isDiff(newPosition) {
+    if (
+      this.currentIndicator &&
+      this.currentIndicator.placement.parent.id === newPosition.parent.id &&
+      this.currentIndicator.placement.index === newPosition.index &&
+      this.currentIndicator.placement.where === newPosition.where
+    ) {
+      return false;
+    }
+    return true;
+  }
+  /**
+   * Get dimensions of every child Node in the specified parent Node
+   */
+  getChildDimensions(newParentNode) {
+    // Use previously computed child dimensions if newParentNode is the same as the previous one
+    const existingTargetChildDimensions = this.currentTargetChildDimensions;
+    if (
+      this.currentTargetId === newParentNode.id &&
+      existingTargetChildDimensions
+    ) {
+      return existingTargetChildDimensions;
+    }
+    return newParentNode.data.nodes.reduce((result, id) => {
+      const dom = this.store.query.node(id).get().dom;
+      if (dom) {
+        result.push(
+          _objectSpread2(
+            {
+              id,
+            },
+            getDOMInfo(dom)
+          )
+        );
+      }
+      return result;
+    }, []);
+  }
+  /**
+   * Get closest Canvas node relative to the dropTargetId
+   * Return dropTargetId if it itself is a Canvas node
+   *
+   * In most cases it will be the dropTarget itself or its immediate parent.
+   * We typically only need to traverse 2 levels or more if the dropTarget is a linked node
+   *
+   * TODO: We should probably have some special rules to handle linked nodes
+   */
+  getCanvasAncestor(dropTargetId) {
+    // If the dropTargetId is the same as the previous one
+    // Return the canvas ancestor node that we found previuously
+    if (
+      dropTargetId === this.currentDropTargetId &&
+      this.currentDropTargetCanvasAncestorId
+    ) {
+      const node = this.store.query
+        .node(this.currentDropTargetCanvasAncestorId)
+        .get();
+      if (node) {
+        return node;
+      }
+    }
+    const getCanvas = (nodeId) => {
+      const node = this.store.query.node(nodeId).get();
+      if (node && node.data.isCanvas) {
+        return node;
+      }
+      if (!node.data.parent) {
+        return null;
+      }
+      return getCanvas(node.data.parent);
+    };
+    return getCanvas(dropTargetId);
+  }
+  /**
+   * Compute a new Indicator object based on the dropTarget and x,y coords
+   * Returns null if theres no change from the previous Indicator
+   */
+  computeIndicator(dropTargetId, x, y) {
+    let newParentNode = this.getCanvasAncestor(dropTargetId);
+    if (!newParentNode) {
+      return;
+    }
+    this.currentDropTargetId = dropTargetId;
+    this.currentDropTargetCanvasAncestorId = newParentNode.id;
+    // Get parent if we're hovering at the border of the current node
+    if (
+      newParentNode.data.parent &&
+      this.isNearBorders(getDOMInfo(newParentNode.dom), x, y) &&
+      // Ignore if linked node because there's won't be an adjacent sibling anyway
+      !this.store.query.node(newParentNode.id).isLinkedNode()
+    ) {
+      newParentNode = this.store.query.node(newParentNode.data.parent).get();
+    }
+    if (!newParentNode) {
+      return;
+    }
+    this.currentTargetChildDimensions = this.getChildDimensions(newParentNode);
+    this.currentTargetId = newParentNode.id;
+    const position = findPosition(
+      newParentNode,
+      this.currentTargetChildDimensions,
+      x,
+      y
+    );
+    // Ignore if the position is similar as the previous one
+    if (!this.isDiff(position)) {
+      return;
+    }
+    let error = this.dragError;
+    // Last thing to check for is if the dragged nodes can be dropped in the target area
+    if (!error) {
+      this.store.query.node(newParentNode.id).isDroppable(
+        this.draggedNodes.map((sourceNode) => sourceNode.node),
+        (dropError) => {
+          error = dropError;
+        }
+      );
+    }
+    const currentNodeId = newParentNode.data.nodes[position.index];
+    const currentNode =
+      currentNodeId && this.store.query.node(currentNodeId).get();
+    this.currentIndicator = {
+      placement: _objectSpread2(
+        _objectSpread2({}, position),
+        {},
+        {
+          currentNode,
+        }
+      ),
+      error,
+    };
+    return this.currentIndicator;
+  }
+  getIndicator() {
+    return this.currentIndicator;
+  }
+}
+_defineProperty(Positioner, 'BORDER_OFFSET', 10);
+
+// Works partially with Linux (except on Chrome)
+// We'll need an alternate way to create drag shadows
+const createShadow = function (e, shadowsToCreate) {
+  let forceSingleShadow =
+    arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  if (shadowsToCreate.length === 1 || forceSingleShadow) {
+    const { width, height } = shadowsToCreate[0].getBoundingClientRect();
+    const shadow = shadowsToCreate[0].cloneNode(true);
+    shadow.style.position = 'absolute';
+    shadow.style.left = '-100%';
+    shadow.style.top = '-100%';
+    shadow.style.width = ''.concat(width, 'px');
+    shadow.style.height = ''.concat(height, 'px');
+    shadow.style.pointerEvents = 'none';
+    shadow.classList.add('drag-shadow');
+    document.body.appendChild(shadow);
+    e.dataTransfer.setDragImage(shadow, 0, 0);
+    return shadow;
+  }
+  /**
+   * If there's supposed to be multiple drag shadows, we will create a single container div to store them
+   * That container will be used as the drag shadow for the current drag event
+   */
+  const container = document.createElement('div');
+  container.style.position = 'absolute';
+  container.style.left = '-100%';
+  container.style.top = '-100%';
+  container.style.width = '100%';
+  container.style.height = '100%';
+  container.style.pointerEvents = 'none';
+  container.classList.add('drag-shadow-container');
+  shadowsToCreate.forEach((dom) => {
+    const { width, height, top, left } = dom.getBoundingClientRect();
+    const shadow = dom.cloneNode(true);
+    shadow.style.position = 'absolute';
+    shadow.style.left = ''.concat(left, 'px');
+    shadow.style.top = ''.concat(top, 'px');
+    shadow.style.width = ''.concat(width, 'px');
+    shadow.style.height = ''.concat(height, 'px');
+    shadow.classList.add('drag-shadow');
+    container.appendChild(shadow);
+  });
+  document.body.appendChild(container);
+  e.dataTransfer.setDragImage(container, e.clientX, e.clientY);
+  return container;
+};
+
+/**
+ * Specifies Editor-wide event handlers and connectors
+ */
+class DefaultEventHandlers extends CoreEventHandlers {
+  constructor() {
+    super(...arguments);
+    _defineProperty(this, 'draggedElementShadow', void 0);
+    _defineProperty(this, 'dragTarget', void 0);
+    _defineProperty(this, 'positioner', null);
+    _defineProperty(this, 'currentSelectedElementIds', []);
+  }
+  onDisable() {
+    this.options.store.actions.clearEvents();
+  }
+  handlers() {
+    const store = this.options.store;
+    return {
+      connect: (el, id) => {
+        store.actions.setDOM(id, el);
+        return this.reflect((connectors) => {
+          connectors.select(el, id);
+          connectors.hover(el, id);
+          connectors.drop(el, id);
+        });
+      },
+      select: (el, id) => {
+        const unbindOnMouseDown = this.addCraftEventListener(
+          el,
+          'mousedown',
+          (e) => {
+            e.craft.stopPropagation();
+            let newSelectedElementIds = [];
+            if (id) {
+              const { query } = store;
+              const selectedElementIds = query.getEvent('selected').all();
+              const isMultiSelect = this.options.isMultiSelectEnabled(e);
+              /**
+               * Retain the previously select elements if the multi-select condition is enabled
+               * or if the currentNode is already selected
+               *
+               * so users can just click to drag the selected elements around without holding the multi-select key
+               */
+              if (isMultiSelect || selectedElementIds.includes(id)) {
+                newSelectedElementIds = selectedElementIds.filter(
+                  (selectedId) => {
+                    const descendants = query
+                      .node(selectedId)
+                      .descendants(true);
+                    const ancestors = query.node(selectedId).ancestors(true);
+                    // Deselect ancestors/descendants
+                    if (descendants.includes(id) || ancestors.includes(id)) {
+                      return false;
+                    }
+                    return true;
+                  }
+                );
+              }
+              if (!newSelectedElementIds.includes(id)) {
+                newSelectedElementIds.push(id);
+              }
+            }
+            store.actions.setNodeEvent('selected', newSelectedElementIds);
+          }
+        );
+        const unbindOnClick = this.addCraftEventListener(el, 'click', (e) => {
+          e.craft.stopPropagation();
+          const { query } = store;
+          const selectedElementIds = query.getEvent('selected').all();
+          const isMultiSelect = this.options.isMultiSelectEnabled(e);
+          const isNodeAlreadySelected = this.currentSelectedElementIds.includes(
+            id
+          );
+          let newSelectedElementIds = [...selectedElementIds];
+          if (isMultiSelect && isNodeAlreadySelected) {
+            newSelectedElementIds.splice(newSelectedElementIds.indexOf(id), 1);
+            store.actions.setNodeEvent('selected', newSelectedElementIds);
+          } else if (!isMultiSelect && selectedElementIds.length > 1) {
+            newSelectedElementIds = [id];
+            store.actions.setNodeEvent('selected', newSelectedElementIds);
+          }
+          this.currentSelectedElementIds = newSelectedElementIds;
+        });
+        return () => {
+          unbindOnMouseDown();
+          unbindOnClick();
+        };
+      },
+      hover: (el, id) => {
+        const unbindMouseover = this.addCraftEventListener(
+          el,
+          'mouseover',
+          (e) => {
+            e.craft.stopPropagation();
+            store.actions.setNodeEvent('hovered', id);
+          }
+        );
+        let unbindMouseleave = null;
+        if (this.options.removeHoverOnMouseleave) {
+          unbindMouseleave = this.addCraftEventListener(
+            el,
+            'mouseleave',
+            (e) => {
+              e.craft.stopPropagation();
+              store.actions.setNodeEvent('hovered', null);
+            }
+          );
+        }
+        return () => {
+          unbindMouseover();
+          if (!unbindMouseleave) {
+            return;
+          }
+          unbindMouseleave();
+        };
+      },
+      drop: (el, targetId) => {
+        const unbindDragOver = this.addCraftEventListener(
+          el,
+          'dragover',
+          (e) => {
+            e.craft.stopPropagation();
+            e.preventDefault();
+            if (!this.positioner) {
+              return;
+            }
+            const indicator = this.positioner.computeIndicator(
+              targetId,
+              e.clientX,
+              e.clientY
+            );
+            if (!indicator) {
+              return;
+            }
+            store.actions.setIndicator(indicator);
+          }
+        );
+        const unbindDragEnter = this.addCraftEventListener(
+          el,
+          'dragenter',
+          (e) => {
+            e.craft.stopPropagation();
+            e.preventDefault();
+          }
+        );
+        return () => {
+          unbindDragEnter();
+          unbindDragOver();
+        };
+      },
+      drag: (el, id) => {
+        if (!store.query.node(id).isDraggable()) {
+          return () => {};
+        }
+        el.setAttribute('draggable', 'true');
+        const unbindDragStart = this.addCraftEventListener(
+          el,
+          'dragstart',
+          (e) => {
+            e.craft.stopPropagation();
+            const { query, actions } = store;
+            let selectedElementIds = query.getEvent('selected').all();
+            const isMultiSelect = this.options.isMultiSelectEnabled(e);
+            const isNodeAlreadySelected = this.currentSelectedElementIds.includes(
+              id
+            );
+            if (!isNodeAlreadySelected) {
+              if (isMultiSelect) {
+                selectedElementIds = [...selectedElementIds, id];
+              } else {
+                selectedElementIds = [id];
+              }
+              store.actions.setNodeEvent('selected', selectedElementIds);
+            }
+            actions.setNodeEvent('dragged', selectedElementIds);
+            const selectedDOMs = selectedElementIds.map(
+              (id) => query.node(id).get().dom
+            );
+            this.draggedElementShadow = createShadow(
+              e,
+              selectedDOMs,
+              DefaultEventHandlers.forceSingleDragShadow
+            );
+            this.dragTarget = {
+              type: 'existing',
+              nodes: selectedElementIds,
+            };
+            this.positioner = new Positioner(
+              this.options.store,
+              this.dragTarget
+            );
+          }
+        );
+        const unbindDragEnd = this.addCraftEventListener(el, 'dragend', (e) => {
+          e.craft.stopPropagation();
+          this.dropElement((dragTarget, indicator) => {
+            if (dragTarget.type === 'new') {
+              return;
+            }
+            const index =
+              indicator.placement.index +
+              (indicator.placement.where === 'after' ? 1 : 0);
+            store.actions.move(
+              dragTarget.nodes,
+              indicator.placement.parent.id,
+              index
+            );
+          });
+        });
+        return () => {
+          el.setAttribute('draggable', 'false');
+          unbindDragStart();
+          unbindDragEnd();
+        };
+      },
+      create: (el, userElement, options) => {
+        el.setAttribute('draggable', 'true');
+        const unbindDragStart = this.addCraftEventListener(
+          el,
+          'dragstart',
+          (e) => {
+            e.craft.stopPropagation();
+            let tree;
+            if (typeof userElement === 'function') {
+              const result = userElement();
+              if (React__default.isValidElement(result)) {
+                tree = store.query.parseReactElement(result).toNodeTree();
+              } else {
+                tree = result;
+              }
+            } else {
+              tree = store.query.parseReactElement(userElement).toNodeTree();
+            }
+            const dom = e.currentTarget;
+            this.draggedElementShadow = createShadow(
+              e,
+              [dom],
+              DefaultEventHandlers.forceSingleDragShadow
+            );
+            this.dragTarget = {
+              type: 'new',
+              tree,
+            };
+            this.positioner = new Positioner(
+              this.options.store,
+              this.dragTarget
+            );
+          }
+        );
+        const unbindDragEnd = this.addCraftEventListener(el, 'dragend', (e) => {
+          e.craft.stopPropagation();
+          this.dropElement((dragTarget, indicator) => {
+            if (dragTarget.type === 'existing') {
+              return;
+            }
+            const index =
+              indicator.placement.index +
+              (indicator.placement.where === 'after' ? 1 : 0);
+            store.actions.addNodeTree(
+              dragTarget.tree,
+              indicator.placement.parent.id,
+              index
+            );
+            if (options && isFunction(options.onCreate)) {
+              options.onCreate(dragTarget.tree);
+            }
+          });
+        });
+        return () => {
+          el.removeAttribute('draggable');
+          unbindDragStart();
+          unbindDragEnd();
+        };
+      },
+    };
+  }
+  dropElement(onDropNode) {
+    const store = this.options.store;
+    if (!this.positioner) {
+      return;
+    }
+    const draggedElementShadow = this.draggedElementShadow;
+    const indicator = this.positioner.getIndicator();
+    if (this.dragTarget && indicator && !indicator.error) {
+      onDropNode(this.dragTarget, indicator);
+    }
+    if (draggedElementShadow) {
+      draggedElementShadow.parentNode.removeChild(draggedElementShadow);
+      this.draggedElementShadow = null;
+    }
+    this.dragTarget = null;
+    store.actions.setIndicator(null);
+    store.actions.setNodeEvent('dragged', null);
+    this.positioner.cleanup();
+    this.positioner = null;
+  }
+}
+/**
+ * Note: Multiple drag shadows (ie: via multiselect in v0.2 and higher) do not look good on Linux Chromium due to way it renders drag shadows in general,
+ * so will have to fallback to the single shadow approach above for the time being
+ * see: https://bugs.chromium.org/p/chromium/issues/detail?id=550999
+ */
+_defineProperty(
+  DefaultEventHandlers,
+  'forceSingleDragShadow',
+  isChromium() && isLinux()
+);
+
+function movePlaceholder(
+  pos,
+  canvasDOMInfo,
+  // which canvas is cursor at
+  bestTargetDomInfo
+) {
+  let thickness =
+    arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 2;
+  let t = 0,
+    l = 0,
+    w = 0,
+    h = 0,
+    where = pos.where;
+  let mode = 'line';
+  const elDim = bestTargetDomInfo;
+  // Show block area for empty containers or when dropping into container
+  if (!elDim) {
+    mode = 'block';
+    if (canvasDOMInfo) {
+      t = canvasDOMInfo.top + canvasDOMInfo.padding.top;
+      l = canvasDOMInfo.left + canvasDOMInfo.padding.left;
+      w =
+        canvasDOMInfo.outerWidth -
+        canvasDOMInfo.padding.right -
+        canvasDOMInfo.padding.left -
+        canvasDOMInfo.margin.left -
+        canvasDOMInfo.margin.right;
+      h =
+        canvasDOMInfo.outerHeight -
+        canvasDOMInfo.padding.top -
+        canvasDOMInfo.padding.bottom -
+        canvasDOMInfo.margin.top -
+        canvasDOMInfo.margin.bottom;
+      // Minimum height for better visibility
+      h = Math.max(h, 40);
+    }
+  } else {
+    // Line indicator for before/after
+    mode = 'line';
+    // If it's not in flow (like 'float' element)
+    if (!elDim.inFlow) {
+      w = thickness;
+      h = elDim.outerHeight;
+      t = elDim.top;
+      l = where === 'before' ? elDim.left : elDim.left + elDim.outerWidth;
+    } else {
+      w = elDim.outerWidth;
+      h = thickness;
+      t = where === 'before' ? elDim.top : elDim.bottom;
+      l = elDim.left;
+    }
+  }
+  return {
+    top: ''.concat(t, 'px'),
+    left: ''.concat(l, 'px'),
+    width: ''.concat(w, 'px'),
+    height: ''.concat(h, 'px'),
+    mode,
+  };
+}
+
+const RenderEditorIndicator = () => {
+  const { indicator, indicatorOptions, enabled } = useInternalEditor(
+    (state) => ({
+      indicator: state.indicator,
+      indicatorOptions: state.options.indicator,
+      enabled: state.options.enabled,
+    })
+  );
+  const handler = useEventHandler();
+  useEffect(() => {
+    if (!handler) {
+      return;
+    }
+    if (!enabled) {
+      handler.disable();
+      return;
+    }
+    handler.enable();
+  }, [enabled, handler]);
+  if (!indicator) {
+    return null;
+  }
+  const placeholderInfo = movePlaceholder(
+    indicator.placement,
+    getDOMInfo(indicator.placement.parent.dom),
+    indicator.placement.currentNode &&
+      getDOMInfo(indicator.placement.currentNode.dom),
+    indicatorOptions.thickness
+  );
+  const isBlockMode = placeholderInfo.mode === 'block';
+  const baseColor = indicator.error
+    ? indicatorOptions.error
+    : indicatorOptions.success;
+  return React__default.createElement(RenderIndicator, {
+    className: indicatorOptions.className,
+    style: {
+      top: placeholderInfo.top,
+      left: placeholderInfo.left,
+      width: placeholderInfo.width,
+      height: placeholderInfo.height,
+      // Apply different styles based on mode
+      ...(isBlockMode
+        ? {
+            // Block area styles - subtle outline with corner accents
+            backgroundColor: `${baseColor}08`, // 08 = ~3% opacity (very subtle)
+            border: `2px solid ${baseColor}`,
+            borderRadius: '6px',
+            boxSizing: 'border-box',
+            pointerEvents: 'none',
+            // Add subtle shadow for depth
+            boxShadow: `0 0 0 4px ${baseColor}10, inset 0 0 20px ${baseColor}15`,
+            // Smooth transition
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          }
+        : {
+            // Line styles (existing behavior)
+            backgroundColor: baseColor,
+            borderWidth: 0,
+          }),
+      transition: indicatorOptions.transition || '0.2s ease-in',
+      ...(indicatorOptions.style ?? {}),
+    },
+    parentDom: indicator.placement.parent.dom,
+  });
+};
+
+const Events = ({ children }) => {
+  const store = useContext(EditorContext);
+  const handler = useMemo(() => store.query.getOptions().handlers(store), [
+    store,
+  ]);
+  if (!handler) {
+    return null;
+  }
+  return React__default.createElement(
+    EventHandlerContext.Provider,
+    { value: handler },
+    React__default.createElement(RenderEditorIndicator, null),
+    children
+  );
+};
+
+const editorInitialState = {
+  nodes: {},
+  events: {
+    dragged: new Set(),
+    selected: new Set(),
+    hovered: new Set(),
+  },
+  indicator: null,
+  options: {
+    onNodesChange: () => null,
+    onRender: ({ render }) => render,
+    onBeforeMoveEnd: () => null,
+    resolver: {},
+    enabled: true,
+    indicator: {
+      error: 'red',
+      success: 'rgb(98, 196, 98)',
+    },
+    handlers: (store) =>
+      new DefaultEventHandlers({
+        store,
+        removeHoverOnMouseleave: false,
+        isMultiSelectEnabled: (e) => !!e.metaKey,
+      }),
+    normalizeNodes: () => {},
+  },
+};
+const ActionMethodsWithConfig = {
+  methods: ActionMethods,
+  ignoreHistoryForActions: [
+    'setDOM',
+    'setNodeEvent',
+    'selectNode',
+    'clearEvents',
+    'setOptions',
+    'setIndicator',
+  ],
+  normalizeHistory: (state) => {
+    /**
+     * On every undo/redo, we remove events pointing to deleted Nodes
+     */
+    Object.keys(state.events).forEach((eventName) => {
+      const nodeIds = Array.from(state.events[eventName] || []);
+      nodeIds.forEach((id) => {
+        if (!state.nodes[id]) {
+          state.events[eventName].delete(id);
+        }
+      });
+    });
+    // Remove any invalid node[nodeId].events
+    // TODO(prev): it's really cumbersome to have to ensure state.events and state.nodes[nodeId].events are in sync
+    // Find a way to make it so that once state.events is set, state.nodes[nodeId] automatically reflects that (maybe using proxies?)
+    Object.keys(state.nodes).forEach((id) => {
+      const node = state.nodes[id];
+      Object.keys(node.events).forEach((eventName) => {
+        const isEventActive = !!node.events[eventName];
+        if (
+          isEventActive &&
+          state.events[eventName] &&
+          !state.events[eventName].has(node.id)
+        ) {
+          node.events[eventName] = false;
+        }
+      });
+    });
+  },
+};
+const useEditorStore = (options, patchListener) => {
+  // TODO: fix type
+  return useMethods(
+    ActionMethodsWithConfig,
+    {
+      ...editorInitialState,
+      options: {
+        ...editorInitialState.options,
+        ...options,
+      },
+    },
+    QueryMethods,
+    patchListener
+  );
+};
+
+/**
+ * A React Component that provides the Editor context
+ */
+const Editor = ({ children, ...options }) => {
+  // we do not want to warn the user if no resolver was supplied
+  if (options.resolver !== undefined) {
+    invariant(
+      typeof options.resolver === 'object' &&
+        !Array.isArray(options.resolver) &&
+        options.resolver !== null,
+      ERROR_RESOLVER_NOT_AN_OBJECT
+    );
+  }
+  const optionsRef = React.useRef(options);
+  const context = useEditorStore(
+    optionsRef.current,
+    (state, previousState, actionPerformedWithPatches, query, normalizer) => {
+      if (!actionPerformedWithPatches) {
+        return;
+      }
+      const { patches, ...actionPerformed } = actionPerformedWithPatches;
+      for (let i = 0; i < patches.length; i++) {
+        const { path } = patches[i];
+        const isModifyingNodeData =
+          path.length > 2 && path[0] === 'nodes' && path[2] === 'data';
+        let actionType = actionPerformed.type;
+        if (
+          [HISTORY_ACTIONS.IGNORE, HISTORY_ACTIONS.THROTTLE].includes(
+            actionType
+          ) &&
+          actionPerformed.params
+        ) {
+          actionPerformed.type = actionPerformed.params[0];
+        }
+        if (
+          ['setState', 'deserialize'].includes(actionPerformed.type) ||
+          isModifyingNodeData
+        ) {
+          normalizer((draft) => {
+            if (state.options.normalizeNodes) {
+              state.options.normalizeNodes(
+                draft,
+                previousState,
+                actionPerformed,
+                query
+              );
+            }
+          });
+          break; // we exit the loop as soon as we find a change in node.data
+        }
+      }
+    }
+  );
+  // sync enabled prop with editor store options
+  React.useEffect(() => {
+    if (!context) {
+      return;
+    }
+    if (
+      options.enabled === undefined ||
+      context.query.getOptions().enabled === options.enabled
+    ) {
+      return;
+    }
+    context.actions.setOptions((editorOptions) => {
+      editorOptions.enabled = options.enabled;
+    });
+  }, [context, options.enabled]);
+  React.useEffect(() => {
+    context.subscribe(
+      (_) => ({
+        json: context.query.serialize(),
+      }),
+      () => {
+        context.query.getOptions().onNodesChange(context.query);
+      }
+    );
+  }, [context]);
+  if (!context) {
+    return null;
+  }
+  return React.createElement(
+    EditorContext.Provider,
+    { value: context },
+    React.createElement(Events, null, children)
+  );
+};
+
+const _excluded = ['events', 'data'],
+  _excluded2 = ['nodes'],
+  _excluded3 = ['nodes'],
+  _excluded4 = ['_hydrationTimestamp', 'rules'],
+  _excluded5 = ['_hydrationTimestamp', 'rules'];
+const getTestNode = (parentNode) => {
+  const {
+      events,
+      data: { nodes: childNodes, linkedNodes },
+    } = parentNode,
+    restParentNode = _objectWithoutProperties(parentNode, _excluded);
+  const validParentNode = createNode(cloneDeep(parentNode));
+  parentNode = _objectSpread2(
+    _objectSpread2(_objectSpread2({}, validParentNode), restParentNode),
+    {},
+    {
+      events: _objectSpread2(
+        _objectSpread2({}, validParentNode.events),
+        events
+      ),
+      dom: parentNode.dom || validParentNode.dom,
+    }
+  );
+  return {
+    node: parentNode,
+    childNodes,
+    linkedNodes,
+  };
+};
+const expectEditorState = (lhs, rhs) => {
+  const { nodes: nodesRhs } = rhs,
+    restRhs = _objectWithoutProperties(rhs, _excluded2);
+  const { nodes: nodesLhs } = lhs,
+    restLhs = _objectWithoutProperties(lhs, _excluded3);
+  expect(restLhs).toEqual(restRhs);
+  const nodesRhsSimplified = Object.keys(nodesRhs).reduce((accum, id) => {
+    const _nodesRhs$id = nodesRhs[id],
+      node = _objectWithoutProperties(_nodesRhs$id, _excluded4);
+    accum[id] = node;
+    return accum;
+  }, {});
+  const nodesLhsSimplified = Object.keys(nodesLhs).reduce((accum, id) => {
+    const _nodesLhs$id = nodesLhs[id],
+      node = _objectWithoutProperties(_nodesLhs$id, _excluded5);
+    accum[id] = node;
+    return accum;
+  }, {});
+  expect(nodesLhsSimplified).toEqual(nodesRhsSimplified);
+};
+const createTestNodes = (rootNode) => {
+  const nodes = {};
+  const iterateNodes = (testNode) => {
+    const { node: parentNode, childNodes, linkedNodes } = getTestNode(testNode);
+    nodes[parentNode.id] = parentNode;
+    if (childNodes) {
+      childNodes.forEach((childTestNode, i) => {
+        const {
+          node: childNode,
+          childNodes: grandChildNodes,
+          linkedNodes: grandChildLinkedNodes,
+        } = getTestNode(childTestNode);
+        childNode.data.parent = parentNode.id;
+        nodes[childNode.id] = childNode;
+        parentNode.data.nodes[i] = childNode.id;
+        iterateNodes(
+          _objectSpread2(
+            _objectSpread2({}, childNode),
+            {},
+            {
+              data: _objectSpread2(
+                _objectSpread2({}, childNode.data),
+                {},
+                {
+                  nodes: grandChildNodes || [],
+                  linkedNodes: grandChildLinkedNodes || {},
+                }
+              ),
+            }
+          )
+        );
+      });
+    }
+    if (linkedNodes) {
+      Object.keys(linkedNodes).forEach((linkedId) => {
+        const {
+          node: childNode,
+          childNodes: grandChildNodes,
+          linkedNodes: grandChildLinkedNodes,
+        } = getTestNode(linkedNodes[linkedId]);
+        parentNode.data.linkedNodes[linkedId] = childNode.id;
+        childNode.data.parent = parentNode.id;
+        nodes[childNode.id] = childNode;
+        iterateNodes(
+          _objectSpread2(
+            _objectSpread2({}, childNode),
+            {},
+            {
+              data: _objectSpread2(
+                _objectSpread2({}, childNode.data),
+                {},
+                {
+                  nodes: grandChildNodes || [],
+                  linkedNodes: grandChildLinkedNodes || {},
+                }
+              ),
+            }
+          )
+        );
+      });
+    }
+  };
+  iterateNodes(rootNode);
+  return nodes;
+};
+const createTestState = function () {
+  let state =
+    arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  const { nodes: rootNode, events } = state;
+  return _objectSpread2(
+    _objectSpread2(_objectSpread2({}, editorInitialState), state),
+    {},
+    {
+      nodes: rootNode ? createTestNodes(rootNode) : {},
+      events: _objectSpread2(
+        _objectSpread2({}, editorInitialState.events),
+        events || {}
+      ),
+    }
+  );
+};
+
+export {
+  ActionMethodsWithConfig,
+  Canvas,
+  CoreEventHandlers,
+  DefaultEventHandlers,
+  DerivedCoreEventHandlers,
+  Editor,
+  Element$1 as Element,
+  Events,
+  Frame,
+  NodeElement,
+  NodeHelpers,
+  NodeProvider,
+  NodeSelectorType,
+  Positioner,
+  QueryMethods,
+  connectEditor,
+  connectNode,
+  createShadow,
+  createTestNodes,
+  createTestState,
+  defaultElementProps,
+  deprecateCanvasComponent,
+  editorInitialState,
+  elementPropToNodeData,
+  expectEditorState,
+  serializeNode,
+  useEditor,
+  useEditorStore,
+  useEventHandler,
+  useNode,
+};
 //# sourceMappingURL=index.js.map

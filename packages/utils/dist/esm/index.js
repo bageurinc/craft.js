@@ -1,2 +1,1176 @@
-"undefined"!=typeof window&&(window.__CRAFTJS__||(window.__CRAFTJS__={}),window.__CRAFTJS__["@craftjs/utils"]="0.2.5");import e,{applyPatches as t,enableMapSet as n,enablePatches as r,produceWithPatches as i}from"immer";import o from"lodash/isEqualWith";import s,{useMemo as a,useRef as c,useCallback as l,useEffect as d,useState as h,cloneElement as u,isValidElement as p}from"react";import f from"shallowequal";import{nanoid as m}from"nanoid";import g from"tiny-invariant";import b from"react-dom";const y="ROOT",v="canvas-ROOT",E="Parent id cannot be ommited",w="Attempting to add a node with duplicated id",O="Node does not exist, it may have been removed",R='A <Element /> that is used inside a User Component must specify an `id` prop, eg: <Element id="text_element">...</Element> ',T="Placeholder required placement info (parent, index, or where) is missing",C="Node cannot be dropped into target parent",P="Target parent rejects incoming node",I="Current parent rejects outgoing node",D="Cannot move node that is not a direct child of a Canvas node",H="Cannot move node into a non-Canvas parent",j="A top-level Node cannot be moved",A="Root Node cannot be moved",x="Cannot move node into a descendant",N="The component type specified for this node (%node_type%) does not exist in the resolver",S="The component specified in the <Canvas> `is` prop has additional Canvas specified in it's render template.",_="The node has specified a canDrag() rule that prevents it from being dragged",k="Invalid parameter Node Id specified",L="Attempting to delete a top-level Node",M="Resolver in <Editor /> has to be an object. For (de)serialization Craft.js needs a list of all the User Components. \n    \nMore info: https://craft.js.org/r/docs/api/editor#props",U="An Error occurred while deserializing components: Cannot find component <%displayName% /> in resolver map. Please check your resolver in <Editor />\n\nAvailable components in resolver: %availableComponents%\n\nMore info: https://craft.js.org/r/docs/api/editor#props",q="You can only use useEditor in the context of <Editor />. \n\nPlease only use useEditor in components that are children of the <Editor /> component.",G="You can only use useNode in the context of <Editor />. \n\nPlease only use useNode in components that are children of the <Editor /> component.";function Y(e,t,n){return(t=function(e){var t=function(e){if("object"!=typeof e||!e)return e;var t=e[Symbol.toPrimitive];if(void 0!==t){var n=t.call(e,"string");if("object"!=typeof n)return n;throw new TypeError("@@toPrimitive must return a primitive value.")}return String(e)}(e);return"symbol"==typeof t?t:t+""}(t))in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function B(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(e);t&&(r=r.filter(function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable})),n.push.apply(n,r)}return n}function F(e){for(var t=1;t<arguments.length;t++){var n=null!=arguments[t]?arguments[t]:{};t%2?B(Object(n),!0).forEach(function(t){Y(e,t,n[t])}):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(n)):B(Object(n)).forEach(function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(n,t))})}return e}const W={UNDO:"HISTORY_UNDO",REDO:"HISTORY_REDO",THROTTLE:"HISTORY_THROTTLE",IGNORE:"HISTORY_IGNORE",MERGE:"HISTORY_MERGE",CLEAR:"HISTORY_CLEAR"};class z{constructor(){Y(this,"timeline",[]),Y(this,"pointer",-1)}add(e,t){0===e.length&&0===t.length||(this.pointer=this.pointer+1,this.timeline.length=this.pointer,this.timeline[this.pointer]={patches:e,inversePatches:t,timestamp:Date.now()})}throttleAdd(e,t){let n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:500;if(0!==e.length||0!==t.length){if(this.timeline.length&&this.pointer>=0){const{patches:r,inversePatches:i,timestamp:o}=this.timeline[this.pointer];if((new Date).getTime()-o<n)return void(this.timeline[this.pointer]={timestamp:o,patches:[...r,...e],inversePatches:[...t,...i]})}this.add(e,t)}}merge(e,t){if(0!==e.length||0!==t.length){if(this.timeline.length&&this.pointer>=0){const{patches:n,inversePatches:r,timestamp:i}=this.timeline[this.pointer];return void(this.timeline[this.pointer]={timestamp:i,patches:[...n,...e],inversePatches:[...t,...r]})}this.add(e,t)}}clear(){this.timeline=[],this.pointer=-1}canUndo(){return this.pointer>=0}canRedo(){return this.pointer<this.timeline.length-1}undo(e){if(!this.canUndo())return;const{inversePatches:n}=this.timeline[this.pointer];return this.pointer=this.pointer-1,t(e,n)}redo(e){if(!this.canRedo())return;this.pointer=this.pointer+1;const{patches:n}=this.timeline[this.pointer];return t(e,n)}}function J(t,n,r,o){const s=a(()=>new z,[]);let h,u=c([]),p=c(()=>{});"function"==typeof t?h=t:(h=t.methods,u.current=t.ignoreHistoryForActions,p.current=t.normalizeHistory);const f=c(o);f.current=o;const m=c(n),g=a(()=>{const{current:t}=p,{current:n}=u,{current:o}=f;return(a,c)=>{const l=r&&K(r,()=>a,s);let d,[u,p,f]=i(a,e=>{switch(c.type){case W.UNDO:return s.undo(e);case W.REDO:return s.redo(e);case W.CLEAR:return s.clear(),F({},e);case W.IGNORE:case W.MERGE:case W.THROTTLE:{const[t,...n]=c.payload;h(e,l)[t](...n);break}default:h(e,l)[c.type](...c.payload)}});return d=u,o&&o(u,a,{type:c.type,params:c.payload,patches:p},l,e=>{let t=i(u,e);d=t[0],p=[...p,...t[1]],f=[...t[2],...f]}),[W.UNDO,W.REDO].includes(c.type)&&t&&(d=e(d,t)),[...n,W.UNDO,W.REDO,W.IGNORE,W.CLEAR].includes(c.type)||(c.type===W.THROTTLE?s.throttleAdd(p,f,c.config&&c.config.rate):c.type===W.MERGE?s.merge(p,f):s.add(p,f)),d}},[s,h,r]),b=l(()=>m.current,[]),y=a(()=>new Q(b),[b]),v=l(e=>{const t=g(m.current,e);m.current=t,y.notify()},[g,y]);d(()=>{y.notify()},[y]);const E=a(()=>r?K(r,()=>m.current,s):[],[s,r]),w=a(()=>{const e=Object.keys(h(null,null)),{current:t}=u;return F(F({},e.reduce((e,t)=>(e[t]=function(){for(var e=arguments.length,n=new Array(e),r=0;r<e;r++)n[r]=arguments[r];return v({type:t,payload:n})},e),{})),{},{history:{undo:()=>v({type:W.UNDO}),redo:()=>v({type:W.REDO}),clear:()=>v({type:W.CLEAR}),throttle:n=>F({},e.filter(e=>!t.includes(e)).reduce((e,t)=>(e[t]=function(){for(var e=arguments.length,r=new Array(e),i=0;i<e;i++)r[i]=arguments[i];return v({type:W.THROTTLE,payload:[t,...r],config:{rate:n}})},e),{})),ignore:()=>F({},e.filter(e=>!t.includes(e)).reduce((e,t)=>(e[t]=function(){for(var e=arguments.length,n=new Array(e),r=0;r<e;r++)n[r]=arguments[r];return v({type:W.IGNORE,payload:[t,...n]})},e),{})),merge:()=>F({},e.filter(e=>!t.includes(e)).reduce((e,t)=>(e[t]=function(){for(var e=arguments.length,n=new Array(e),r=0;r<e;r++)n[r]=arguments[r];return v({type:W.MERGE,payload:[t,...n]})},e),{}))}})},[v,h]);return a(()=>({getState:b,subscribe:(e,t,n)=>y.subscribe(e,t,n),actions:w,query:E,history:s}),[w,E,y,b,s])}function K(e,t,n){const r=Object.keys(e()).reduce((n,r)=>F(F({},n),{},{[r]:function(){return e(t())[r](...arguments)}}),{});return F(F({},r),{},{history:{canUndo:()=>n.canUndo(),canRedo:()=>n.canRedo()}})}n(),r();class Q{constructor(e){Y(this,"getState",void 0),Y(this,"subscribers",[]),this.getState=e}subscribe(e,t,n){const r=new V(()=>e(this.getState()),t,n);return this.subscribers.push(r),this.unsubscribe.bind(this,r)}unsubscribe(e){if(this.subscribers.length){const t=this.subscribers.indexOf(e);if(t>-1)return this.subscribers.splice(t,1)}}notify(){this.subscribers.forEach(e=>e.collect())}}class V{constructor(e,t){let n=arguments.length>2&&void 0!==arguments[2]&&arguments[2];Y(this,"collected",void 0),Y(this,"collector",void 0),Y(this,"onChange",void 0),Y(this,"id",void 0),this.collector=e,this.onChange=t,n&&this.collect()}collect(){try{const e=this.collector();o(e,this.collected)||(this.collected=e,this.onChange&&this.onChange(this.collected))}catch(e){console.warn(e)}}}const X=e=>{const{x:t,y:n,top:r,left:i,bottom:o,right:s,width:a,height:c}=e.getBoundingClientRect(),l=window.getComputedStyle(e),d={left:parseInt(l.marginLeft),right:parseInt(l.marginRight),bottom:parseInt(l.marginBottom),top:parseInt(l.marginTop)},h={left:parseInt(l.paddingLeft),right:parseInt(l.paddingRight),bottom:parseInt(l.paddingBottom),top:parseInt(l.paddingTop)};return{x:t,y:n,top:r,left:i,bottom:o,right:s,width:a,height:c,outerWidth:Math.round(a+d.left+d.right),outerHeight:Math.round(c+d.top+d.bottom),margin:d,padding:h,inFlow:e.parentElement&&!!(t=>{const n=getComputedStyle(t);if(!(l.overflow&&"visible"!==l.overflow||"none"!==n.float||"grid"===n.display||"flex"===n.display&&"column"!==n["flex-direction"])){switch(l.position){case"static":case"relative":break;default:return}switch(e.tagName){case"TR":case"TBODY":case"THEAD":case"TFOOT":return!0}switch(l.display){case"block":case"list-item":case"table":case"flex":case"grid":return!0}}})(e.parentElement)}};function Z(e,t){const{subscribe:n,getState:r,actions:i,query:o}=e,s=c(!0),a=c(null),u=c(t);u.current=t;const p=l(e=>({...e,actions:i,query:o}),[i,o]);s.current&&t&&(a.current=t(r(),o),s.current=!1);const[f,m]=h(p(a.current));return d(()=>{let e;return u.current&&(e=n(e=>u.current(e,o),e=>{m(p(e))})),()=>{e&&e()}},[p,o,n]),f}const $=function(){return m(arguments.length>0&&void 0!==arguments[0]?arguments[0]:10)};class ee{constructor(){Y(this,"isEnabled",!0),Y(this,"elementIdMap",new WeakMap),Y(this,"registry",new Map)}getElementId(e){const t=this.elementIdMap.get(e);if(t)return t;const n=$();return this.elementIdMap.set(e,n),n}getConnectorId(e,t){const n=this.getElementId(e);return"".concat(t,"--").concat(n)}register(e,t){const n=this.getByElement(e,t.name);if(n){if(f(t.required,n.required))return n;this.getByElement(e,t.name).disable()}let r=null;const i=this.getConnectorId(e,t.name);return this.registry.set(i,{id:i,required:t.required,enable:()=>{r&&r(),r=t.connector(e,t.required,t.options)},disable:()=>{r&&r()},remove:()=>this.remove(i)}),this.isEnabled&&this.registry.get(i).enable(),this.registry.get(i)}get(e){return this.registry.get(e)}remove(e){const t=this.get(e);t&&(t.disable(),this.registry.delete(t.id))}enable(){this.isEnabled=!0,this.registry.forEach(e=>{e.enable()})}disable(){this.isEnabled=!1,this.registry.forEach(e=>{e.disable()})}getByElement(e,t){return this.get(this.getConnectorId(e,t))}removeByElement(e,t){return this.remove(this.getConnectorId(e,t))}clear(){this.disable(),this.elementIdMap=new WeakMap,this.registry=new Map}}var te;!function(e){e[e.HandlerDisabled=0]="HandlerDisabled",e[e.HandlerEnabled=1]="HandlerEnabled"}(te||(te={}));class ne{constructor(e){Y(this,"options",void 0),Y(this,"registry",new ee),Y(this,"subscribers",new Set),this.options=e}listen(e){return this.subscribers.add(e),()=>this.subscribers.delete(e)}disable(){this.onDisable&&this.onDisable(),this.registry.disable(),this.subscribers.forEach(e=>{e(te.HandlerDisabled)})}enable(){this.onEnable&&this.onEnable(),this.registry.enable(),this.subscribers.forEach(e=>{e(te.HandlerEnabled)})}cleanup(){this.disable(),this.subscribers.clear(),this.registry.clear()}addCraftEventListener(e,t,n,r){const i=r=>{(function(e,t,n){e.craft||(e.craft={stopPropagation:()=>{},blockedEvents:{}});const r=e.craft&&e.craft.blockedEvents[t]||[];for(let e=0;e<r.length;e++){const t=r[e];if(n!==t&&n.contains(t))return!0}return!1})(r,t,e)||(r.craft.stopPropagation=()=>{r.craft.blockedEvents[t]||(r.craft.blockedEvents[t]=[]),r.craft.blockedEvents[t].push(e)},n(r))};return e.addEventListener(t,i,r),()=>e.removeEventListener(t,i,r)}createConnectorsUsage(){const e=this.handlers(),t=new Set;let n=!1;const r=new Map;return{connectors:Object.entries(e).reduce((e,i)=>{let[o,s]=i;return F(F({},e),{},{[o]:(e,i,a)=>{const c=()=>{const n=this.registry.register(e,{required:i,name:o,options:a,connector:s});return t.add(n.id),n};return r.set(this.registry.getConnectorId(e,o),c),n&&c(),e}})},{}),register:()=>{n=!0,r.forEach(e=>{e()})},cleanup:()=>{n=!1,t.forEach(e=>this.registry.remove(e))}}}derive(e,t){return new e(this,t)}createProxyHandlers(e,t){const n=[],r=e.handlers(),i=new Proxy(r,{get:(e,t,i)=>t in r==0?Reflect.get(e,t,i):function(e){for(var i=arguments.length,o=new Array(i>1?i-1:0),s=1;s<i;s++)o[s-1]=arguments[s];const a=r[t](e,...o);a&&n.push(a)}});return t(i),()=>{n.forEach(e=>{e()})}}reflect(e){return this.createProxyHandlers(this,e)}}class re extends ne{constructor(e,t){super(t),Y(this,"derived",void 0),Y(this,"unsubscribeParentHandlerListener",void 0),this.derived=e,this.options=t,this.unsubscribeParentHandlerListener=this.derived.listen(e=>{switch(e){case te.HandlerEnabled:return this.enable();case te.HandlerDisabled:return this.disable();default:return}})}inherit(e){return this.createProxyHandlers(this.derived,e)}cleanup(){super.cleanup(),this.unsubscribeParentHandlerListener()}}function ie(e,t){t&&("function"==typeof e?e(t):e.current=t)}function oe(e,t){const n=e.ref;return g("string"!=typeof n,"Cannot connect to an element with an existing string ref. Please convert it to use a callback ref instead, or wrap it into a <span> or <div>. Read more: https://facebook.github.io/react/docs/more-about-refs.html#the-ref-callback-attribute"),u(e,n?{ref:e=>{ie(n,e),ie(t,e)}}:{ref:t})}function se(e){return(t=null,...n)=>{if(!p(t)){if(!t)return;const r=t;return r&&e(r,...n),r}const r=t;return function(e){if("string"!=typeof e.type)throw new Error}(r),oe(r,e)}}function ae(e){return Object.keys(e).reduce((t,n)=>(t[n]=se((...t)=>e[n](...t)),t),{})}const ce=({style:e,className:t,parentDom:n})=>{const r=s.createElement("div",{className:t,style:{position:"fixed",display:"block",opacity:1,borderStyle:"solid",borderWidth:"1px",borderColor:"transparent",zIndex:99999,...e}});return n&&n.ownerDocument!==document?b.createPortal(r,n.ownerDocument.body):r},le=e=>{d(e,[])},de=(e,t)=>{let n="Deprecation warning: ".concat(e," will be deprecated in future relases.");const{suggest:r,doc:i}=t;r&&(n+=" Please use ".concat(r," instead.")),i&&(n+="(".concat(i,")")),console.warn(n)},he=()=>"undefined"!=typeof window,ue=()=>he()&&/Linux/i.test(window.navigator.userAgent),pe=()=>he()&&/Chrome/i.test(window.navigator.userAgent);export{v as DEPRECATED_ROOT_NODE,re as DerivedEventHandlers,_ as ERROR_CANNOT_DRAG,L as ERROR_DELETE_TOP_LEVEL_NODE,U as ERROR_DESERIALIZE_COMPONENT_NOT_IN_RESOLVER,w as ERROR_DUPLICATE_NODEID,S as ERROR_INFINITE_CANVAS,O as ERROR_INVALID_NODEID,k as ERROR_INVALID_NODE_ID,T as ERROR_MISSING_PLACEHOLDER_PLACEMENT,C as ERROR_MOVE_CANNOT_DROP,P as ERROR_MOVE_INCOMING_PARENT,D as ERROR_MOVE_NONCANVAS_CHILD,I as ERROR_MOVE_OUTGOING_PARENT,A as ERROR_MOVE_ROOT_NODE,j as ERROR_MOVE_TOP_LEVEL_NODE,x as ERROR_MOVE_TO_DESCENDANT,H as ERROR_MOVE_TO_NONCANVAS_PARENT,E as ERROR_NOPARENT,N as ERROR_NOT_IN_RESOLVER,M as ERROR_RESOLVER_NOT_AN_OBJECT,R as ERROR_TOP_LEVEL_ELEMENT_NO_ID,q as ERROR_USE_EDITOR_OUTSIDE_OF_EDITOR_CONTEXT,G as ERROR_USE_NODE_OUTSIDE_OF_EDITOR_CONTEXT,te as EventHandlerUpdates,ne as EventHandlers,W as HISTORY_ACTIONS,z as History,y as ROOT_NODE,ce as RenderIndicator,oe as cloneWithRef,K as createQuery,de as deprecationWarning,X as getDOMInfo,$ as getRandomId,pe as isChromium,he as isClientSide,ue as isLinux,Z as useCollector,le as useEffectOnce,J as useMethods,ae as wrapConnectorHooks,se as wrapHookToRecognizeElement};
+if (typeof window !== 'undefined') {
+  if (!window['__CRAFTJS__']) {
+    window['__CRAFTJS__'] = {};
+  }
+
+  window['__CRAFTJS__']['@craftjs/utils'] = '0.2.5';
+}
+
+import produce, {
+  applyPatches,
+  enableMapSet,
+  enablePatches,
+  produceWithPatches,
+} from 'immer';
+import isEqualWith from 'lodash/isEqualWith';
+import React, {
+  useMemo,
+  useRef,
+  useCallback,
+  useEffect,
+  useState,
+  cloneElement,
+  isValidElement,
+} from 'react';
+import isEqual from 'shallowequal';
+import { nanoid } from 'nanoid';
+import invariant from 'tiny-invariant';
+import ReactDOM from 'react-dom';
+
+const ROOT_NODE = 'ROOT';
+const DEPRECATED_ROOT_NODE = 'canvas-ROOT';
+// TODO: Use a better way to store/display error messages
+const ERROR_NOPARENT = 'Parent id cannot be ommited';
+const ERROR_DUPLICATE_NODEID = 'Attempting to add a node with duplicated id';
+const ERROR_INVALID_NODEID = 'Node does not exist, it may have been removed';
+const ERROR_TOP_LEVEL_ELEMENT_NO_ID =
+  'A <Element /> that is used inside a User Component must specify an `id` prop, eg: <Element id="text_element">...</Element> ';
+const ERROR_MISSING_PLACEHOLDER_PLACEMENT =
+  'Placeholder required placement info (parent, index, or where) is missing';
+const ERROR_MOVE_CANNOT_DROP = 'Node cannot be dropped into target parent';
+const ERROR_MOVE_INCOMING_PARENT = 'Target parent rejects incoming node';
+const ERROR_MOVE_OUTGOING_PARENT = 'Current parent rejects outgoing node';
+const ERROR_MOVE_NONCANVAS_CHILD =
+  'Cannot move node that is not a direct child of a Canvas node';
+const ERROR_MOVE_TO_NONCANVAS_PARENT =
+  'Cannot move node into a non-Canvas parent';
+const ERROR_MOVE_TOP_LEVEL_NODE = 'A top-level Node cannot be moved';
+const ERROR_MOVE_ROOT_NODE = 'Root Node cannot be moved';
+const ERROR_MOVE_TO_DESCENDANT = 'Cannot move node into a descendant';
+const ERROR_NOT_IN_RESOLVER =
+  'The component type specified for this node (%node_type%) does not exist in the resolver';
+const ERROR_INFINITE_CANVAS =
+  "The component specified in the <Canvas> `is` prop has additional Canvas specified in it's render template.";
+const ERROR_CANNOT_DRAG =
+  'The node has specified a canDrag() rule that prevents it from being dragged';
+const ERROR_INVALID_NODE_ID = 'Invalid parameter Node Id specified';
+const ERROR_DELETE_TOP_LEVEL_NODE = 'Attempting to delete a top-level Node';
+const ERROR_RESOLVER_NOT_AN_OBJECT =
+  'Resolver in <Editor /> has to be an object. For (de)serialization Craft.js needs a list of all the User Components. \n    \nMore info: https://craft.js.org/r/docs/api/editor#props';
+const ERROR_DESERIALIZE_COMPONENT_NOT_IN_RESOLVER =
+  'An Error occurred while deserializing components: Cannot find component <%displayName% /> in resolver map. Please check your resolver in <Editor />\n\nAvailable components in resolver: %availableComponents%\n\nMore info: https://craft.js.org/r/docs/api/editor#props';
+const ERROR_USE_EDITOR_OUTSIDE_OF_EDITOR_CONTEXT =
+  'You can only use useEditor in the context of <Editor />. \n\nPlease only use useEditor in components that are children of the <Editor /> component.';
+const ERROR_USE_NODE_OUTSIDE_OF_EDITOR_CONTEXT =
+  'You can only use useNode in the context of <Editor />. \n\nPlease only use useNode in components that are children of the <Editor /> component.';
+
+function _defineProperty(e, r, t) {
+  return (
+    (r = _toPropertyKey(r)) in e
+      ? Object.defineProperty(e, r, {
+          value: t,
+          enumerable: !0,
+          configurable: !0,
+          writable: !0,
+        })
+      : (e[r] = t),
+    e
+  );
+}
+function ownKeys(e, r) {
+  var t = Object.keys(e);
+  if (Object.getOwnPropertySymbols) {
+    var o = Object.getOwnPropertySymbols(e);
+    r &&
+      (o = o.filter(function (r) {
+        return Object.getOwnPropertyDescriptor(e, r).enumerable;
+      })),
+      t.push.apply(t, o);
+  }
+  return t;
+}
+function _objectSpread2(e) {
+  for (var r = 1; r < arguments.length; r++) {
+    var t = null != arguments[r] ? arguments[r] : {};
+    r % 2
+      ? ownKeys(Object(t), !0).forEach(function (r) {
+          _defineProperty(e, r, t[r]);
+        })
+      : Object.getOwnPropertyDescriptors
+      ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t))
+      : ownKeys(Object(t)).forEach(function (r) {
+          Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
+        });
+  }
+  return e;
+}
+function _toPrimitive(t, r) {
+  if ('object' != typeof t || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || 'default');
+    if ('object' != typeof i) return i;
+    throw new TypeError('@@toPrimitive must return a primitive value.');
+  }
+  return ('string' === r ? String : Number)(t);
+}
+function _toPropertyKey(t) {
+  var i = _toPrimitive(t, 'string');
+  return 'symbol' == typeof i ? i : i + '';
+}
+
+const HISTORY_ACTIONS = {
+  UNDO: 'HISTORY_UNDO',
+  REDO: 'HISTORY_REDO',
+  THROTTLE: 'HISTORY_THROTTLE',
+  IGNORE: 'HISTORY_IGNORE',
+  MERGE: 'HISTORY_MERGE',
+  CLEAR: 'HISTORY_CLEAR',
+};
+class History {
+  constructor() {
+    _defineProperty(this, 'timeline', []);
+    _defineProperty(this, 'pointer', -1);
+  }
+  add(patches, inversePatches) {
+    if (patches.length === 0 && inversePatches.length === 0) {
+      return;
+    }
+    this.pointer = this.pointer + 1;
+    this.timeline.length = this.pointer;
+    this.timeline[this.pointer] = {
+      patches,
+      inversePatches,
+      timestamp: Date.now(),
+    };
+  }
+  throttleAdd(patches, inversePatches) {
+    let throttleRate =
+      arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 500;
+    if (patches.length === 0 && inversePatches.length === 0) {
+      return;
+    }
+    if (this.timeline.length && this.pointer >= 0) {
+      const {
+        patches: currPatches,
+        inversePatches: currInversePatches,
+        timestamp,
+      } = this.timeline[this.pointer];
+      const now = new Date();
+      const diff = now.getTime() - timestamp;
+      if (diff < throttleRate) {
+        this.timeline[this.pointer] = {
+          timestamp,
+          patches: [...currPatches, ...patches],
+          inversePatches: [...inversePatches, ...currInversePatches],
+        };
+        return;
+      }
+    }
+    this.add(patches, inversePatches);
+  }
+  merge(patches, inversePatches) {
+    if (patches.length === 0 && inversePatches.length === 0) {
+      return;
+    }
+    if (this.timeline.length && this.pointer >= 0) {
+      const {
+        patches: currPatches,
+        inversePatches: currInversePatches,
+        timestamp,
+      } = this.timeline[this.pointer];
+      this.timeline[this.pointer] = {
+        timestamp,
+        patches: [...currPatches, ...patches],
+        inversePatches: [...inversePatches, ...currInversePatches],
+      };
+      return;
+    }
+    this.add(patches, inversePatches);
+  }
+  clear() {
+    this.timeline = [];
+    this.pointer = -1;
+  }
+  canUndo() {
+    return this.pointer >= 0;
+  }
+  canRedo() {
+    return this.pointer < this.timeline.length - 1;
+  }
+  undo(state) {
+    if (!this.canUndo()) {
+      return;
+    }
+    const { inversePatches } = this.timeline[this.pointer];
+    this.pointer = this.pointer - 1;
+    return applyPatches(state, inversePatches);
+  }
+  redo(state) {
+    if (!this.canRedo()) {
+      return;
+    }
+    this.pointer = this.pointer + 1;
+    const { patches } = this.timeline[this.pointer];
+    return applyPatches(state, patches);
+  }
+}
+
+enableMapSet();
+enablePatches();
+function useMethods(
+  methodsOrOptions,
+  initialState,
+  queryMethods,
+  patchListener
+) {
+  const history = useMemo(() => new History(), []);
+  let methodsFactory;
+  let ignoreHistoryForActionsRef = useRef([]);
+  let normalizeHistoryRef = useRef(() => {});
+  if (typeof methodsOrOptions === 'function') {
+    methodsFactory = methodsOrOptions;
+  } else {
+    methodsFactory = methodsOrOptions.methods;
+    ignoreHistoryForActionsRef.current =
+      methodsOrOptions.ignoreHistoryForActions;
+    normalizeHistoryRef.current = methodsOrOptions.normalizeHistory;
+  }
+  const patchListenerRef = useRef(patchListener);
+  patchListenerRef.current = patchListener;
+  const stateRef = useRef(initialState);
+  const reducer = useMemo(() => {
+    const { current: normalizeHistory } = normalizeHistoryRef;
+    const { current: ignoreHistoryForActions } = ignoreHistoryForActionsRef;
+    const { current: patchListener } = patchListenerRef;
+    return (state, action) => {
+      const query =
+        queryMethods && createQuery(queryMethods, () => state, history);
+      let finalState;
+      let [nextState, patches, inversePatches] = produceWithPatches(
+        state,
+        (draft) => {
+          switch (action.type) {
+            case HISTORY_ACTIONS.UNDO: {
+              return history.undo(draft);
+            }
+            case HISTORY_ACTIONS.REDO: {
+              return history.redo(draft);
+            }
+            case HISTORY_ACTIONS.CLEAR: {
+              history.clear();
+              return _objectSpread2({}, draft);
+            }
+            // TODO: Simplify History API
+            case HISTORY_ACTIONS.IGNORE:
+            case HISTORY_ACTIONS.MERGE:
+            case HISTORY_ACTIONS.THROTTLE: {
+              const [type, ...params] = action.payload;
+              methodsFactory(draft, query)[type](...params);
+              break;
+            }
+            default:
+              methodsFactory(draft, query)[action.type](...action.payload);
+          }
+        }
+      );
+      finalState = nextState;
+      if (patchListener) {
+        patchListener(
+          nextState,
+          state,
+          {
+            type: action.type,
+            params: action.payload,
+            patches,
+          },
+          query,
+          (cb) => {
+            let normalizedDraft = produceWithPatches(nextState, cb);
+            finalState = normalizedDraft[0];
+            patches = [...patches, ...normalizedDraft[1]];
+            inversePatches = [...normalizedDraft[2], ...inversePatches];
+          }
+        );
+      }
+      if (
+        [HISTORY_ACTIONS.UNDO, HISTORY_ACTIONS.REDO].includes(action.type) &&
+        normalizeHistory
+      ) {
+        finalState = produce(finalState, normalizeHistory);
+      }
+      if (
+        ![
+          ...ignoreHistoryForActions,
+          HISTORY_ACTIONS.UNDO,
+          HISTORY_ACTIONS.REDO,
+          HISTORY_ACTIONS.IGNORE,
+          HISTORY_ACTIONS.CLEAR,
+        ].includes(action.type)
+      ) {
+        if (action.type === HISTORY_ACTIONS.THROTTLE) {
+          history.throttleAdd(
+            patches,
+            inversePatches,
+            action.config && action.config.rate
+          );
+        } else if (action.type === HISTORY_ACTIONS.MERGE) {
+          history.merge(patches, inversePatches);
+        } else {
+          history.add(patches, inversePatches);
+        }
+      }
+      return finalState;
+    };
+  }, [history, methodsFactory, queryMethods]);
+  const getState = useCallback(() => stateRef.current, []);
+  const watcher = useMemo(() => new Watcher(getState), [getState]);
+  const dispatch = useCallback(
+    (action) => {
+      const newState = reducer(stateRef.current, action);
+      stateRef.current = newState;
+      watcher.notify();
+    },
+    [reducer, watcher]
+  );
+  useEffect(() => {
+    watcher.notify();
+  }, [watcher]);
+  const query = useMemo(
+    () =>
+      !queryMethods
+        ? []
+        : createQuery(queryMethods, () => stateRef.current, history),
+    [history, queryMethods]
+  );
+  const actions = useMemo(() => {
+    const actionTypes = Object.keys(methodsFactory(null, null));
+    const { current: ignoreHistoryForActions } = ignoreHistoryForActionsRef;
+    return _objectSpread2(
+      _objectSpread2(
+        {},
+        actionTypes.reduce((accum, type) => {
+          accum[type] = function () {
+            for (
+              var _len = arguments.length, payload = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              payload[_key] = arguments[_key];
+            }
+            return dispatch({
+              type,
+              payload,
+            });
+          };
+          return accum;
+        }, {})
+      ),
+      {},
+      {
+        history: {
+          undo() {
+            return dispatch({
+              type: HISTORY_ACTIONS.UNDO,
+            });
+          },
+          redo() {
+            return dispatch({
+              type: HISTORY_ACTIONS.REDO,
+            });
+          },
+          clear: () => {
+            return dispatch({
+              type: HISTORY_ACTIONS.CLEAR,
+            });
+          },
+          throttle: (rate) => {
+            return _objectSpread2(
+              {},
+              actionTypes
+                .filter((type) => !ignoreHistoryForActions.includes(type))
+                .reduce((accum, type) => {
+                  accum[type] = function () {
+                    for (
+                      var _len2 = arguments.length,
+                        payload = new Array(_len2),
+                        _key2 = 0;
+                      _key2 < _len2;
+                      _key2++
+                    ) {
+                      payload[_key2] = arguments[_key2];
+                    }
+                    return dispatch({
+                      type: HISTORY_ACTIONS.THROTTLE,
+                      payload: [type, ...payload],
+                      config: {
+                        rate: rate,
+                      },
+                    });
+                  };
+                  return accum;
+                }, {})
+            );
+          },
+          ignore: () => {
+            return _objectSpread2(
+              {},
+              actionTypes
+                .filter((type) => !ignoreHistoryForActions.includes(type))
+                .reduce((accum, type) => {
+                  accum[type] = function () {
+                    for (
+                      var _len3 = arguments.length,
+                        payload = new Array(_len3),
+                        _key3 = 0;
+                      _key3 < _len3;
+                      _key3++
+                    ) {
+                      payload[_key3] = arguments[_key3];
+                    }
+                    return dispatch({
+                      type: HISTORY_ACTIONS.IGNORE,
+                      payload: [type, ...payload],
+                    });
+                  };
+                  return accum;
+                }, {})
+            );
+          },
+          merge: () => {
+            return _objectSpread2(
+              {},
+              actionTypes
+                .filter((type) => !ignoreHistoryForActions.includes(type))
+                .reduce((accum, type) => {
+                  accum[type] = function () {
+                    for (
+                      var _len4 = arguments.length,
+                        payload = new Array(_len4),
+                        _key4 = 0;
+                      _key4 < _len4;
+                      _key4++
+                    ) {
+                      payload[_key4] = arguments[_key4];
+                    }
+                    return dispatch({
+                      type: HISTORY_ACTIONS.MERGE,
+                      payload: [type, ...payload],
+                    });
+                  };
+                  return accum;
+                }, {})
+            );
+          },
+        },
+      }
+    );
+  }, [dispatch, methodsFactory]);
+  return useMemo(
+    () => ({
+      getState,
+      subscribe: (collector, cb, collectOnCreate) =>
+        watcher.subscribe(collector, cb, collectOnCreate),
+      actions,
+      query,
+      history,
+    }),
+    [actions, query, watcher, getState, history]
+  );
+}
+function createQuery(queryMethods, getState, history) {
+  const queries = Object.keys(queryMethods()).reduce((accum, key) => {
+    return _objectSpread2(
+      _objectSpread2({}, accum),
+      {},
+      {
+        [key]: function () {
+          return queryMethods(getState())[key](...arguments);
+        },
+      }
+    );
+  }, {});
+  return _objectSpread2(
+    _objectSpread2({}, queries),
+    {},
+    {
+      history: {
+        canUndo: () => history.canUndo(),
+        canRedo: () => history.canRedo(),
+      },
+    }
+  );
+}
+class Watcher {
+  constructor(getState) {
+    _defineProperty(this, 'getState', void 0);
+    _defineProperty(this, 'subscribers', []);
+    this.getState = getState;
+  }
+  /**
+   * Creates a Subscriber
+   * @returns {() => void} a Function that removes the Subscriber
+   */
+  subscribe(collector, onChange, collectOnCreate) {
+    const subscriber = new Subscriber(
+      () => collector(this.getState()),
+      onChange,
+      collectOnCreate
+    );
+    this.subscribers.push(subscriber);
+    return this.unsubscribe.bind(this, subscriber);
+  }
+  unsubscribe(subscriber) {
+    if (this.subscribers.length) {
+      const index = this.subscribers.indexOf(subscriber);
+      if (index > -1) return this.subscribers.splice(index, 1);
+    }
+  }
+  notify() {
+    this.subscribers.forEach((subscriber) => subscriber.collect());
+  }
+}
+class Subscriber {
+  /**
+   * Creates a Subscriber
+   * @param collector The method that returns an object of values to be collected
+   * @param onChange A callback method that is triggered when the collected values has changed
+   * @param collectOnCreate If set to true, the collector/onChange will be called on instantiation
+   */
+  constructor(collector, onChange) {
+    let collectOnCreate =
+      arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    _defineProperty(this, 'collected', void 0);
+    _defineProperty(this, 'collector', void 0);
+    _defineProperty(this, 'onChange', void 0);
+    _defineProperty(this, 'id', void 0);
+    this.collector = collector;
+    this.onChange = onChange;
+    // Collect and run onChange callback when Subscriber is created
+    if (collectOnCreate) this.collect();
+  }
+  collect() {
+    try {
+      const recollect = this.collector();
+      if (!isEqualWith(recollect, this.collected)) {
+        this.collected = recollect;
+        if (this.onChange) this.onChange(this.collected);
+      }
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn(err);
+    }
+  }
+}
+
+const getDOMInfo = (el) => {
+  const {
+    x,
+    y,
+    top,
+    left,
+    bottom,
+    right,
+    width,
+    height,
+  } = el.getBoundingClientRect();
+  const style = window.getComputedStyle(el);
+  const margin = {
+    left: parseInt(style.marginLeft),
+    right: parseInt(style.marginRight),
+    bottom: parseInt(style.marginBottom),
+    top: parseInt(style.marginTop),
+  };
+  const padding = {
+    left: parseInt(style.paddingLeft),
+    right: parseInt(style.paddingRight),
+    bottom: parseInt(style.paddingBottom),
+    top: parseInt(style.paddingTop),
+  };
+  const styleInFlow = (parent) => {
+    const parentStyle = getComputedStyle(parent);
+    if (style.overflow && style.overflow !== 'visible') {
+      return;
+    }
+    if (parentStyle.float !== 'none') {
+      return;
+    }
+    if (parentStyle.display === 'grid') {
+      return;
+    }
+    if (
+      parentStyle.display === 'flex' &&
+      parentStyle['flex-direction'] !== 'column'
+    ) {
+      return;
+    }
+    switch (style.position) {
+      case 'static':
+      case 'relative':
+        break;
+      default:
+        return;
+    }
+    switch (el.tagName) {
+      case 'TR':
+      case 'TBODY':
+      case 'THEAD':
+      case 'TFOOT':
+        return true;
+    }
+    switch (style.display) {
+      case 'block':
+      case 'list-item':
+      case 'table':
+      case 'flex':
+      case 'grid':
+        return true;
+    }
+    return;
+  };
+  return {
+    x,
+    y,
+    top,
+    left,
+    bottom,
+    right,
+    width,
+    height,
+    outerWidth: Math.round(width + margin.left + margin.right),
+    outerHeight: Math.round(height + margin.top + margin.bottom),
+    margin,
+    padding,
+    inFlow: el.parentElement && !!styleInFlow(el.parentElement),
+  };
+};
+
+function useCollector(store, collector) {
+  const { subscribe, getState, actions, query } = store;
+  const initial = useRef(true);
+  const collected = useRef(null);
+  const collectorRef = useRef(collector);
+  collectorRef.current = collector;
+  const onCollect = useCallback(
+    (collected) => {
+      return { ...collected, actions, query };
+    },
+    [actions, query]
+  );
+  // Collect states for initial render
+  if (initial.current && collector) {
+    collected.current = collector(getState(), query);
+    initial.current = false;
+  }
+  const [renderCollected, setRenderCollected] = useState(
+    onCollect(collected.current)
+  );
+  // Collect states on state change
+  useEffect(() => {
+    let unsubscribe;
+    if (collectorRef.current) {
+      unsubscribe = subscribe(
+        (current) => collectorRef.current(current, query),
+        (collected) => {
+          setRenderCollected(onCollect(collected));
+        }
+      );
+    }
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [onCollect, query, subscribe]);
+  return renderCollected;
+}
+
+// By default nanoid generate an ID with 21 characters. To reduce the footprint, we default to 10 characters.
+// We have a higher probability for collisions, though
+/**
+ * Generate a random ID. That ID can for example be used as a node ID.
+ *
+ * @param size The number of characters that are generated for the ID. Defaults to `10`
+ * @returns A random id
+ */
+const getRandomId = function () {
+  let size =
+    arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;
+  return nanoid(size);
+};
+
+/**
+ * Stores all connected DOM elements and their connectors here
+ * This allows us to easily enable/disable and perform cleanups
+ */
+class ConnectorRegistry {
+  constructor() {
+    _defineProperty(this, 'isEnabled', true);
+    _defineProperty(this, 'elementIdMap', new WeakMap());
+    _defineProperty(this, 'registry', new Map());
+  }
+  getElementId(element) {
+    const existingId = this.elementIdMap.get(element);
+    if (existingId) {
+      return existingId;
+    }
+    const newId = getRandomId();
+    this.elementIdMap.set(element, newId);
+    return newId;
+  }
+  getConnectorId(element, connectorName) {
+    const elementId = this.getElementId(element);
+    return ''.concat(connectorName, '--').concat(elementId);
+  }
+  register(element, connectorPayload) {
+    const existingConnector = this.getByElement(element, connectorPayload.name);
+    if (existingConnector) {
+      if (isEqual(connectorPayload.required, existingConnector.required)) {
+        return existingConnector;
+      }
+      this.getByElement(element, connectorPayload.name).disable();
+    }
+    let cleanup = null;
+    const id = this.getConnectorId(element, connectorPayload.name);
+    this.registry.set(id, {
+      id,
+      required: connectorPayload.required,
+      enable: () => {
+        if (cleanup) {
+          cleanup();
+        }
+        cleanup = connectorPayload.connector(
+          element,
+          connectorPayload.required,
+          connectorPayload.options
+        );
+      },
+      disable: () => {
+        if (!cleanup) {
+          return;
+        }
+        cleanup();
+      },
+      remove: () => {
+        return this.remove(id);
+      },
+    });
+    if (this.isEnabled) {
+      this.registry.get(id).enable();
+    }
+    return this.registry.get(id);
+  }
+  get(id) {
+    return this.registry.get(id);
+  }
+  remove(id) {
+    const connector = this.get(id);
+    if (!connector) {
+      return;
+    }
+    connector.disable();
+    this.registry.delete(connector.id);
+  }
+  enable() {
+    this.isEnabled = true;
+    this.registry.forEach((connectors) => {
+      connectors.enable();
+    });
+  }
+  disable() {
+    this.isEnabled = false;
+    this.registry.forEach((connectors) => {
+      connectors.disable();
+    });
+  }
+  getByElement(element, connectorName) {
+    return this.get(this.getConnectorId(element, connectorName));
+  }
+  removeByElement(element, connectorName) {
+    return this.remove(this.getConnectorId(element, connectorName));
+  }
+  clear() {
+    this.disable();
+    this.elementIdMap = new WeakMap();
+    this.registry = new Map();
+  }
+}
+
+var EventHandlerUpdates;
+(function (EventHandlerUpdates) {
+  EventHandlerUpdates[(EventHandlerUpdates['HandlerDisabled'] = 0)] =
+    'HandlerDisabled';
+  EventHandlerUpdates[(EventHandlerUpdates['HandlerEnabled'] = 1)] =
+    'HandlerEnabled';
+})(EventHandlerUpdates || (EventHandlerUpdates = {}));
+
+/**
+ * Check if a specified event is blocked by a child
+ * that's a descendant of the specified element
+ */
+function isEventBlockedByDescendant(e, eventName, el) {
+  // Store initial Craft event value
+  if (!e.craft) {
+    e.craft = {
+      stopPropagation: () => {},
+      blockedEvents: {},
+    };
+  }
+  const blockingElements = (e.craft && e.craft.blockedEvents[eventName]) || [];
+  for (let i = 0; i < blockingElements.length; i++) {
+    const blockingElement = blockingElements[i];
+    if (el !== blockingElement && el.contains(blockingElement)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+class EventHandlers {
+  constructor(options) {
+    _defineProperty(this, 'options', void 0);
+    _defineProperty(this, 'registry', new ConnectorRegistry());
+    _defineProperty(this, 'subscribers', new Set());
+    this.options = options;
+  }
+  listen(cb) {
+    this.subscribers.add(cb);
+    return () => this.subscribers.delete(cb);
+  }
+  disable() {
+    if (this.onDisable) {
+      this.onDisable();
+    }
+    this.registry.disable();
+    this.subscribers.forEach((listener) => {
+      listener(EventHandlerUpdates.HandlerDisabled);
+    });
+  }
+  enable() {
+    if (this.onEnable) {
+      this.onEnable();
+    }
+    this.registry.enable();
+    this.subscribers.forEach((listener) => {
+      listener(EventHandlerUpdates.HandlerEnabled);
+    });
+  }
+  cleanup() {
+    this.disable();
+    this.subscribers.clear();
+    this.registry.clear();
+  }
+  addCraftEventListener(el, eventName, listener, options) {
+    const bindedListener = (e) => {
+      if (!isEventBlockedByDescendant(e, eventName, el)) {
+        e.craft.stopPropagation = () => {
+          if (!e.craft.blockedEvents[eventName]) {
+            e.craft.blockedEvents[eventName] = [];
+          }
+          e.craft.blockedEvents[eventName].push(el);
+        };
+        listener(e);
+      }
+    };
+    el.addEventListener(eventName, bindedListener, options);
+    return () => el.removeEventListener(eventName, bindedListener, options);
+  }
+  /**
+   * Creates a record of chainable connectors and tracks their usages
+   */
+  createConnectorsUsage() {
+    const handlers = this.handlers();
+    // Track all active connector ids here
+    // This is so we can return a cleanup method below so the callee can programmatically cleanup all connectors
+    const activeConnectorIds = new Set();
+    let canRegisterConnectors = false;
+    const connectorsToRegister = new Map();
+    const connectors = Object.entries(handlers).reduce((accum, _ref) => {
+      let [name, handler] = _ref;
+      return _objectSpread2(
+        _objectSpread2({}, accum),
+        {},
+        {
+          [name]: (el, required, options) => {
+            const registerConnector = () => {
+              const connector = this.registry.register(el, {
+                required,
+                name,
+                options,
+                connector: handler,
+              });
+              activeConnectorIds.add(connector.id);
+              return connector;
+            };
+            connectorsToRegister.set(
+              this.registry.getConnectorId(el, name),
+              registerConnector
+            );
+            /**
+             * If register() has been called,
+             * register the connector immediately.
+             *
+             * Otherwise, registration is deferred until after register() is called
+             */
+            if (canRegisterConnectors) {
+              registerConnector();
+            }
+            return el;
+          },
+        }
+      );
+    }, {});
+    return {
+      connectors,
+      register: () => {
+        canRegisterConnectors = true;
+        connectorsToRegister.forEach((registerConnector) => {
+          registerConnector();
+        });
+      },
+      cleanup: () => {
+        canRegisterConnectors = false;
+        activeConnectorIds.forEach((connectorId) =>
+          this.registry.remove(connectorId)
+        );
+      },
+    };
+  }
+  derive(type, opts) {
+    return new type(this, opts);
+  }
+  // This method allows us to execute multiple connectors and returns a single cleanup method for all of them
+  createProxyHandlers(instance, cb) {
+    const connectorsToCleanup = [];
+    const handlers = instance.handlers();
+    const proxiedHandlers = new Proxy(handlers, {
+      get: (target, key, receiver) => {
+        if (key in handlers === false) {
+          return Reflect.get(target, key, receiver);
+        }
+        return function (el) {
+          for (
+            var _len = arguments.length,
+              args = new Array(_len > 1 ? _len - 1 : 0),
+              _key = 1;
+            _key < _len;
+            _key++
+          ) {
+            args[_key - 1] = arguments[_key];
+          }
+          const cleanup = handlers[key](el, ...args);
+          if (!cleanup) {
+            return;
+          }
+          connectorsToCleanup.push(cleanup);
+        };
+      },
+    });
+    cb(proxiedHandlers);
+    return () => {
+      connectorsToCleanup.forEach((cleanup) => {
+        cleanup();
+      });
+    };
+  }
+  // This lets us to execute and cleanup sibling connectors
+  reflect(cb) {
+    return this.createProxyHandlers(this, cb);
+  }
+}
+
+// Creates EventHandlers that depends on another EventHandlers instance
+// This lets us to easily create new connectors that composites of the parent EventHandlers instance
+class DerivedEventHandlers extends EventHandlers {
+  constructor(derived, options) {
+    super(options);
+    _defineProperty(this, 'derived', void 0);
+    _defineProperty(this, 'unsubscribeParentHandlerListener', void 0);
+    this.derived = derived;
+    this.options = options;
+    // Automatically disable/enable depending on the parent handlers
+    this.unsubscribeParentHandlerListener = this.derived.listen((msg) => {
+      switch (msg) {
+        case EventHandlerUpdates.HandlerEnabled: {
+          return this.enable();
+        }
+        case EventHandlerUpdates.HandlerDisabled: {
+          return this.disable();
+        }
+        default: {
+          return;
+        }
+      }
+    });
+  }
+  // A method to easily inherit parent connectors
+  inherit(cb) {
+    return this.createProxyHandlers(this.derived, cb);
+  }
+  cleanup() {
+    super.cleanup();
+    this.unsubscribeParentHandlerListener();
+  }
+}
+
+// https://github.com/react-dnd/react-dnd
+function setRef(ref, node) {
+  if (node) {
+    if (typeof ref === 'function') {
+      ref(node);
+    } else {
+      ref.current = node;
+    }
+  }
+}
+function cloneWithRef(element, newRef) {
+  const previousRef = element.ref;
+  invariant(
+    typeof previousRef !== 'string',
+    'Cannot connect to an element with an existing string ref. ' +
+      'Please convert it to use a callback ref instead, or wrap it into a <span> or <div>. ' +
+      'Read more: https://facebook.github.io/react/docs/more-about-refs.html#the-ref-callback-attribute'
+  );
+  if (!previousRef) {
+    // When there is no ref on the element, use the new ref directly
+    return cloneElement(element, {
+      ref: newRef,
+    });
+  } else {
+    return cloneElement(element, {
+      ref: (node) => {
+        setRef(previousRef, node);
+        setRef(newRef, node);
+      },
+    });
+  }
+}
+function throwIfCompositeComponentElement(element) {
+  if (typeof element.type === 'string') {
+    return;
+  }
+  throw new Error();
+}
+function wrapHookToRecognizeElement(hook) {
+  return (elementOrNode = null, ...args) => {
+    // When passed a node, call the hook straight away.
+    if (!isValidElement(elementOrNode)) {
+      if (!elementOrNode) {
+        return;
+      }
+      const node = elementOrNode;
+      node && hook(node, ...args);
+      return node;
+    }
+    // If passed a ReactElement, clone it and attach this function as a ref.
+    // This helps us achieve a neat API where user doesn't even know that refs
+    // are being used under the hood.
+    const element = elementOrNode;
+    throwIfCompositeComponentElement(element);
+    return cloneWithRef(element, hook);
+  };
+}
+// A React wrapper for our connectors
+// Wrap all our connectors so that would additionally accept React.ReactElement
+function wrapConnectorHooks(connectors) {
+  return Object.keys(connectors).reduce((accum, key) => {
+    accum[key] = wrapHookToRecognizeElement((...args) => {
+      // @ts-ignore
+      return connectors[key](...args);
+    });
+    return accum;
+  }, {});
+}
+
+const RenderIndicator = ({ style, className, parentDom }) => {
+  const indicator = React.createElement('div', {
+    className: className,
+    style: {
+      position: 'fixed',
+      display: 'block',
+      opacity: 1,
+      borderStyle: 'solid',
+      borderWidth: '1px',
+      borderColor: 'transparent',
+      zIndex: 99999,
+      ...style,
+    },
+  });
+  if (parentDom && parentDom.ownerDocument !== document) {
+    return ReactDOM.createPortal(indicator, parentDom.ownerDocument.body);
+  }
+  return indicator;
+};
+
+const useEffectOnce = (effect) => {
+  /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  useEffect(effect, []);
+};
+
+const deprecationWarning = (name, payload) => {
+  let message = 'Deprecation warning: '.concat(
+    name,
+    ' will be deprecated in future relases.'
+  );
+  const { suggest, doc } = payload;
+  if (suggest) {
+    message += ' Please use '.concat(suggest, ' instead.');
+  }
+  // URL link to Documentation
+  if (doc) {
+    message += '('.concat(doc, ')');
+  }
+  // eslint-disable-next-line no-console
+  console.warn(message);
+};
+
+const isClientSide = () => typeof window !== 'undefined';
+const isLinux = () =>
+  isClientSide() && /Linux/i.test(window.navigator.userAgent);
+const isChromium = () =>
+  isClientSide() && /Chrome/i.test(window.navigator.userAgent);
+
+export {
+  DEPRECATED_ROOT_NODE,
+  DerivedEventHandlers,
+  ERROR_CANNOT_DRAG,
+  ERROR_DELETE_TOP_LEVEL_NODE,
+  ERROR_DESERIALIZE_COMPONENT_NOT_IN_RESOLVER,
+  ERROR_DUPLICATE_NODEID,
+  ERROR_INFINITE_CANVAS,
+  ERROR_INVALID_NODEID,
+  ERROR_INVALID_NODE_ID,
+  ERROR_MISSING_PLACEHOLDER_PLACEMENT,
+  ERROR_MOVE_CANNOT_DROP,
+  ERROR_MOVE_INCOMING_PARENT,
+  ERROR_MOVE_NONCANVAS_CHILD,
+  ERROR_MOVE_OUTGOING_PARENT,
+  ERROR_MOVE_ROOT_NODE,
+  ERROR_MOVE_TOP_LEVEL_NODE,
+  ERROR_MOVE_TO_DESCENDANT,
+  ERROR_MOVE_TO_NONCANVAS_PARENT,
+  ERROR_NOPARENT,
+  ERROR_NOT_IN_RESOLVER,
+  ERROR_RESOLVER_NOT_AN_OBJECT,
+  ERROR_TOP_LEVEL_ELEMENT_NO_ID,
+  ERROR_USE_EDITOR_OUTSIDE_OF_EDITOR_CONTEXT,
+  ERROR_USE_NODE_OUTSIDE_OF_EDITOR_CONTEXT,
+  EventHandlerUpdates,
+  EventHandlers,
+  HISTORY_ACTIONS,
+  History,
+  ROOT_NODE,
+  RenderIndicator,
+  cloneWithRef,
+  createQuery,
+  deprecationWarning,
+  getDOMInfo,
+  getRandomId,
+  isChromium,
+  isClientSide,
+  isLinux,
+  useCollector,
+  useEffectOnce,
+  useMethods,
+  wrapConnectorHooks,
+  wrapHookToRecognizeElement,
+};
 //# sourceMappingURL=index.js.map

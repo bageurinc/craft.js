@@ -25,7 +25,7 @@ const LayerChildren = styled.div<{
   $hasCanvases: boolean;
   $theme: LayersTheme;
 }>`
-  margin: 0 0 0 ${(props) => (props.$hasCanvases ? 35 : 0)}px;
+  margin: 0 0 0 ${(props) => (props.$hasCanvases ? 28 : 0)}px;
   background: ${(props) =>
     props.$hasCanvases ? props.$theme.bgCanvas : 'transparent'};
   position: relative;

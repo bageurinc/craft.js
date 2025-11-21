@@ -5,6 +5,7 @@ import { styled } from 'styled-components';
 import { EditableLayerName } from './EditableLayerName';
 import Arrow from './svg/arrow.svg';
 import Eye from './svg/eye.svg';
+import Grip from './svg/grip.svg';
 import Linked from './svg/linked.svg';
 
 import { LayersTheme } from '../../theme';
@@ -35,7 +36,7 @@ const StyledDiv = styled.div<{
       padding: 0px;
       flex: 1;
       display: flex;
-      margin-left: ${(props) => props.$depth * 10}px;
+      margin-left: ${(props) => Math.min(props.$depth * 8, 40)}px;
       align-items: center;
       div.layer-name {
         flex: 1;
@@ -105,6 +106,76 @@ const TopLevelIndicator = styled.div`
   }
 `;
 
+const DragHandle = styled.div<{
+  $theme: LayersTheme;
+}>`
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+  margin-right: 4px;
+  flex-shrink: 0;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:active {
+    cursor: grabbing;
+    opacity: 1;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+  }
+`;
+
+const ReorderButtons = styled.div<{
+  $theme: LayersTheme;
+}>`
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+`;
+
+const ReorderButton = styled.button<{
+  $theme: LayersTheme;
+  $disabled?: boolean;
+}>`
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: ${(props) => (props.$disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${(props) => (props.$disabled ? 0.3 : 0.6)};
+  transition: opacity 0.2s ease;
+  padding: 0;
+  border-radius: 3px;
+
+  &:hover {
+    opacity: ${(props) => (props.$disabled ? 0.3 : 1)};
+    background: ${(props) =>
+      props.$disabled ? 'transparent' : props.$theme.bgHover};
+  }
+
+  svg {
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+  }
+`;
+
 export const DefaultLayerHeader = () => {
   const theme = useLayerTheme();
   const {
@@ -120,26 +191,67 @@ export const DefaultLayerHeader = () => {
     };
   });
 
-  const { hidden, actions, selected, topLevel } = useEditor((state, query) => {
+  const {
+    hidden,
+    actions,
+    selected,
+    topLevel,
+    parent,
+    currentIndex,
+    canMoveUp,
+    canMoveDown,
+  } = useEditor((state, query) => {
     // TODO: handle multiple selected elements
     const selected = query.getEvent('selected').first() === id;
+    const node = state.nodes[id];
+    const parent = node?.data?.parent ? state.nodes[node.data.parent] : null;
+    const siblings = parent?.data?.nodes || [];
+    const currentIndex = siblings.indexOf(id);
 
     return {
-      hidden: state.nodes[id] && state.nodes[id].data.hidden,
+      hidden: node && node.data.hidden,
       selected,
       topLevel: query.node(id).isTopLevelCanvas(),
+      parent,
+      currentIndex,
+      canMoveUp: currentIndex > 0,
+      canMoveDown: currentIndex < siblings.length - 1 && currentIndex !== -1,
     };
   });
+
+  const handleMoveUp = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!canMoveUp || !parent) return;
+    // Move to previous position
+    actions.move(id, parent.id, currentIndex - 1);
+  };
+
+  const handleMoveDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!canMoveDown || !parent) return;
+    // When moving down, the node is removed first, so we need to add 2
+    // to account for: current position removal + skip the next sibling
+    actions.move(id, parent.id, currentIndex + 2);
+  };
+
+  const [isHovered, setIsHovered] = React.useState(false);
 
   return (
     <StyledDiv
       $selected={selected}
-      ref={(dom) => {
-        drag(dom);
-      }}
       $depth={depth}
       $theme={theme}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
+      <DragHandle
+        ref={(dom) => {
+          drag(dom);
+        }}
+        $theme={theme}
+      >
+        <Grip />
+      </DragHandle>
       <Hide
         $selected={selected}
         $isHidden={hidden}
@@ -163,7 +275,34 @@ export const DefaultLayerHeader = () => {
           <div className="layer-name s">
             <EditableLayerName />
           </div>
-          <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {!topLevel && isHovered && (
+              <ReorderButtons
+                $theme={theme}
+                style={{ opacity: isHovered ? 1 : 0 }}
+              >
+                <ReorderButton
+                  $theme={theme}
+                  $disabled={!canMoveUp}
+                  onClick={handleMoveUp}
+                  title="Move up"
+                >
+                  <svg viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 3l-5 5h10z" />
+                  </svg>
+                </ReorderButton>
+                <ReorderButton
+                  $theme={theme}
+                  $disabled={!canMoveDown}
+                  onClick={handleMoveDown}
+                  title="Move down"
+                >
+                  <svg viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 13l5-5H3z" />
+                  </svg>
+                </ReorderButton>
+              </ReorderButtons>
+            )}
             {children && children.length ? (
               <Expand $expanded={expanded} onMouseDown={() => toggleLayer()}>
                 <Arrow />

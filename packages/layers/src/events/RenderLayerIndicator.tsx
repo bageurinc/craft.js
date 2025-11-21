@@ -1,8 +1,28 @@
 import { useEditor } from '@craftjs/core';
-import { RenderIndicator } from '@craftjs/utils';
 import React, { useMemo } from 'react';
+import { styled, keyframes } from 'styled-components';
 
 import { useLayerManager } from '../manager/useLayerManager';
+
+const pulse = keyframes`
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+`;
+
+const StyledIndicator = styled.div<{ $error?: boolean }>`
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  box-shadow: ${(props) =>
+    props.$error
+      ? '0 0 8px rgba(239, 68, 68, 0.6)'
+      : '0 0 8px rgba(59, 130, 246, 0.6)'};
+  animation: ${pulse} 1.5s ease-in-out infinite;
+`;
 
 type RenderLayerIndicatorProps = {
   children?: React.ReactNode;
@@ -57,7 +77,7 @@ export const RenderLayerIndicator = ({
           top,
           left: headingPos.left,
           width: pos.width + pos.left - headingPos.left,
-          height: 2,
+          height: 4,
           borderWidth: 0,
           background: color,
         };
@@ -67,11 +87,12 @@ export const RenderLayerIndicator = ({
 
   return (
     <div>
-      {events.indicator
-        ? React.createElement(RenderIndicator, {
-            style: indicatorPosition,
-          })
-        : null}
+      {events.indicator ? (
+        <StyledIndicator
+          $error={!!events.indicator.error}
+          style={indicatorPosition}
+        />
+      ) : null}
       {children}
     </div>
   );
