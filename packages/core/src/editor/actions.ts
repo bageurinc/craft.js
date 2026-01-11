@@ -406,6 +406,14 @@ const Methods = (
     },
 
     /**
+     * Set snap guides during drag operations
+     * @param guides - array of snap guide lines to display
+     */
+    setSnapGuides(guides: EditorState['snapGuides']) {
+      state.snapGuides = guides || [];
+    },
+
+    /**
      * Hide a Node
      * @param id
      * @param bool

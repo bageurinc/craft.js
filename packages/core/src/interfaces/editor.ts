@@ -52,6 +52,14 @@ export type EditorState = {
   events: EditorEvents;
   options: Options;
   indicator: Indicator;
+  snapGuides: SnapGuide[];
 };
+
+export interface SnapGuide {
+  type: 'horizontal' | 'vertical';
+  position: number;
+  start: number;
+  end: number;
+}
 
 export type ConnectedEditor<S = null> = useInternalEditorReturnType<S>;

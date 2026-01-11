@@ -1,203 +1,251 @@
 import { getDOMInfo, ROOT_NODE } from '@craftjs/utils';
 import findPosition from './findPosition';
+import { SnapGuideCalculator } from './SnapGuideCalculator';
 import { getNodesFromSelector } from '../utils/getNodesFromSelector';
 // Hack: to trigger dragend event immediate
 // Otherwise we would have to wait until the native animation is completed before we can actually drop an block
 const documentDragoverEventHandler = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 };
 /**
  * Positioner is responsible for computing the drop Indicator during a sequence of drag-n-drop events
  */
 export class Positioner {
-    store;
-    dragTarget;
-    static BORDER_OFFSET = 10;
-    // Current Node being hovered on
-    currentDropTargetId;
-    // Current closest Canvas Node relative to the currentDropTarget
-    currentDropTargetCanvasAncestorId;
-    currentIndicator = null;
-    currentTargetId;
-    currentTargetChildDimensions;
-    dragError;
-    draggedNodes;
-    onScrollListener;
-    constructor(store, dragTarget) {
-        this.store = store;
-        this.dragTarget = dragTarget;
-        this.currentDropTargetId = null;
-        this.currentDropTargetCanvasAncestorId = null;
-        this.currentTargetId = null;
-        this.currentTargetChildDimensions = null;
-        this.currentIndicator = null;
-        this.dragError = null;
-        this.draggedNodes = this.getDraggedNodes();
-        this.validateDraggedNodes();
-        this.onScrollListener = this.onScroll.bind(this);
-        window.addEventListener('scroll', this.onScrollListener, true);
-        window.addEventListener('dragover', documentDragoverEventHandler, false);
+  store;
+  dragTarget;
+  static BORDER_OFFSET = 10;
+  // Current Node being hovered on
+  currentDropTargetId;
+  // Current closest Canvas Node relative to the currentDropTarget
+  currentDropTargetCanvasAncestorId;
+  currentIndicator = null;
+  currentTargetId;
+  currentTargetChildDimensions;
+  dragError;
+  draggedNodes;
+  onScrollListener;
+  snapGuideCalculator;
+  constructor(store, dragTarget) {
+    this.store = store;
+    this.dragTarget = dragTarget;
+    this.currentDropTargetId = null;
+    this.currentDropTargetCanvasAncestorId = null;
+    this.currentTargetId = null;
+    this.currentTargetChildDimensions = null;
+    this.currentIndicator = null;
+    this.dragError = null;
+    this.draggedNodes = this.getDraggedNodes();
+    this.validateDraggedNodes();
+    this.snapGuideCalculator = new SnapGuideCalculator(store);
+    this.onScrollListener = this.onScroll.bind(this);
+    window.addEventListener('scroll', this.onScrollListener, true);
+    window.addEventListener('dragover', documentDragoverEventHandler, false);
+  }
+  cleanup() {
+    window.removeEventListener('scroll', this.onScrollListener, true);
+    window.removeEventListener('dragover', documentDragoverEventHandler, false);
+    this.snapGuideCalculator.clear();
+    this.store.actions.setSnapGuides([]);
+  }
+  onScroll(e) {
+    const scrollBody = e.target;
+    const rootNode = this.store.query.node(ROOT_NODE).get();
+    // Clear the currentTargetChildDimensions if the user has scrolled
+    // Because we will have to recompute new dimensions relative to the new scroll pos
+    const shouldClearChildDimensionsCache =
+      scrollBody instanceof Element &&
+      rootNode &&
+      rootNode.dom &&
+      scrollBody.contains(rootNode.dom);
+    if (!shouldClearChildDimensionsCache) {
+      return;
     }
-    cleanup() {
-        window.removeEventListener('scroll', this.onScrollListener, true);
-        window.removeEventListener('dragover', documentDragoverEventHandler, false);
+    this.currentTargetChildDimensions = null;
+  }
+  getDraggedNodes() {
+    if (this.dragTarget.type === 'new') {
+      return getNodesFromSelector(
+        this.store.query.getNodes(),
+        this.dragTarget.tree.nodes[this.dragTarget.tree.rootNodeId]
+      );
     }
-    onScroll(e) {
-        const scrollBody = e.target;
-        const rootNode = this.store.query.node(ROOT_NODE).get();
-        // Clear the currentTargetChildDimensions if the user has scrolled
-        // Because we will have to recompute new dimensions relative to the new scroll pos
-        const shouldClearChildDimensionsCache = scrollBody instanceof Element &&
-            rootNode &&
-            rootNode.dom &&
-            scrollBody.contains(rootNode.dom);
-        if (!shouldClearChildDimensionsCache) {
-            return;
-        }
-        this.currentTargetChildDimensions = null;
+    return getNodesFromSelector(
+      this.store.query.getNodes(),
+      this.dragTarget.nodes
+    );
+  }
+  // Check if the elements being dragged are allowed to be dragged
+  validateDraggedNodes() {
+    // We don't need to check for dragTarget.type = "new" because those nodes are not yet in the state (ie: via the .create() connector)
+    if (this.dragTarget.type === 'new') {
+      return;
     }
-    getDraggedNodes() {
-        if (this.dragTarget.type === 'new') {
-            return getNodesFromSelector(this.store.query.getNodes(), this.dragTarget.tree.nodes[this.dragTarget.tree.rootNodeId]);
-        }
-        return getNodesFromSelector(this.store.query.getNodes(), this.dragTarget.nodes);
+    this.draggedNodes.forEach(({ node, exists }) => {
+      if (!exists) {
+        return;
+      }
+      this.store.query.node(node.id).isDraggable((err) => {
+        this.dragError = err;
+      });
+    });
+  }
+  isNearBorders(domInfo, x, y) {
+    const { top, bottom, left, right } = domInfo;
+    if (
+      top + Positioner.BORDER_OFFSET > y ||
+      bottom - Positioner.BORDER_OFFSET < y ||
+      left + Positioner.BORDER_OFFSET > x ||
+      right - Positioner.BORDER_OFFSET < x
+    ) {
+      return true;
     }
-    // Check if the elements being dragged are allowed to be dragged
-    validateDraggedNodes() {
-        // We don't need to check for dragTarget.type = "new" because those nodes are not yet in the state (ie: via the .create() connector)
-        if (this.dragTarget.type === 'new') {
-            return;
-        }
-        this.draggedNodes.forEach(({ node, exists }) => {
-            if (!exists) {
-                return;
-            }
-            this.store.query.node(node.id).isDraggable((err) => {
-                this.dragError = err;
-            });
+    return false;
+  }
+  isDiff(newPosition) {
+    if (
+      this.currentIndicator &&
+      this.currentIndicator.placement.parent.id === newPosition.parent.id &&
+      this.currentIndicator.placement.index === newPosition.index &&
+      this.currentIndicator.placement.where === newPosition.where
+    ) {
+      return false;
+    }
+    return true;
+  }
+  /**
+   * Get dimensions of every child Node in the specified parent Node
+   */
+  getChildDimensions(newParentNode) {
+    // Use previously computed child dimensions if newParentNode is the same as the previous one
+    const existingTargetChildDimensions = this.currentTargetChildDimensions;
+    if (
+      this.currentTargetId === newParentNode.id &&
+      existingTargetChildDimensions
+    ) {
+      return existingTargetChildDimensions;
+    }
+    return newParentNode.data.nodes.reduce((result, id) => {
+      const dom = this.store.query.node(id).get().dom;
+      if (dom) {
+        result.push({
+          id,
+          ...getDOMInfo(dom),
         });
+      }
+      return result;
+    }, []);
+  }
+  /**
+   * Get closest Canvas node relative to the dropTargetId
+   * Return dropTargetId if it itself is a Canvas node
+   *
+   * In most cases it will be the dropTarget itself or its immediate parent.
+   * We typically only need to traverse 2 levels or more if the dropTarget is a linked node
+   *
+   * TODO: We should probably have some special rules to handle linked nodes
+   */
+  getCanvasAncestor(dropTargetId) {
+    // If the dropTargetId is the same as the previous one
+    // Return the canvas ancestor node that we found previuously
+    if (
+      dropTargetId === this.currentDropTargetId &&
+      this.currentDropTargetCanvasAncestorId
+    ) {
+      const node = this.store.query
+        .node(this.currentDropTargetCanvasAncestorId)
+        .get();
+      if (node) {
+        return node;
+      }
     }
-    isNearBorders(domInfo, x, y) {
-        const { top, bottom, left, right } = domInfo;
-        if (top + Positioner.BORDER_OFFSET > y ||
-            bottom - Positioner.BORDER_OFFSET < y ||
-            left + Positioner.BORDER_OFFSET > x ||
-            right - Positioner.BORDER_OFFSET < x) {
-            return true;
-        }
-        return false;
+    const getCanvas = (nodeId) => {
+      const node = this.store.query.node(nodeId).get();
+      if (node && node.data.isCanvas) {
+        return node;
+      }
+      if (!node.data.parent) {
+        return null;
+      }
+      return getCanvas(node.data.parent);
+    };
+    return getCanvas(dropTargetId);
+  }
+  /**
+   * Compute a new Indicator object based on the dropTarget and x,y coords
+   * Returns null if theres no change from the previous Indicator
+   */
+  computeIndicator(dropTargetId, x, y) {
+    let newParentNode = this.getCanvasAncestor(dropTargetId);
+    if (!newParentNode) {
+      return;
     }
-    isDiff(newPosition) {
-        if (this.currentIndicator &&
-            this.currentIndicator.placement.parent.id === newPosition.parent.id &&
-            this.currentIndicator.placement.index === newPosition.index &&
-            this.currentIndicator.placement.where === newPosition.where) {
-            return false;
-        }
-        return true;
+    this.currentDropTargetId = dropTargetId;
+    this.currentDropTargetCanvasAncestorId = newParentNode.id;
+    // Get parent if we're hovering at the border of the current node
+    if (
+      newParentNode.data.parent &&
+      this.isNearBorders(getDOMInfo(newParentNode.dom), x, y) &&
+      // Ignore if linked node because there's won't be an adjacent sibling anyway
+      !this.store.query.node(newParentNode.id).isLinkedNode()
+    ) {
+      newParentNode = this.store.query.node(newParentNode.data.parent).get();
     }
-    /**
-     * Get dimensions of every child Node in the specified parent Node
-     */
-    getChildDimensions(newParentNode) {
-        // Use previously computed child dimensions if newParentNode is the same as the previous one
-        const existingTargetChildDimensions = this.currentTargetChildDimensions;
-        if (this.currentTargetId === newParentNode.id &&
-            existingTargetChildDimensions) {
-            return existingTargetChildDimensions;
-        }
-        return newParentNode.data.nodes.reduce((result, id) => {
-            const dom = this.store.query.node(id).get().dom;
-            if (dom) {
-                result.push({
-                    id,
-                    ...getDOMInfo(dom),
-                });
-            }
-            return result;
-        }, []);
+    if (!newParentNode) {
+      return;
     }
-    /**
-     * Get closest Canvas node relative to the dropTargetId
-     * Return dropTargetId if it itself is a Canvas node
-     *
-     * In most cases it will be the dropTarget itself or its immediate parent.
-     * We typically only need to traverse 2 levels or more if the dropTarget is a linked node
-     *
-     * TODO: We should probably have some special rules to handle linked nodes
-     */
-    getCanvasAncestor(dropTargetId) {
-        // If the dropTargetId is the same as the previous one
-        // Return the canvas ancestor node that we found previuously
-        if (dropTargetId === this.currentDropTargetId &&
-            this.currentDropTargetCanvasAncestorId) {
-            const node = this.store.query
-                .node(this.currentDropTargetCanvasAncestorId)
-                .get();
-            if (node) {
-                return node;
-            }
-        }
-        const getCanvas = (nodeId) => {
-            const node = this.store.query.node(nodeId).get();
-            if (node && node.data.isCanvas) {
-                return node;
-            }
-            if (!node.data.parent) {
-                return null;
-            }
-            return getCanvas(node.data.parent);
-        };
-        return getCanvas(dropTargetId);
+    this.currentTargetChildDimensions = this.getChildDimensions(newParentNode);
+    this.currentTargetId = newParentNode.id;
+    const position = findPosition(
+      newParentNode,
+      this.currentTargetChildDimensions,
+      x,
+      y
+    );
+    // Ignore if the position is similar as the previous one
+    if (!this.isDiff(position)) {
+      return;
     }
-    /**
-     * Compute a new Indicator object based on the dropTarget and x,y coords
-     * Returns null if theres no change from the previous Indicator
-     */
-    computeIndicator(dropTargetId, x, y) {
-        let newParentNode = this.getCanvasAncestor(dropTargetId);
-        if (!newParentNode) {
-            return;
+    let error = this.dragError;
+    // Last thing to check for is if the dragged nodes can be dropped in the target area
+    if (!error) {
+      this.store.query.node(newParentNode.id).isDroppable(
+        this.draggedNodes.map((sourceNode) => sourceNode.node),
+        (dropError) => {
+          error = dropError;
         }
-        this.currentDropTargetId = dropTargetId;
-        this.currentDropTargetCanvasAncestorId = newParentNode.id;
-        // Get parent if we're hovering at the border of the current node
-        if (newParentNode.data.parent &&
-            this.isNearBorders(getDOMInfo(newParentNode.dom), x, y) &&
-            // Ignore if linked node because there's won't be an adjacent sibling anyway
-            !this.store.query.node(newParentNode.id).isLinkedNode()) {
-            newParentNode = this.store.query.node(newParentNode.data.parent).get();
-        }
-        if (!newParentNode) {
-            return;
-        }
-        this.currentTargetChildDimensions = this.getChildDimensions(newParentNode);
-        this.currentTargetId = newParentNode.id;
-        const position = findPosition(newParentNode, this.currentTargetChildDimensions, x, y);
-        // Ignore if the position is similar as the previous one
-        if (!this.isDiff(position)) {
-            return;
-        }
-        let error = this.dragError;
-        // Last thing to check for is if the dragged nodes can be dropped in the target area
-        if (!error) {
-            this.store.query.node(newParentNode.id).isDroppable(this.draggedNodes.map((sourceNode) => sourceNode.node), (dropError) => {
-                error = dropError;
-            });
-        }
-        const currentNodeId = newParentNode.data.nodes[position.index];
-        const currentNode = currentNodeId && this.store.query.node(currentNodeId).get();
-        this.currentIndicator = {
-            placement: {
-                ...position,
-                currentNode,
-            },
-            error,
-        };
-        return this.currentIndicator;
+      );
     }
-    getIndicator() {
-        return this.currentIndicator;
-    }
+    const currentNodeId = newParentNode.data.nodes[position.index];
+    const currentNode =
+      currentNodeId && this.store.query.node(currentNodeId).get();
+    this.currentIndicator = {
+      placement: {
+        ...position,
+        currentNode,
+      },
+      error,
+    };
+    // Compute snap guides for alignment visualization
+    // Get dragged node IDs to exclude from snap targets
+    const draggedNodeIds = this.draggedNodes.map((n) => n.node.id);
+    // Setup snap guide calculator with current parent's children
+    this.snapGuideCalculator.setSiblings(newParentNode.id, draggedNodeIds);
+    // Create a virtual rect around the mouse position (simulating dragged element)
+    // We use a small rect since we don't have the actual element dimensions during drag
+    const virtualDraggedRect = {
+      left: x - 50,
+      right: x + 50,
+      top: y - 25,
+      bottom: y + 25,
+      width: 100,
+      height: 50,
+    };
+    const snapResult = this.snapGuideCalculator.calculate(virtualDraggedRect);
+    this.store.actions.setSnapGuides(snapResult.guides);
+    return this.currentIndicator;
+  }
+  getIndicator() {
+    return this.currentIndicator;
+  }
 }
 //# sourceMappingURL=Positioner.js.map

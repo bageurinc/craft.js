@@ -18,6 +18,7 @@ export const editorInitialState: EditorState = {
     hovered: new Set<NodeId>(),
   },
   indicator: null,
+  snapGuides: [],
   options: {
     onNodesChange: () => null,
     onRender: ({ render }) => render,
@@ -47,6 +48,7 @@ export const ActionMethodsWithConfig = {
     'clearEvents',
     'setOptions',
     'setIndicator',
+    'setSnapGuides',
   ] as const,
   normalizeHistory: (state: EditorState) => {
     /**

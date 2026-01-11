@@ -1,5 +1,6 @@
 import { getDOMInfo, ROOT_NODE } from '@craftjs/utils';
 
+import { SnapGuideCalculator } from './SnapGuideCalculator';
 import findPosition from './findPosition';
 
 import { EditorStore } from '../editor/store';
@@ -41,6 +42,8 @@ export class Positioner {
 
   private onScrollListener: (e: Event) => void;
 
+  private snapGuideCalculator: SnapGuideCalculator;
+
   constructor(readonly store: EditorStore, readonly dragTarget: DragTarget) {
     this.currentDropTargetId = null;
     this.currentDropTargetCanvasAncestorId = null;
@@ -55,6 +58,8 @@ export class Positioner {
 
     this.validateDraggedNodes();
 
+    this.snapGuideCalculator = new SnapGuideCalculator(store);
+
     this.onScrollListener = this.onScroll.bind(this);
     window.addEventListener('scroll', this.onScrollListener, true);
     window.addEventListener('dragover', documentDragoverEventHandler, false);
@@ -63,6 +68,8 @@ export class Positioner {
   cleanup() {
     window.removeEventListener('scroll', this.onScrollListener, true);
     window.removeEventListener('dragover', documentDragoverEventHandler, false);
+    this.snapGuideCalculator.clear();
+    this.store.actions.setSnapGuides([]);
   }
 
   private onScroll(e: Event) {
@@ -283,6 +290,27 @@ export class Positioner {
       },
       error,
     };
+
+    // Compute snap guides for alignment visualization
+    // Get dragged node IDs to exclude from snap targets
+    const draggedNodeIds = this.draggedNodes.map((n) => n.node.id);
+
+    // Setup snap guide calculator with current parent's children
+    this.snapGuideCalculator.setSiblings(newParentNode.id, draggedNodeIds);
+
+    // Create a virtual rect around the mouse position (simulating dragged element)
+    // We use a small rect since we don't have the actual element dimensions during drag
+    const virtualDraggedRect = {
+      left: x - 50,
+      right: x + 50,
+      top: y - 25,
+      bottom: y + 25,
+      width: 100,
+      height: 50,
+    } as DOMRect;
+
+    const snapResult = this.snapGuideCalculator.calculate(virtualDraggedRect);
+    this.store.actions.setSnapGuides(snapResult.guides);
 
     return this.currentIndicator;
   }

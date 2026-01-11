@@ -4,4 +4,6 @@ export * from './DefaultEventHandlers';
 export { Events } from './Events';
 export { Positioner } from './Positioner';
 export { createShadow } from './createShadow';
+export { SnapGuideCalculator } from './SnapGuideCalculator';
+export { RenderSnapGuides } from './RenderSnapGuides';
 //# sourceMappingURL=index.js.map

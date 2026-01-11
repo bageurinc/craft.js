@@ -2,6 +2,7 @@ import React, { useContext, useMemo } from 'react';
 
 import { EventHandlerContext } from './EventContext';
 import { RenderEditorIndicator } from './RenderEditorIndicator';
+import { RenderSnapGuides } from './RenderSnapGuides';
 
 import { EditorContext } from '../editor/EditorContext';
 
@@ -23,6 +24,7 @@ export const Events = ({ children }: EventsProps) => {
   return (
     <EventHandlerContext.Provider value={handler}>
       <RenderEditorIndicator />
+      <RenderSnapGuides />
       {children}
     </EventHandlerContext.Provider>
   );
